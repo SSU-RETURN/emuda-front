@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 // The presence of 'description' does not matter
-// Possible 'type' values: recommend, select, cancel
+// 'type' values: recommend, select, cancel
 function PlayListCell({ image, title, artist, description, type }) {
   const [isChecked, setIsChecked] = useState(false);
 
