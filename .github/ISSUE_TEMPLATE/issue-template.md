@@ -1,12 +1,3 @@
----
-name: issue template
-about: 이슈 내용을 입력해주세요.
-title: ''
-labels: ''
-assignees: ''
-
----
-
 ## 📝 개요
 - 자세한 개요 작성
 
