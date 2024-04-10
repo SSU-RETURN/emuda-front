@@ -2,6 +2,7 @@
 import { css } from '@emotion/react';
 import AppBarInEditMode from './components/AppBarInEditMode/AppBarInEditMode';
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
+
 const containerStyle = css`
   display: flex;
   flex-direction: column;
