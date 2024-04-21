@@ -22,7 +22,7 @@ var AppBarInEditMode = () => {
 const BarStyle = css`
   position: related;
   background-color: white;
-  height: 5.5vh;
+  height: 5vh;
   padding-top: 0.5vh;
   width: 100%;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */

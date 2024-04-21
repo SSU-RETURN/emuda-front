@@ -1,0 +1,238 @@
+/** @jsxImportSource @emotion/react */
+import React, { useState } from 'react';
+import { css } from '@emotion/react';
+import Button from '../../components/Button/Button';
+import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
+import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
+import Logo from '../../assets/emuda_logo.svg';
+import PlayListCell from '../../components/PlayListCell/PlayListCell';
+import { useNavigate } from 'react-router-dom';
+import colors from '../../Colors/Colors';
+const containerStyle = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0 0 5vh 0;
+  max-width: 800px;
+  width: 100%;
+  height: 91.5vh;
+  @media (max-width: 800px) {
+    height: 90vh;
+  }
+  overflow: hidden;
+  box-sizing: border-box;
+  .btn:active,
+  .btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  font-family: 'Pretendard-Medium';
+`;
+const contentStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+`;
+const divStyle = (color) => css`
+  flex: 1;
+  width: 100%;
+  background-color: ${color};
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border: 1px solic black;
+`;
+const buttonTextStyle = css`
+  margin-bottom: 20px;
+  color: #000;
+  font-size: 16px;
+`;
+const textStyle = css`
+  margin-left: 10px;
+`;
+const musicIconStyle = css`
+  height: 20vh;
+  width: 20vh;
+  margin-bottom: 20px;
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  animation: rotate 1s linear infinite;
+`;
+
+const playListCellStyle = css`
+  margin-bottom: 50px;
+`;
+const Container = ({ children }) => {
+  return <div css={containerStyle}>{children}</div>;
+};
+
+// Mock data for playlist cells
+const playlistData = [
+  {
+    id: 1,
+    title: '곡명1',
+    artist: '아티스트',
+    image: Logo,
+    type: 'recommend',
+    description: 'Hello',
+  },
+  {
+    id: 1,
+    title: '곡명1',
+    artist: '아티스트',
+    image: Logo,
+    type: 'recommend',
+    description: 'Hello',
+  },
+  {
+    id: 1,
+    title: '곡명1',
+    artist: '아티스트',
+    image: Logo,
+    type: 'recommend',
+    description: 'Hello',
+  },
+];
+
+var RecommendationView = ({ isDiaryWritten }) => {
+  const playlistDivStyle = (color) => css`
+    ${divStyle};
+    background-color: ${color};
+  `;
+  const navigate = useNavigate();
+  const [playlist, setPlaylist] = useState(playlistData);
+
+  const handleSelect = (id) => {
+    setPlaylist((prevPlaylist) =>
+      prevPlaylist.map((cell) =>
+        cell.id === id ? { ...cell, type: cell.type === 'select' ? 'select' : 'cancel' } : cell
+      )
+    );
+  };
+
+  const handleRoute = () => {
+    navigate('/more');
+  };
+  return (
+    <Container css={containerStyle}>
+      <AppBarInMainScreen />
+
+      {isDiaryWritten ? (
+        <div css={containerStyle}>
+          <div
+            css={css`
+              ${playlistDivStyle(colors.lightPink)};
+              margin-top: 10px;
+            `}
+          >
+            <span
+              css={css`
+                ${textStyle};
+                margin-top: 10px;
+                font-size: 13px;
+              `}
+            >
+              2024년 4월 22일 월요일
+            </span>
+            <span
+              css={css`
+                ${textStyle};
+                font-size: 18px;
+              `}
+            >
+              오늘 RETURN님을 위한 추천 노래들이예요!
+            </span>
+            {playlist.map((cell) => (
+              <PlayListCell
+                key={cell.id}
+                image={cell.image}
+                title={cell.title}
+                artist={cell.artist}
+                type={cell.type}
+                css={playListCellStyle}
+                onClick={() => handleSelect(cell.id)}
+              />
+            ))}
+            <span
+              onClick={handleRoute}
+              css={css`
+                ${textStyle};
+                text-align: right;
+                margin: 0 10px 5px 0;
+                font-size: 12px;
+              `}
+            >
+              더보기&gt;
+            </span>
+          </div>
+          <div
+            css={css`
+              ${playlistDivStyle(colors.lightBlue)};
+              padding-bottom: 10px;
+            `}
+          >
+            <span
+              css={css`
+                ${textStyle};
+                margin-top: 10px;
+                font-size: 15px;
+              `}
+            >
+              RETURN님은 설렐 때 이런 노래를 들었어요
+            </span>
+            <span
+              onClick={handleRoute}
+              css={css`
+                ${textStyle};
+                text-align: right;
+                margin: 0 10px 5px 0;
+                font-size: 12px;
+              `}
+            >
+              더보기&gt;
+            </span>
+            {playlist.map((cell) => (
+              <PlayListCell
+                key={cell.id}
+                image={cell.image}
+                title={cell.title}
+                artist={cell.artist}
+                type={cell.type}
+                css={playListCellStyle}
+                onClick={() => handleSelect(cell.id)}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div css={contentStyle}>
+          <img src={Logo} css={musicIconStyle} alt="Music Note" />
+          <div css={buttonTextStyle}>노래 추천을 위해 오늘의 일기를 작성해주세요.</div>
+          <Button onClick={handleRoute} text="일기 작성하기"></Button>
+        </div>
+      )}
+
+      <BottomNavigationBar current="/recommend"></BottomNavigationBar>
+    </Container>
+  );
+};
+
+export default RecommendationView;

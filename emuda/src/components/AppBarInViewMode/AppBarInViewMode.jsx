@@ -26,7 +26,7 @@ const BarStyle = css`
   left: 0;
   background-color: white;
   width: 100vw;
-  height: 5.5vh;
+  height: 5vh;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
