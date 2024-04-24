@@ -5,7 +5,8 @@ const colors = {
     lightYellow: 'rgba(255, 244, 193, 1)',  
     lightRed: 'rgba(255, 103, 103, 0.8)',
     lightPurple: 'rgba(158, 146, 210, 0.8)',
-    mainBlue: '#3D96FF' 
+    mainBlue: '#3D96FF', 
+    black:'#000000',
   };
   
   export default colors;

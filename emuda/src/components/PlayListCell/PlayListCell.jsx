@@ -12,10 +12,11 @@ function PlayListCell({ image, title, artist, description, type }) {
   };
 
   const cellBoxStyle = css`
-    width: 90%;
+    width: 95%;
     aspect-ratio: 5 / 1;
     background-color: white;
     border-radius: 10px;
+    margin: 5px 10px;
     display: flex;
     flex-direction: row;
     padding: 10px;
@@ -32,7 +33,7 @@ function PlayListCell({ image, title, artist, description, type }) {
     max-height: 100%;
     margin-right: 5px;
     border-radius: 7px;
-    object-fit: cover;
+    object-fit: fill;
   `;
 
   const outerTextBoxStyle = css`

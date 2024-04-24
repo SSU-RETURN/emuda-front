@@ -4,23 +4,23 @@ import React from 'react';
 
 // 버튼에 적용할 스타일 정의
 const buttonStyle = css`
-  background-color: #3D96FF; 
-  color: white;              
-  border: none;              
-  width: 360px;              
-  height: 40px;              
-  border-radius: 20px;       
-  font-size: 16px;          
-  cursor: pointer;           
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-  transition: background-color 0.3s; 
+  background-color: #3d96ff;
+  color: white;
+  border: none;
+  width: 360px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
 
   &:hover {
-    background-color: #3478E5; 
+    background-color: #3478e5;
   }
 
   &:active {
-    background-color: #2C65CC; 
+    background-color: #2c65cc;
   }
 `;
 
@@ -34,9 +34,9 @@ const buttonWrapperStyle = css`
 const Button = ({ text, onClick }) => {
   return (
     <div css={buttonWrapperStyle}>
-    <button css={buttonStyle} onClick={onClick}>
-      {text}
-    </button>
+      <button css={buttonStyle} onClick={onClick}>
+        {text}
+      </button>
     </div>
   );
 };
