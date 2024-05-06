@@ -11,14 +11,14 @@ import colors from '../../Colors/Colors';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 0 0 5vh 0;
+  padding: 2vh 0 10vh 0;
   max-width: 800px;
   width: 100%;
   height: 91.5vh;
-  @media (max-width: 800px) {
+  @media screen and (max-width: 800px) {
     height: 90vh;
   }
   overflow: hidden;
@@ -116,6 +116,8 @@ var RecommendationView = ({ isDiaryWritten }) => {
   const playlistDivStyle = (color) => css`
     ${divStyle};
     background-color: ${color};
+    max-height: 60vh;
+    overflow-y: auto;
   `;
   const navigate = useNavigate();
   const [playlist, setPlaylist] = useState(playlistData);
