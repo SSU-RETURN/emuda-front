@@ -24,8 +24,8 @@ const subContainerStyle = css`
   width: 100%;
   flex-direction: column;
   align-items: center;
-  padding: 0px 22px;
-  margin-top: 10px;
+  padding: 0px;
+  margin: 10px 22px;
 `;
 
 const subTitleStyle = css`
