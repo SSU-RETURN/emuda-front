@@ -10,7 +10,6 @@ function PlayListCell({ image, title, artist, description, type }) {
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
-
   const cellBoxStyle = css`
     width: 95%;
     aspect-ratio: 5 / 1;

@@ -1,11 +1,11 @@
-import emotionStyles from './components/EmotionStyles/EmotionStyles';
+import emotionStyles from '/Users/yunha/Desktop/코딩/Algorithms/emuda-front/emuda/src/components/EmotionStyles/EmotionStyles.jsx';
 import { css } from '@emotion/react';
 const containerStyle = css`
   display: flex;
+  height: 60px;
   flex-direction: column;
   justify-content: space-between;
 `;
-
 const EmotionStyles = ({ emotion }) => {
   return <div css={emotionStyles[emotion]}></div>;
 };
