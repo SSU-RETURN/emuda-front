@@ -7,6 +7,7 @@ import PlayListView from './Pages/PlayListView/PlayListView.jsx';
 import MoreRecommendationView from './Pages/RecommendationView/MoreRecommendationView/MoreRecommendationView.jsx';
 import WriteDiaryView from './Pages/WriteDiaryView/WriteDiaryView.jsx';
 // import SearchMusicView from './Pages/SearcjMusicView/SearchMusicView.jsx';
+import MusicCardView from './Pages/MusicCardView/MusicCardView.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   { path: '/write', element: <WriteDiaryView /> },
+  { path: '/card', element: <MusicCardView /> },
   {
     path: '/recommend',
     element: <RecommendationView isDiaryWritten={true} />,
