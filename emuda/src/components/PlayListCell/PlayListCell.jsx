@@ -12,11 +12,11 @@ function PlayListCell({ image, title, artist, description, type }) {
   };
 
   const cellBoxStyle = css`
-    width: 95%;
+    width: 100%;
+    margin-bottom: 10px;
     aspect-ratio: 5 / 1;
     background-color: white;
     border-radius: 10px;
-    margin: 5px 10px;
     display: flex;
     flex-direction: row;
     padding: 10px;
