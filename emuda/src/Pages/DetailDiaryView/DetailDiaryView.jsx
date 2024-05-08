@@ -6,7 +6,7 @@ import AppBarInViewMode from '../../components/AppBarInViewMode/AppBarInViewMode
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
-import Magnifyingglass from '../../assets/magnifyingglass.svg';
+import Logo from '../../assets/emuda_logo.svg';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -150,21 +150,21 @@ const DetailDiaryData = [
         id: 1,
         title: '곡명1',
         artist: '아티스트',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
       {
         id: 2,
         title: '곡명1',
         artist: '아티스트',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
       {
         id: 3,
         title: '곡명1',
         artist: '아티스트',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
     ],
@@ -173,21 +173,21 @@ const DetailDiaryData = [
         id: 1,
         title: '안녕',
         artist: '아티스트입니다.',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
       {
         id: 2,
         title: '이건',
         artist: '아티',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
       {
         id: 3,
         title: '더미 데이터',
         artist: '스트',
-        image: Magnifyingglass,
+        image: Logo,
         description: '신날때 듣는 노래',
       },
     ],
