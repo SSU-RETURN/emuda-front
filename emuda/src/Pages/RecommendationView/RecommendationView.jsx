@@ -11,16 +11,13 @@ import colors from '../../Colors/Colors';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   margin: 0 auto;
-  padding: 0 0 5vh 0;
+  padding: 0;
   max-width: 800px;
   width: 100%;
-  height: 91.5vh;
-  @media (max-width: 800px) {
-    height: 90vh;
-  }
+  height: 80vh;
   overflow: hidden;
   box-sizing: border-box;
   .btn:active,
@@ -48,6 +45,7 @@ const contentStyle = css`
 const divStyle = (color) => css`
   flex: 1;
   width: 100%;
+  overflow: visible;
   background-color: ${color};
   display: flex;
   flex-direction: column;
@@ -116,6 +114,8 @@ var RecommendationView = ({ isDiaryWritten }) => {
   const playlistDivStyle = (color) => css`
     ${divStyle};
     background-color: ${color};
+    max-height: 60vh;
+    overflow-y: auto;
   `;
   const navigate = useNavigate();
   const [playlist, setPlaylist] = useState(playlistData);
@@ -132,105 +132,107 @@ var RecommendationView = ({ isDiaryWritten }) => {
     navigate('/more');
   };
   return (
-    <Container css={containerStyle}>
-      <AppBarInMainScreen />
+    <Container>
+      <Container css={containerStyle}>
+        <AppBarInMainScreen />
 
-      {isDiaryWritten ? (
-        <div css={containerStyle}>
-          <div
-            css={css`
-              ${playlistDivStyle(colors.lightPink)};
-              margin-top: 10px;
-            `}
-          >
-            <span
+        {isDiaryWritten ? (
+          <div css={containerStyle}>
+            <div
               css={css`
-                ${textStyle};
+                ${playlistDivStyle(colors.lightPink)};
                 margin-top: 10px;
-                font-size: 13px;
               `}
             >
-              2024년 4월 22일 월요일
-            </span>
-            <span
+              <span
+                css={css`
+                  ${textStyle};
+                  margin-top: 10px;
+                  font-size: 13px;
+                `}
+              >
+                2024년 4월 22일 월요일
+              </span>
+              <span
+                css={css`
+                  ${textStyle};
+                  font-size: 18px;
+                `}
+              >
+                오늘 RETURN님을 위한 추천 노래들이예요!
+              </span>
+              {playlist.map((cell) => (
+                <PlayListCell
+                  key={cell.id}
+                  image={cell.image}
+                  title={cell.title}
+                  artist={cell.artist}
+                  css={playListCellStyle}
+                  description={cell.description}
+                  onClick={() => handleSelect(cell.id)}
+                />
+              ))}
+              <span
+                onClick={handleRoute}
+                css={css`
+                  ${textStyle};
+                  text-align: right;
+                  margin: 0 10px 5px 0;
+                  font-size: 12px;
+                `}
+              >
+                더보기&gt;
+              </span>
+            </div>
+            <div
               css={css`
-                ${textStyle};
-                font-size: 18px;
+                ${playlistDivStyle('white')};
+                padding-bottom: 10px;
               `}
             >
-              오늘 RETURN님을 위한 추천 노래들이예요!
-            </span>
-            {playlist.map((cell) => (
-              <PlayListCell
-                key={cell.id}
-                image={cell.image}
-                title={cell.title}
-                artist={cell.artist}
-                type={cell.type}
-                css={playListCellStyle}
-                onClick={() => handleSelect(cell.id)}
-              />
-            ))}
-            <span
-              onClick={handleRoute}
-              css={css`
-                ${textStyle};
-                text-align: right;
-                margin: 0 10px 5px 0;
-                font-size: 12px;
-              `}
-            >
-              더보기&gt;
-            </span>
+              <span
+                css={css`
+                  ${textStyle};
+                  margin-top: 10px;
+                  font-size: 15px;
+                `}
+              >
+                RETURN님은 설렐 때 이런 노래를 들었어요
+              </span>
+              <span
+                onClick={handleRoute}
+                css={css`
+                  ${textStyle};
+                  text-align: right;
+                  margin: 0 10px 5px 0;
+                  font-size: 12px;
+                `}
+              >
+                더보기&gt;
+              </span>
+              {playlist.map((cell) => (
+                <PlayListCell
+                  key={cell.id}
+                  image={cell.image}
+                  title={cell.title}
+                  artist={cell.artist}
+                  css={playListCellStyle}
+                  description={cell.description}
+                  onClick={() => handleSelect(cell.id)}
+                />
+              ))}
+            </div>
           </div>
-          <div
-            css={css`
-              ${playlistDivStyle(colors.lightBlue)};
-              padding-bottom: 10px;
-            `}
-          >
-            <span
-              css={css`
-                ${textStyle};
-                margin-top: 10px;
-                font-size: 15px;
-              `}
-            >
-              RETURN님은 설렐 때 이런 노래를 들었어요
-            </span>
-            <span
-              onClick={handleRoute}
-              css={css`
-                ${textStyle};
-                text-align: right;
-                margin: 0 10px 5px 0;
-                font-size: 12px;
-              `}
-            >
-              더보기&gt;
-            </span>
-            {playlist.map((cell) => (
-              <PlayListCell
-                key={cell.id}
-                image={cell.image}
-                title={cell.title}
-                artist={cell.artist}
-                type={cell.type}
-                css={playListCellStyle}
-                onClick={() => handleSelect(cell.id)}
-              />
-            ))}
+        ) : (
+          <div css={contentStyle}>
+            <img src={Logo} css={musicIconStyle} alt="Music Note" />
+            <div css={buttonTextStyle}>노래 추천을 위해 오늘의 일기를 작성해주세요.</div>
+            <Button onClick={handleRoute} text="일기 작성하기"></Button>
           </div>
-        </div>
-      ) : (
-        <div css={contentStyle}>
-          <img src={Logo} css={musicIconStyle} alt="Music Note" />
-          <div css={buttonTextStyle}>노래 추천을 위해 오늘의 일기를 작성해주세요.</div>
-          <Button onClick={handleRoute} text="일기 작성하기"></Button>
-        </div>
-      )}
+        )}
 
-      <BottomNavigationBar current="/recommend"></BottomNavigationBar>
+        <BottomNavigationBar current="/recommend"></BottomNavigationBar>
+      </Container>
     </Container>
   );
 };
