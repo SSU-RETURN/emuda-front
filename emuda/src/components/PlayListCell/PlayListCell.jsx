@@ -5,9 +5,9 @@ import { css } from '@emotion/react';
 // 'type' values: recommend, select, cancel
 function PlayListCell({ image, title, artist, description, type, isChecked, onCheckChange }) {
   const cellBoxStyle = css`
-    width: 100%;
-    margin-bottom: 10px;
+    width: 95%;
     aspect-ratio: 5 / 1;
+    margin: 5px 0 5px 2.5%;
     background-color: white;
     border-radius: 10px;
     display: flex;
