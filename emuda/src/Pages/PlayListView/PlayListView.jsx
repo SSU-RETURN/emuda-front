@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
 import SelectBar from '../../components/SelectBar/SelectBar';
-import DailyPlaylistCell from '../../components/dailyPlaylistCell/DailyPlaylistCell';
+import DailyPlaylistCell from '../../components/DailyPlaylistCell/DailyPlaylistCell';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import SelectEmotionBar from '../../components/SelectBar/SelectEmotionBar';
 import Logo from '../../assets/emuda_logo.svg';
