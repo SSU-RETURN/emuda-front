@@ -8,7 +8,7 @@ import Button from '../../components/Button/Button';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
-import Magnifyingglass from '../../assets/magnifyingglass.svg';
+import Magnifyingglass from '../../assets/magnifyingglass';
 import photo_add from '../../assets/photo_add.svg';
 
 const containerStyle = css`
@@ -126,7 +126,7 @@ const searchButtonStyle = css`
   align-items: center;
   margin: 14px 0px;
   padding: 10px;
-  & img {
+  & div {
     margin-right: 13px;
     height: 100%;
     width: auto;
@@ -295,7 +295,9 @@ const WriteDiaryView = () => {
         />
         <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
         <button css={searchButtonStyle} onClick={handleSearchClick}>
-          <img src={Magnifyingglass} />
+          <div>
+            <Magnifyingglass fillColor="#3D96FF" strokeColor="#3D96FF" />
+          </div>
           원하는 노래를 검색해보세요.
         </button>
         <div css={activityListStyle}>

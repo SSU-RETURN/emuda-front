@@ -1,16 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useState } from 'react';
 
 // The presence of 'description' does not matter
 // 'type' values: recommend, select, cancel
-function PlayListCell({ image, title, artist, description, type }) {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-  };
-
+function PlayListCell({ image, title, artist, description, type, isChecked, onCheckChange }) {
   const cellBoxStyle = css`
     width: 100%;
     margin-bottom: 10px;
@@ -54,21 +47,18 @@ function PlayListCell({ image, title, artist, description, type }) {
   `;
 
   const musicTitleTextStyle = css`
-    font-family: 'Alegreya Sans';
-    font-weight: 500;
+    font-family: 'Pretendard-Medium';
     font-size: 14px;
     color: #000000;
   `;
 
   const artistNameTextStyle = css`
-    font-family: 'Alegreya Sans';
-    font-weight: 400;
+    font-family: 'Pretendard-Medium';
     font-size: 10px;
     color: ${type === 'recommend' ? '#000000' : '#6e6e6e'};
   `;
   const musicSummaryTextStyle = css`
-    font-family: 'Alegreya Sans';
-    font-weight: 400;
+    font-family: 'Pretendard-Medium';
     font-size: 8px;
     color: ${type === 'recommend' ? '#000000' : '#cdcdcd'};
   `;
@@ -111,7 +101,7 @@ function PlayListCell({ image, title, artist, description, type }) {
         </div>
         {description && <span css={musicSummaryTextStyle}>{description}</span>}
         {type === 'select' && (
-          <div css={[checkboxStyle, isChecked && checkedStyle]} onClick={handleCheckboxChange} />
+          <div css={[checkboxStyle, isChecked && checkedStyle]} onClick={onCheckChange} />
         )}
         {type === 'cancel' && (
           <button css={xMarkBtnStyle}>
