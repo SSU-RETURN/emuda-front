@@ -167,8 +167,8 @@ var RecommendationView = ({ isDiaryWritten }) => {
                   image={cell.image}
                   title={cell.title}
                   artist={cell.artist}
-                  type={cell.type}
                   css={playListCellStyle}
+                  description={cell.description}
                   onClick={() => handleSelect(cell.id)}
                 />
               ))}
@@ -186,7 +186,7 @@ var RecommendationView = ({ isDiaryWritten }) => {
             </div>
             <div
               css={css`
-                ${playlistDivStyle(colors.lightBlue)};
+                ${playlistDivStyle('white')};
                 padding-bottom: 10px;
               `}
             >
@@ -216,8 +216,8 @@ var RecommendationView = ({ isDiaryWritten }) => {
                   image={cell.image}
                   title={cell.title}
                   artist={cell.artist}
-                  type={cell.type}
                   css={playListCellStyle}
+                  description={cell.description}
                   onClick={() => handleSelect(cell.id)}
                 />
               ))}

@@ -83,7 +83,8 @@ var MoreRecommendationView = () => {
             image={cell.image}
             title={cell.title}
             artist={cell.artist}
-            type={cell.type}
+            type="recommend"
+            description={cell.description}
             onClick={() => handleSelect(cell.id)}
           />
         ))}
