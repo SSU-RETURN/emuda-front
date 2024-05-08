@@ -10,7 +10,6 @@ function PlayListCell({ image, title, artist, description, type }) {
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
-
   const cellBoxStyle = css`
     width: 100%;
     margin-bottom: 10px;

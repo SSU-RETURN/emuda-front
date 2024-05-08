@@ -21,11 +21,12 @@ const BarStyle = css`
   background-color: white;
   height: 5vh;
   padding-top: 1.5vh;
+  padding-bottom: 1.5vh;
   width: 100%;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
+  justify-content: center;
+  align-items: center;
 `;
 
 const imgStyle = css`
