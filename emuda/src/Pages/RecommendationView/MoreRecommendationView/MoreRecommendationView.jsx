@@ -11,11 +11,13 @@ const containerStyle = css`
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 0;
-  padding-bottom: 5vh;
+  padding: 2vh 0 10vh 0;
   max-width: 800px;
   width: 100%;
   height: 91.5vh;
+  @media screen and (max-width: 800px) {
+    height: 90vh;
+  }
   overflow: hidden;
   box-sizing: border-box;
   .btn:active,
@@ -30,6 +32,7 @@ const containerStyle = css`
   font-family: 'Pretendard-Medium';
 `;
 const contentStyle = css`
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -40,13 +43,12 @@ const contentStyle = css`
 `;
 const textStyle = css`
   margin: 10px 0 0 10px;
-  font-size: 30px;
+  font-size: 25px;
   display: flex;
   align-items: start;
 `;
 
 const playlistData = [
-  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
@@ -81,7 +83,8 @@ var MoreRecommendationView = () => {
             image={cell.image}
             title={cell.title}
             artist={cell.artist}
-            type={cell.type}
+            type="recommend"
+            description={cell.description}
             onClick={() => handleSelect(cell.id)}
           />
         ))}

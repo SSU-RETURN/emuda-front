@@ -33,9 +33,7 @@ const emotionStyles = {
   `,
 };
 
-
 export default emotionStyles;
-
 
 /* 사용법
 import emotionStyles from './components/EmotionStyles/EmotionStyles';
