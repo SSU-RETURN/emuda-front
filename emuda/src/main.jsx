@@ -15,6 +15,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   { path: '/write', element: <WriteDiaryView /> },
+  { path: '/edit', element: <WriteDiaryView /> },
   { path: '/card', element: <MusicCardView /> },
   { path: '/search', element: <SearchMusicView /> },
   {
