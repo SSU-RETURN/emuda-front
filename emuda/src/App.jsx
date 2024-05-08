@@ -8,11 +8,16 @@ import './Fonts/Font.css';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   margin: 0 auto;
-  padding: 0;
+  padding: 2vh 0 10vh 0;
   max-width: 800px;
   width: 100%;
-  height: 100vh;
+  height: 91.5vh;
+  @media screen and (max-width: 800px) {
+    height: 90vh;
+  }
   overflow: hidden;
   box-sizing: border-box;
   .btn:active,
