@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import React, { useState, useRef, useEffect } from 'react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import emotionStyles from '../../components/EmotionStyles/EmotionStyles';
 import Button from '../../components/Button/Button';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
@@ -50,10 +50,11 @@ const colorPickerStyle = css`
       border: none;
       outline: none;
     }
-    &:hover {
-      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
-    }
   }
+`;
+
+const selectedEmotionStyle = css`
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
 `;
 
 const emotionLabelStyle = css`
@@ -151,33 +152,50 @@ const fixButtonBoxStyle = css`
   box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
-const playlistData = [
+const DiaryData = [
   {
     id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Magnifyingglass,
-    type: 'cancel',
-  },
-  {
-    id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Magnifyingglass,
-    type: 'cancel',
-  },
-  {
-    id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Magnifyingglass,
-    type: 'cancel',
+    emotion: 'happy',
+    image:
+      'https://images.unsplash.com/photo-1714907135093-e60f0a730574?q=80&w=1818&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    content:
+      '오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다.',
+    playlistData: [
+      {
+        id: 1,
+        title: '곡명1',
+        artist: '아티스트',
+        image: Magnifyingglass,
+        type: 'cancel',
+      },
+      {
+        id: 2,
+        title: '곡명1',
+        artist: '아티스트',
+        image: Magnifyingglass,
+        type: 'cancel',
+      },
+      {
+        id: 3,
+        title: '곡명1',
+        artist: '아티스트',
+        image: Magnifyingglass,
+        type: 'cancel',
+      },
+    ],
   },
 ];
 
 const WriteDiaryView = () => {
-  // const history = useHistory();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [diaryData, setDiaryData] = useState({
+    id: null,
+    emotion: '',
+    image: '',
+    content: '',
+    playlistData: [],
+  });
   const emotions = [
     { key: 'sad', label: '슬퍼요' },
     { key: 'happy', label: '기뻐요' },
@@ -185,9 +203,7 @@ const WriteDiaryView = () => {
     { key: 'exciting', label: '설레요' },
     { key: 'anxiety', label: '불안해요' },
   ];
-  const [imageSrc, setImageSrc] = useState(null);
   const fileInputRef = useRef(null);
-
   const textAreaRef = useRef(null);
 
   const Container = ({ children }) => {
@@ -195,18 +211,30 @@ const WriteDiaryView = () => {
   };
 
   useEffect(() => {
+    if (location.pathname === '/edit') {
+      setDiaryData(DiaryData[0]);
+    } else if (location.pathname === '/write') {
+      setDiaryData({
+        id: null,
+        emotion: '',
+        image: '',
+        content: '',
+        playlistData: [],
+      });
+    }
     const textArea = textAreaRef.current;
     if (textArea) {
       textArea.style.height = 'auto';
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
-  });
+  }, [location.pathname]);
 
   const handleTextChange = (event) => {
     const textarea = event.target;
+    const content = event.target.value;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
-    // setText(event.target.value);
+    setDiaryData((prevData) => ({ ...prevData, content }));
   };
 
   const handleSearchClick = () => {
@@ -215,10 +243,10 @@ const WriteDiaryView = () => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image')) {
+    if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImageSrc(e.target.result);
+        setDiaryData((prevData) => ({ ...prevData, image: e.target.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -236,13 +264,19 @@ const WriteDiaryView = () => {
         <div css={colorPickerStyle}>
           {emotions.map((emotion) => (
             <div key={emotion.key}>
-              <button css={emotionStyles[emotion.key]} />
+              <button
+                css={[
+                  emotionStyles[emotion.key],
+                  diaryData && diaryData.emotion === emotion.key && selectedEmotionStyle,
+                ]}
+                onClick={() => diaryData && setDiaryData({ ...diaryData, emotion: emotion.key })}
+              />
               <div css={emotionLabelStyle}>{emotion.label}</div>
             </div>
           ))}
         </div>
         <span css={subTitleStyle}>오늘의 일기</span>
-        <div css={imageContainerStyle(imageSrc)}>
+        <div css={imageContainerStyle(diaryData.image)}>
           <div css={uploadIconStyle} onClick={() => fileInputRef.current.click()} />
           <input
             type="file"
@@ -252,10 +286,10 @@ const WriteDiaryView = () => {
             accept="image/*"
           />
         </div>
-
         <textarea
           css={textFieldStyle}
           type="text"
+          value={diaryData?.content || ''}
           onChange={handleTextChange}
           placeholder="오늘 하루 무슨 일이 있었나요?"
         />
@@ -265,7 +299,7 @@ const WriteDiaryView = () => {
           원하는 노래를 검색해보세요.
         </button>
         <div css={activityListStyle}>
-          {playlistData.map((item) => (
+          {diaryData?.playlistData?.map((item) => (
             <PlayListCell
               key={item.id}
               image={item.image}

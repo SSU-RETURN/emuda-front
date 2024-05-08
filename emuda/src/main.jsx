@@ -14,6 +14,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   { path: '/write', element: <WriteDiaryView /> },
+  { path: '/edit', element: <WriteDiaryView /> },
   {
     path: '/recommend',
     element: <RecommendationView isDiaryWritten={true} />,
