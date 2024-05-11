@@ -5,6 +5,7 @@ import AppBarInMainScreen from './components/AppBarInMainScreen/AppBarInMainScre
 // import AppBarInEditMode from './components/AppBarInEditMode/AppBarInEditMode';
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
 import './Fonts/Font.css';
+
 const containerStyle = css`
   display: flex;
   flex-direction: column;

@@ -1,3 +1,4 @@
+
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import React from 'react';
@@ -15,6 +16,12 @@ const buttonStyle = css`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
 
+  &:disabled{
+    background-color: #cdcdcd;
+    color: #737373;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
   &:hover {
     background-color: #3478e5;
   }
@@ -22,7 +29,9 @@ const buttonStyle = css`
   &:active {
     background-color: #2c65cc;
   }
-`;
+
+
+  `;
 
 // 가운데 정렬 위한 코드
 const buttonWrapperStyle = css`
@@ -31,10 +40,10 @@ const buttonWrapperStyle = css`
 `;
 
 // Button 컴포넌트 정의
-const Button = ({ text, onClick }) => {
+const Button = ({ text, onClick, disabled}) => {
   return (
     <div css={buttonWrapperStyle}>
-      <button css={buttonStyle} onClick={onClick}>
+      <button css={buttonStyle} onClick={onClick} disabled={disabled}>
         {text}
       </button>
     </div>
@@ -50,4 +59,7 @@ const handleClick = () => {
 };
 
 <Button text="작성하기" onClick={handleClick} />;
+
+<Button disabled={true} text="저장" />
+
 */
