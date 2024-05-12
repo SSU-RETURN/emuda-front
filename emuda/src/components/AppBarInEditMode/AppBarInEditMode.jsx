@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-var AppBarInEditMode = () => {
+var AppBarInEditMode = ({ text }) => {
   const navigate = useNavigate();
   const onClickBtn = () => {
     navigate(-1);
@@ -13,11 +13,13 @@ var AppBarInEditMode = () => {
       <button onClick={onClickBtn} css={ButtonStyle}>
         <IoIosArrowBack />
       </button>
-      <div css={MainStyle}>일기</div>
+      <div css={MainStyle}>{text}</div>
       <div css={{ flex: 1 }} />
     </div>
   );
 };
+
+//사용 : <AppBarInEditMode text='일기 작성'/>
 
 const BarStyle = css`
   position: related;

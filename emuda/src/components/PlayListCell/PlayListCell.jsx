@@ -7,6 +7,7 @@ function PlayListCell({ image, title, artist, description, type, isChecked, onCh
   const cellBoxStyle = css`
     width: 95%;
     aspect-ratio: 5 / 1;
+    min-height: 50px;
     margin: 5px 0 5px 2.5%;
     background-color: white;
     border-radius: 10px;
