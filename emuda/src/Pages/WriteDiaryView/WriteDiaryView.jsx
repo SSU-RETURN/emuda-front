@@ -256,7 +256,7 @@ const WriteDiaryView = () => {
     if (location.pathname === '/edit') {
       navigate('/detail');
     } else if (location.pathname === '/write') {
-      navigate('/card');
+      navigate('/emotionGraph');
     }
   };
 
