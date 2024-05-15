@@ -23,14 +23,25 @@ const emotionStyles = {
     ${baseStyle};
     background: ${colors.lightPink}; // 설렘
   `,
-  angry: css`
+  anxiety: css`
     ${baseStyle};
     background: ${colors.lightPurple}; // 불안
   `,
-  anxiety: css`
+  angry: css`
     ${baseStyle};
     background: ${colors.lightRed}; // 화
   `,
+  today: css`
+    ${baseStyle};
+    background: white; // 오늘
+    border: 2px solid ${colors.mainBlue};
+    // background: ${colors.mainBlue}; // 오늘
+    `,
+
+  select: css`
+    ${baseStyle};
+    background: ${colors.mainBlue}; // 클릭 날짜
+`
 };
 
 export default emotionStyles;

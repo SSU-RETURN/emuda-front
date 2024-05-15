@@ -5,6 +5,7 @@ import AppBarInMainScreen from './components/AppBarInMainScreen/AppBarInMainScre
 // import AppBarInEditMode from './components/AppBarInEditMode/AppBarInEditMode';
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
 import './Fonts/Font.css';
+import MainPage from './Pages/MainView/MainView';
 
 const containerStyle = css`
   display: flex;
@@ -40,9 +41,9 @@ const Container = ({ children }) => {
 function App() {
   return (
     <Container>
-      <AppBarInMainScreen></AppBarInMainScreen>
-
-      <BottomNavigationBar current="/"></BottomNavigationBar>
+      {/* <AppBarInMainScreen></AppBarInMainScreen> */}
+      <MainPage></MainPage>
+      {/* <BottomNavigationBar current="/"></BottomNavigationBar> */}
     </Container>
   );
 }
