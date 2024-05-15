@@ -263,7 +263,7 @@ const SearchMusicView = () => {
       selectedItems.map((id) => sampleData.find((data) => data.id === id))
     );
     console.log('선택된 개수:', selectedItems.length);
-    navigate('/write');
+    navigate(-1);
   };
 
   return (
