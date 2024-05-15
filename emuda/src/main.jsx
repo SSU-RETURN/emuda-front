@@ -9,6 +9,7 @@ import WriteDiaryView from './Pages/WriteDiaryView/WriteDiaryView.jsx';
 import DetailDiaryView from './Pages/DetailDiaryView/DetailDiaryView.jsx';
 import MusicCardView from './Pages/MusicCardView/MusicCardView.jsx';
 import SearchMusicView from './Pages/SearchMusicView/SearchMusicView.jsx';
+import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGraphView.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
   { path: '/detail', element: <DetailDiaryView /> },
   { path: '/write', element: <WriteDiaryView /> },
   { path: '/edit', element: <WriteDiaryView /> },
+  { path: '/emotionGraph', element: <DiaryEmotionGraphView /> },
   { path: '/card', element: <MusicCardView /> },
   { path: '/search', element: <SearchMusicView /> },
   {

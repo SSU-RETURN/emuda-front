@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import styled from '@emotion/styled';
 import colors from '../../Colors/Colors';
@@ -8,12 +8,21 @@ const ChartContainer = styled('div')`
   width: 100%;
   max-width: 600px;
   margin: auto;
+  height: 100%; // 부모 컨테이너 높이를 100%로 설정
   /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: transparent;
   border-radius: 8px;*/
 `;
 
-function EmotionChart({ data, height }) {
+const ChartWrapper = styled('div')`
+  width: 100%;
+  height: 100%;
+`;
+
+function EmotionChart({ data }) {
+  const chartRef = useRef(null);
+  const [chartHeight, setChartHeight] = useState(0);
+
   const [chartData, setChartData] = useState({
     series: [
       {
@@ -23,7 +32,6 @@ function EmotionChart({ data, height }) {
     ],
     options: {
       chart: {
-        height: 350,
         type: 'bar',
         toolbar: {
           show: false,
@@ -95,6 +103,12 @@ function EmotionChart({ data, height }) {
   });
 
   useEffect(() => {
+    if (chartRef.current) {
+      setChartHeight(chartRef.current.clientHeight);
+    }
+  }, []);
+
+  useEffect(() => {
     setChartData((current) => ({
       ...current,
       series: [{ ...current.series[0], data: data }],
@@ -102,21 +116,21 @@ function EmotionChart({ data, height }) {
   }, [data]);
 
   return (
-    <ChartContainer>
-      <div id="chart">
+    <ChartContainer ref={chartRef}>
+      <ChartWrapper>
         <ReactApexChart
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          height={height}
+          height={chartHeight}
         />
-      </div>
+      </ChartWrapper>
     </ChartContainer>
   );
 }
 
 export default EmotionChart;
 
-//사용법
-//let data = [20, 17, 22, 40, 0];
-//<EmotionChart data={data} height="100%" />
+// 사용법
+// let data = [20, 17, 22, 40, 0];
+// <EmotionChart data={data} />
