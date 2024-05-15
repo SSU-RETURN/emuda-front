@@ -40,6 +40,7 @@ function App() {
   return (
     <Container>
       <AppBarInMainScreen></AppBarInMainScreen>
+
       <BottomNavigationBar current="/"></BottomNavigationBar>
     </Container>
   );

@@ -127,7 +127,6 @@ var RecommendationView = ({ isDiaryWritten }) => {
       )
     );
   };
-
   const handleRoute = () => {
     navigate('/more');
   };
