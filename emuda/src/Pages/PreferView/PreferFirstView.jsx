@@ -4,6 +4,8 @@ import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
+
 
 // Styles
 const pageStyle = css`
@@ -120,6 +122,8 @@ const bottomBarStyle = css`
 // Component
 const PreferFirst = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const navigate = useNavigate();
+
 
   const handleSelectGenre = genre => {
     const index = selectedGenres.indexOf(genre);
@@ -133,6 +137,10 @@ const PreferFirst = () => {
   const getGenreIndex = genre => selectedGenres.indexOf(genre) + 1;
 
   const genres = ['💃 댄스', '🎤 발라드', '🪩 트로트', '🎧 힙합', '🎹 밴드', '🎷 재즈', '🎻 클래식', '🎶 팝', '🎸 록', '🤠 컨트리'];
+
+  const handleNextClick = () => {
+    navigate('/prefersecond');
+  };
 
   return (
     <div css={pageStyle}>
@@ -159,7 +167,7 @@ const PreferFirst = () => {
         ))}
       </div>
       <div css={bottomBarStyle}>
-        <Button text="다음" onClick={() => console.log('Next')} />
+        <Button text="다음" onClick={handleNextClick} />
       </div>
     </div>
   );

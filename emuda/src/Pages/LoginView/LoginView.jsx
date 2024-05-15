@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import Logo from '../../assets/emuda_logo.svg';
 import Button from '../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
+
 
 const loginPageStyle = css`
   display: flex;
@@ -59,6 +61,7 @@ const togglePasswordStyle = css`
 const LoginView = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ password: '' }); 
+  const navigate = useNavigate(); 
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -66,6 +69,8 @@ const LoginView = () => {
 
   const handleClick = () => {
     console.log('로그인 버튼이 클릭되었습니다!');
+    navigate('/preferstart');
+
   };
 
     // 밑에 작은 버튼들
@@ -79,6 +84,8 @@ const LoginView = () => {
 
     const handleSignup = () => {
       console.log('회원가입 버튼 클릭');
+      navigate('/signup');
+
     };
   
     const handleFindIdPw = () => {

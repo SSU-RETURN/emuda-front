@@ -5,8 +5,8 @@ import AppBarInMainScreen from './components/AppBarInMainScreen/AppBarInMainScre
 // import AppBarInEditMode from './components/AppBarInEditMode/AppBarInEditMode';
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
 import './Fonts/Font.css';
-
-
+import LoginView from './Pages/LoginView/LoginView';
+import SignUpCom from './Pages/SignUpView/SignUpComView';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
@@ -41,8 +41,7 @@ const Container = ({ children }) => {
 function App() {
   return (
     <Container>
-      <AppBarInMainScreen></AppBarInMainScreen>
-      <BottomNavigationBar current="/"></BottomNavigationBar>
+      <LoginView></LoginView>
     </Container>
   );
 }

@@ -1,5 +1,4 @@
 // 년도 눌렀을 때 이동하는거 있 or 없
-// 달력에 년도 표시 있 or 없
 // 버튼에서 왜 마진이 안먹히지 안먹혀서 캘린더에 마진 넣어둠
 
 /** @jsxImportSource @emotion/react */
@@ -273,8 +272,8 @@ const formatShortWeekday = (locale, date) => {
 };
 
 const formatMonthYear = (locale, date) => {
-  return `${date.getMonth() + 1}월`;
-  // return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+  // return `${date.getMonth() + 1}월`;
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
 };
 
 const tileClassName = ({ date: tileDate, view }) => {

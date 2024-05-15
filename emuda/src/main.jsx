@@ -9,6 +9,14 @@ import WriteDiaryView from './Pages/WriteDiaryView/WriteDiaryView.jsx';
 import DetailDiaryView from './Pages/DetailDiaryView/DetailDiaryView.jsx';
 import MusicCardView from './Pages/MusicCardView/MusicCardView.jsx';
 import SearchMusicView from './Pages/SearchMusicView/SearchMusicView.jsx';
+import SignUpView from './Pages/SignUpView/SignUpView.jsx';
+import LoginView from './Pages/LoginView/LoginView.jsx';
+import SignUpComView from './Pages/SignUpView/SignUpComView.jsx';
+import MainPage from './Pages/MainView/MainView.jsx';
+import PreferStart from './Pages/PreferView/PreferStartView.jsx';
+import PreferFirst from './Pages/PreferView/PreferFirstView.jsx';
+import PreferSecond from './Pages/PreferView/PreferSecondView.jsx';
+import PreferFin from './Pages/PreferView/PreferFinView.jsx';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +35,19 @@ const router = createBrowserRouter([
   },
   { path: '/library', element: <PlayListView /> },
   { path: '/more', element: <MoreRecommendationView /> },
+
+  { path: '/login', element: <LoginView/> },
+  { path: '/signup', element: <SignUpView/> },
+  { path: '/signupcom', element: <SignUpComView/> },
+
+  { path: '/main', element: <MainPage/> },
+
+  { path: '/preferstart', element: <PreferStart/> },
+  { path: '/preferfirst', element: <PreferFirst/> },
+  { path: '/prefersecond', element: <PreferSecond/> },
+  { path: '/preferfin', element: <PreferFin/> }
+
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
