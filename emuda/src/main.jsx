@@ -22,6 +22,7 @@ const router = createBrowserRouter([
   { path: '/search', element: <SearchMusicView /> },
   {
     path: '/recommend',
+    //추후에 server과의 연결할 때 여기에도 함수 추가해야 합니다
     element: <RecommendationView isDiaryWritten={true} />,
   },
   { path: '/library', element: <PlayListView /> },

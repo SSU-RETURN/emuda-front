@@ -32,14 +32,14 @@ const containerStyle = css`
   font-family: 'Pretendard-Medium';
 `;
 const contentStyle = css`
-  overflow: auto;
+  width: 100%;
+  height: 100%; // 부모 컨테이너의 높이에 맞춰줍니다.
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: center;
   text-align: center;
-  width: 100%;
-  height: 100%; // 부모 컨테이너의 높이에 맞춰줍니다.
 `;
 const textStyle = css`
   margin: 10px 0 0 10px;
@@ -49,6 +49,14 @@ const textStyle = css`
 `;
 
 const playlistData = [
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
+  { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
   { id: 1, title: '곡명1', artist: '아티스트', image: Logo, type: 'select', description: 'Hello' },
