@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
@@ -140,6 +141,7 @@ const sampleData = [
 ];
 
 const MusicCardView = () => {
+  const navigate = useNavigate();
   const [playlistData1, setPlaylistData1] = useState([]);
   const [playlistData2, setPlaylistData2] = useState([]);
 
@@ -157,7 +159,7 @@ const MusicCardView = () => {
   }, []);
 
   const handleNext = () => {
-    console.log('완료 버튼 클릭됨');
+    navigate('/detail');
   };
 
   return (
