@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import Button from '../../components/Button/Button';
 import '../../Fonts/Font.css';
@@ -177,6 +178,7 @@ const sampleData = [
 ];
 
 const SearchMusicView = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
@@ -261,6 +263,7 @@ const SearchMusicView = () => {
       selectedItems.map((id) => sampleData.find((data) => data.id === id))
     );
     console.log('선택된 개수:', selectedItems.length);
+    navigate(-1);
   };
 
   return (

@@ -17,6 +17,7 @@ import PreferStart from './Pages/PreferView/PreferStartView.jsx';
 import PreferFirst from './Pages/PreferView/PreferFirstView.jsx';
 import PreferSecond from './Pages/PreferView/PreferSecondView.jsx';
 import PreferFin from './Pages/PreferView/PreferFinView.jsx';
+import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGraphView.jsx';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
   { path: '/detail', element: <DetailDiaryView /> },
   { path: '/write', element: <WriteDiaryView /> },
   { path: '/edit', element: <WriteDiaryView /> },
+  { path: '/emotionGraph', element: <DiaryEmotionGraphView /> },
   { path: '/card', element: <MusicCardView /> },
   { path: '/search', element: <SearchMusicView /> },
   {

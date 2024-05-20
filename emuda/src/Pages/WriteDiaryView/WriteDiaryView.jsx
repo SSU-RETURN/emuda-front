@@ -253,7 +253,11 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = () => {
-    console.log('다음 버튼 클릭됨');
+    if (location.pathname === '/edit') {
+      navigate('/detail');
+    } else if (location.pathname === '/write') {
+      navigate('/emotionGraph');
+    }
   };
 
   return (

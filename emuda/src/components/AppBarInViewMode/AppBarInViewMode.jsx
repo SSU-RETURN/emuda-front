@@ -1,8 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { IoIosArrowBack, IoMdCreate, IoMdTrash } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
 function AppBarInViewMode() {
+  const navigate = useNavigate();
+  const onClickDeleteBtn = () => {
+    navigate('/');
+  };
+  const onClickEditBtn = () => {
+    navigate('/edit');
+  };
+
   return (
     <div css={BarStyle}>
       <button css={ButtonStyle}>
@@ -10,10 +19,10 @@ function AppBarInViewMode() {
       </button>
       <div css={ButtonStyle}></div>
       <div css={MainStyle}>일기</div>
-      <button css={ButtonStyle}>
+      <button css={ButtonStyle} onClick={onClickDeleteBtn}>
         <IoMdTrash />
       </button>
-      <button css={ButtonStyle}>
+      <button css={ButtonStyle} onClick={onClickEditBtn}>
         <IoMdCreate />
       </button>
     </div>
