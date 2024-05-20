@@ -6,7 +6,6 @@ import AppBarInMainScreen from './components/AppBarInMainScreen/AppBarInMainScre
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
 import './Fonts/Font.css';
 import MainPage from './Pages/MainView/MainView';
-
 const containerStyle = css`
   display: flex;
   flex-direction: column;
@@ -41,6 +40,7 @@ const Container = ({ children }) => {
 function App() {
   return (
     <Container>
+
       {/* <AppBarInMainScreen></AppBarInMainScreen> */}
       <MainPage></MainPage>
       {/* <BottomNavigationBar current="/"></BottomNavigationBar> */}

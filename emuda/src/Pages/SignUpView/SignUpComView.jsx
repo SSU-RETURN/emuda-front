@@ -49,36 +49,12 @@ const firstTextStyle = css`
 
 `;
 
-const secondTextStyle = css`
-  font-size: 12px;
-  color: ${colors.black};
-  text-align: center;
-  margin-bottom: 50px; 
-  font-family: 'Pretendard-light';
-`;
+const SignUpComView = () => {
+    const navigate = useNavigate();
 
-const skipButtonStyle = css`
-  width: 94px;
-  height: 19px;
-  background-color: white;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  margin-top: 30px; 
-  color: #857979;
-
-
-`;
-const PreferStart = () => {
-  const navigate = useNavigate();
-
-  const handleNextClick = () => {
-    navigate('/preferfirst');
-  };
-
-  const handleSkip = () => {
-    navigate('/main'); // Update this line to navigate to the Main view
-  };
+    const handleGoToLogin = () => {
+        navigate('/login');
+    };
 
   return (
     <div css={pageStyle}>
@@ -87,11 +63,10 @@ const PreferStart = () => {
         <img src={Logo} alt="Emuda Logo" style={{ width: '100%', height: '100%' }} />
         <div css={logoTextStyle}>EMUDA</div>
     </div>
-      <h1 css={firstTextStyle}>00님 환영합니다!</h1>
-      <p css={secondTextStyle}>더 정확한 노래 추천을 위해<br />00님의 취향을 입력해주세요</p>
-        <Button text="다음" onClick={handleNextClick} />
-        <button css={skipButtonStyle} onClick={handleSkip}>건너뛰기</button>
+      <h1 css={firstTextStyle}>가입이 완료되었습니다!</h1>
+      <Button text="로그인 하러 가기" onClick={handleGoToLogin} />
     </div>
   );
 };
-export default PreferStart;
+
+export default SignUpComView;

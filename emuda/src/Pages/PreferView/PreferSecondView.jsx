@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 // Styles
 const pageStyle = css`
@@ -101,6 +102,7 @@ const bottomBarStyle = css`
 const PreferSecond = () => {
   const [selectedMoods, setSelectedMoods] = useState({});
   const [progress, setProgress] = useState(50);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const selectedCount = Object.values(selectedMoods).filter(Boolean).length;
@@ -121,6 +123,11 @@ const PreferSecond = () => {
       [category]: prev[category] === mood ? undefined : mood
     }));
   };
+
+  const handleNextClick = () => {
+    navigate('/preferfin');
+  };
+
 
   return (
     <div css={pageStyle}>
@@ -147,7 +154,7 @@ const PreferSecond = () => {
         </div>
       ))}
       <div css={bottomBarStyle}>
-        <Button text="다음" onClick={() => console.log('Next')} />
+       <Button text="다음" onClick={handleNextClick} />
       </div>
     </div>
   );

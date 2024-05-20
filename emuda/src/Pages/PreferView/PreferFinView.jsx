@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 const pageStyle = css`
   display: flex;
@@ -82,6 +83,12 @@ const PreferFinView = () => {
   const selectedGenres = ['댄스', '발라드', '팝'];
   const selectedMoods = { '슬플 때': '잔잔한', '기쁠 때': '신나는', '설렐 때': '모름', '화날 때': '모름', '불안할 때': '신나는'}; // Simulating previously selected moods
   const progress = 100;
+  const navigate = useNavigate();
+
+  const handleNextClick = () => {
+    navigate('/main');
+  };
+
 
   return (
     <div css={pageStyle}>
@@ -105,7 +112,7 @@ const PreferFinView = () => {
         </div>
       ))}
 
-      <Button text="완료" onClick={() => console.log('Complete')} />
+      <Button text="완료" onClick={handleNextClick} />
     </div>
   );
 };
