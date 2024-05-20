@@ -7,6 +7,7 @@ import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
 import Logo from '../../assets/emuda_logo.svg';
+import EmotionChart from '../../components/EmotionChart/EmotionChart';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -132,9 +133,18 @@ const tabContentStyle = css`
 
 const activityListStyle = css`
   width: 100%;
+  margin-bottom: 20px;
+`;
+
+const graphContainerStyle = css`
+  width: calc(100% - 44px);
+  height: 200px;
+  aspect-ratio: ${352 / 581};
+  display: flex;
   margin-bottom: 80px;
 `;
 
+const sampleData = [20, 17, 22, 40, 0];
 const DetailDiaryData = [
   {
     id: 1,
@@ -313,6 +323,9 @@ const DetailDiaryView = () => {
             </button>
           </div>
           {renderContent()}
+        </div>
+        <div css={graphContainerStyle}>
+          <EmotionChart data={sampleData} height="100%" />
         </div>
       </div>
     </Container>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import Logo from '../../assets/emuda_logo.svg';
 import Button from '../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 const signupPageStyle = css`
   display: flex;
@@ -77,6 +78,7 @@ const SignUpView = () => {
   });
   const [showPassword, setShowPassword] = useState(false); // 비밀번호 가시성 상태 추가
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 비밀번호 확인 가시성 상태 추가
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,6 +100,7 @@ const SignUpView = () => {
     e.preventDefault();
     if (Object.values(errors).every(err => !err) && formData.password === formData.confirmPassword) {
       console.log('Form data submitted:', formData);
+      navigate('/signupcom');
     } else {
       console.log('Please correct the errors before submitting.');
     }
