@@ -3,14 +3,16 @@ import { css } from '@emotion/react';
 import Logo from '../../assets/emuda_logo.svg';
 import { IoIosPerson } from 'react-icons/io';
 import colors from '../../Colors/Colors';
+import { useNavigate } from 'react-router-dom';
 var AppBarInMainScreen = () => {
+  const navigate = useNavigate();
   return (
     <div css={BarStyle}>
-      <button onClick={null} css={ButtonStyle}>
+      <button css={ButtonStyle}>
         <img css={imgStyle} src={Logo} />
       </button>
       <div css={MainStyle}>EMUDA</div>
-      <button css={ButtonStyle}>
+      <button css={ButtonStyle} onClick={() => navigate('/setting')}>
         <IoIosPerson />
       </button>
     </div>

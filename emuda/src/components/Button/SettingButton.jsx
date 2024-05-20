@@ -4,30 +4,18 @@ import React from 'react';
 
 // 버튼에 적용할 스타일 정의
 const buttonStyle = css`
-  background-color: #3d96ff;
-  color: white;
+  background-color: white;
+  color: grey;
   border: none;
-  width: 360px;
+  border-bottom: 1px solid black;
+  width: 320px;
   height: 40px;
-  border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
-
-  &:disabled {
-    background-color: #cdcdcd;
-    color: #737373;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-  &:hover {
-    background-color: #3478e5;
-  }
-
-  &:active {
-    background-color: #2c65cc;
-  }
+  margin-top: 5px;
+  padding-top: 7px;
+  text-align: left;
 `;
 
 // 가운데 정렬 위한 코드
@@ -37,7 +25,7 @@ const buttonWrapperStyle = css`
 `;
 
 // Button 컴포넌트 정의
-const Button = ({ text, onClick, disabled }) => {
+const SettingButton = ({ text, onClick, disabled }) => {
   return (
     <div css={buttonWrapperStyle}>
       <button css={buttonStyle} onClick={onClick} disabled={disabled}>
@@ -47,7 +35,7 @@ const Button = ({ text, onClick, disabled }) => {
   );
 };
 
-export default Button;
+export default SettingButton;
 
 /* 사용법
 
