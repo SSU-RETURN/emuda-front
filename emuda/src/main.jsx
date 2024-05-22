@@ -18,7 +18,7 @@ import PreferFirst from './Pages/PreferView/PreferFirstView.jsx';
 import PreferSecond from './Pages/PreferView/PreferSecondView.jsx';
 import PreferFin from './Pages/PreferView/PreferFinView.jsx';
 import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGraphView.jsx';
-
+import SettingView from './Pages/SettingVIew/SettingView.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -38,18 +38,16 @@ const router = createBrowserRouter([
   { path: '/library', element: <PlayListView /> },
   { path: '/more', element: <MoreRecommendationView /> },
 
-  { path: '/login', element: <LoginView/> },
-  { path: '/signup', element: <SignUpView/> },
-  { path: '/signupcom', element: <SignUpComView/> },
+  { path: '/login', element: <LoginView /> },
+  { path: '/signup', element: <SignUpView /> },
+  { path: '/signupcom', element: <SignUpComView /> },
 
-  { path: '/main', element: <MainPage/> },
-
-  { path: '/preferstart', element: <PreferStart/> },
-  { path: '/preferfirst', element: <PreferFirst/> },
-  { path: '/prefersecond', element: <PreferSecond/> },
-  { path: '/preferfin', element: <PreferFin/> }
-
-
+  { path: '/main', element: <MainPage /> },
+  { path: '/setting', element: <SettingView /> },
+  { path: '/preferstart', element: <PreferStart /> },
+  { path: '/preferfirst', element: <PreferFirst /> },
+  { path: '/prefersecond', element: <PreferSecond /> },
+  { path: '/preferfin', element: <PreferFin /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
