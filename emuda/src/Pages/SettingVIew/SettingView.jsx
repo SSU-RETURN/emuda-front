@@ -6,6 +6,9 @@ import Logo from '../../assets/emuda_logo.svg';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
 import SettingButton from '../../components/Button/SettingButton';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
+
 // Styles
 const containerStyle = css`
   display: flex;
@@ -49,11 +52,52 @@ const imageStyle = css`
 // Component
 const SettingView = () => {
   const navigate = useNavigate();
+
+  const withdrawal = async (memberId) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/api/member/delete`, { params: { memberId } });
+      return response.data;
+    } catch (error) {
+      console.error('회원탈퇴 요청 실패:', error);
+      throw error;
+    }
+  };
+
   let nickname = '서윤하';
 
   const handleLogOut = () => {
     localStorage.clear();
     navigate('/login');
+  };
+
+  const handleWithdrawal = async () => {
+    const memberId = Number(localStorage.getItem('memberId'));
+
+    const confirmWithdrawal = window.confirm('정말 탈퇴하시겠습니까?');
+    if (!confirmWithdrawal) {
+      return;
+    }
+
+    try {
+      const loginResult = await withdrawal(memberId);
+      console.log('회원탈퇴 성공');
+      if (loginResult.isSuccess) {
+        localStorage.clear();
+        navigate('/login');
+      } else {
+        alert(`회원탈퇴 실패: ${loginResult.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('회원탈퇴 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '회원탈퇴 중 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('회원탈퇴 중 오류가 발생했습니다.');
+      }
+    }
   };
 
   return (
@@ -64,7 +108,7 @@ const SettingView = () => {
         <span>{nickname}님</span>
         <SettingButton text="회원 정보 수정" onClick={null}></SettingButton>
         <SettingButton text="로그아웃" onClick={handleLogOut}></SettingButton>
-        <SettingButton text="탈퇴하기" onClick={null}></SettingButton>
+        <SettingButton text="탈퇴하기" onClick={handleWithdrawal}></SettingButton>
         <SettingButton text="노래취향 재설정" onClick={null}></SettingButton>
       </div>
       <BottomNavigationBar current="/home"></BottomNavigationBar>
