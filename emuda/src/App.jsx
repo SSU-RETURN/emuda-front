@@ -6,6 +6,7 @@ import AppBarInMainScreen from './components/AppBarInMainScreen/AppBarInMainScre
 import BottomNavigationBar from './components/BottomNavigationBar/BottomNavigationBar';
 import './Fonts/Font.css';
 import MainPage from './Pages/MainView/MainView';
+import LoginView from './Pages/LoginView/LoginView';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
@@ -42,7 +43,8 @@ function App() {
     <Container>
 
       {/* <AppBarInMainScreen></AppBarInMainScreen> */}
-      <MainPage></MainPage>
+      {/* <MainPage></MainPage> */}
+      <LoginView></LoginView>
       {/* <BottomNavigationBar current="/"></BottomNavigationBar> */}
     </Container>
   );
