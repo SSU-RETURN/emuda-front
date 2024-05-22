@@ -5,6 +5,7 @@ import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode
 import Logo from '../../assets/emuda_logo.svg';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
 import SettingButton from '../../components/Button/SettingButton';
+import { useNavigate } from 'react-router-dom';
 // Styles
 const containerStyle = css`
   display: flex;
@@ -47,7 +48,14 @@ const imageStyle = css`
 
 // Component
 const SettingView = () => {
+  const navigate = useNavigate();
   let nickname = '서윤하';
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
+
   return (
     <div css={containerStyle}>
       <AppBarInEditMode text="마이페이지" />
@@ -55,7 +63,7 @@ const SettingView = () => {
         <img src={Logo} css={imageStyle} />
         <span>{nickname}님</span>
         <SettingButton text="회원 정보 수정" onClick={null}></SettingButton>
-        <SettingButton text="로그아웃" onClick={null}></SettingButton>
+        <SettingButton text="로그아웃" onClick={handleLogOut}></SettingButton>
         <SettingButton text="탈퇴하기" onClick={null}></SettingButton>
         <SettingButton text="노래취향 재설정" onClick={null}></SettingButton>
       </div>
