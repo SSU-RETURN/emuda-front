@@ -38,8 +38,8 @@ const contentStyle = css`
 `;
 
 const imageStyle = css`
-  height: 120px;
-  width: 120px;
+  height: 100px;
+  width: 100px;
   border-radius: 60px;
   border: 1px solid black;
   margin-bottom: 10px;

@@ -14,6 +14,7 @@ const buttonStyle = css`
   cursor: pointer;
   transition: background-color 0.3s;
   margin-top: 5px;
+  padding: 5px;
   padding-top: 7px;
   text-align: left;
 `;
