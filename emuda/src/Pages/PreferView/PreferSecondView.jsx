@@ -135,6 +135,10 @@ const PreferSecond = () => {
     }));
   };
 
+  const allMoodsSelected = Object.keys(moodColors).every(
+    (category) => selectedMoods[category] != null
+  );
+
   const handleNextClick = () => {
     const translatedMoods = Object.entries(selectedMoods).reduce((acc, [category, mood]) => {
       if (mood) {
@@ -177,7 +181,7 @@ const PreferSecond = () => {
         </div>
       ))}
       <div css={bottomBarStyle}>
-        <Button text="다음" onClick={handleNextClick} />
+        <Button text="다음" onClick={handleNextClick} disabled={!allMoodsSelected} />
       </div>
     </div>
   );
