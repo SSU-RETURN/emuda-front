@@ -1,8 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { IoIosHome, IoIosMusicalNote, IoIosHeartEmpty } from 'react-icons/io';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import colors from '../../Colors/Colors';
+import Home from '../../assets/bottomnavigationbar/home';
+import Menu from '../../assets/bottomnavigationbar/menu';
+import Recommend from '../../assets/bottomnavigationbar/recommend';
+
 const navBarStyle = css`
   position: absolute;
   bottom: 0;
@@ -50,7 +54,7 @@ const BottomNavigationBarItem = ({ icon, label, route, isSelected }) => {
           font-size: 30px;
         `}
       >
-        {icon}
+        {React.cloneElement(icon, { color: isSelected ? colors.mainBlue : colors.black })}
       </div>
       <div
         css={css`
@@ -65,9 +69,9 @@ const BottomNavigationBarItem = ({ icon, label, route, isSelected }) => {
 
 export const BottomNavigationBar = ({ current }) => {
   const items = [
-    { label: '추천', route: '/recommend', icon: <IoIosHeartEmpty /> },
-    { label: '홈', route: '/', icon: <IoIosHome /> },
-    { label: '보관함', route: '/library', icon: <IoIosMusicalNote /> },
+    { label: '추천', route: '/recommend', icon: <Recommend /> },
+    { label: '홈', route: '/main', icon: <Home /> },
+    { label: '보관함', route: '/library', icon: <Menu /> },
   ];
 
   return (
