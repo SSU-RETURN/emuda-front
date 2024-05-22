@@ -73,6 +73,11 @@ const SettingView = () => {
   const handleWithdrawal = async () => {
     const memberId = Number(localStorage.getItem('memberId'));
 
+    const confirmWithdrawal = window.confirm('정말 탈퇴하시겠습니까?');
+    if (!confirmWithdrawal) {
+      return;
+    }
+
     try {
       const loginResult = await withdrawal(memberId);
       console.log('회원탈퇴 성공');
