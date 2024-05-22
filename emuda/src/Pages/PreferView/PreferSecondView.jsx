@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Styles
 const pageStyle = css`
@@ -16,7 +16,6 @@ const pageStyle = css`
   padding: 0;
   max-width: 800px;
   width: 100%;
-  height: 100vh;
   font-family: 'Pretendard-Medium';
 `;
 
@@ -34,7 +33,7 @@ const progressBarLabelStyle = () => css`
   font-weight: bold;
 `;
 
-const progressBarStyle = progress => css`
+const progressBarStyle = (progress) => css`
   width: 320px;
   height: 20px;
   background-color: #ddd;
@@ -90,19 +89,31 @@ const moodContainerStyle = css`
 `;
 
 const bottomBarStyle = css`
-  margin-top: 60px;
-  width: 100%;
-  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
   background-color: white;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
 // Component
 const PreferSecond = () => {
+  const location = useLocation();
+  const selectedGenresEng = location.state?.selectedGenres;
   const [selectedMoods, setSelectedMoods] = useState({});
   const [progress, setProgress] = useState(50);
   const navigate = useNavigate();
+
+  const moodTranslation = {
+    신나는: 'excited',
+    잔잔한: 'calm',
+    모름: null,
+  };
 
   useEffect(() => {
     const selectedCount = Object.values(selectedMoods).filter(Boolean).length;
@@ -114,20 +125,36 @@ const PreferSecond = () => {
     '기쁠 땐': colors.lightYellow,
     '설렐 땐': colors.lightPink,
     '화날 땐': colors.lightRed,
-    '불안할 땐': colors.lightPurple
+    '불안할 땐': colors.lightPurple,
   };
 
   const handleMoodClick = (category, mood) => {
-    setSelectedMoods(prev => ({
+    setSelectedMoods((prev) => ({
       ...prev,
-      [category]: prev[category] === mood ? undefined : mood
+      [category]: prev[category] === mood ? undefined : mood,
     }));
   };
 
-  const handleNextClick = () => {
-    navigate('/preferfin');
-  };
+  const allMoodsSelected = Object.keys(moodColors).every(
+    (category) => selectedMoods[category] != null
+  );
 
+  const handleNextClick = () => {
+    const translatedMoods = Object.entries(selectedMoods).reduce((acc, [category, mood]) => {
+      if (mood) {
+        acc[category] = moodTranslation[mood];
+      }
+      return acc;
+    }, {});
+
+    console.log(translatedMoods);
+    navigate('/preferfin', {
+      state: {
+        selectedGenres: selectedGenresEng,
+        selectedMoods: translatedMoods,
+      },
+    });
+  };
 
   return (
     <div css={pageStyle}>
@@ -141,7 +168,7 @@ const PreferSecond = () => {
         <div key={label}>
           <div css={feelingLabelStyle}>{label}</div>
           <div css={moodContainerStyle}>
-            {['신나는', '잔잔한', '모름'].map(mood => (
+            {['신나는', '잔잔한', '모름'].map((mood) => (
               <button
                 key={mood}
                 css={moodStyle(selectedMoods[label] === mood, color)}
@@ -154,7 +181,7 @@ const PreferSecond = () => {
         </div>
       ))}
       <div css={bottomBarStyle}>
-       <Button text="다음" onClick={handleNextClick} />
+        <Button text="다음" onClick={handleNextClick} disabled={!allMoodsSelected} />
       </div>
     </div>
   );
