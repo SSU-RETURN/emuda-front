@@ -6,7 +6,6 @@ import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
-
 // Styles
 const pageStyle = css`
   display: flex;
@@ -17,7 +16,6 @@ const pageStyle = css`
   padding: 0;
   max-width: 800px;
   width: 100%;
-  height: 100vh;
   font-family: 'Pretendard-Medium';
 `;
 
@@ -35,7 +33,7 @@ const progressBarLabelStyle = () => css`
   font-weight: bold;
 `;
 
-const progressBarStyle = progress => css`
+const progressBarStyle = (progress) => css`
   width: 320px;
   height: 20px;
   background-color: #ddd;
@@ -71,8 +69,9 @@ const musicPreferStyle = (isSelected, index) => css`
   padding: 15px;
   background-color: ${isSelected ? 'rgba(0, 123, 255, 0.2)' : 'white'};
   border-radius: 15px;
-  border: ${isSelected ? '3px' : '1px'} solid ${isSelected ? colors.mainBlue : 'rgba(0, 123, 255, 0.5)'};
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: ${isSelected ? '3px' : '1px'} solid
+    ${isSelected ? colors.mainBlue : 'rgba(0, 123, 255, 0.5)'};
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   position: relative;
   color: ${colors.black};
@@ -107,16 +106,19 @@ const bigContainerStyle = css`
   width: 330px;
   height: 300px;
   margin-bottom: 150px;
-
 `;
 
 const bottomBarStyle = css`
-  margin-top: auto;
-  width: 100%;
-  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
   background-color: white;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
 // Component
@@ -124,50 +126,91 @@ const PreferFirst = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const navigate = useNavigate();
 
-
-  const handleSelectGenre = genre => {
+  const handleSelectGenre = (genre) => {
     const index = selectedGenres.indexOf(genre);
     if (index > -1) {
-      setSelectedGenres(prev => prev.filter((_, i) => i !== index));
+      setSelectedGenres((prev) => prev.filter((_, i) => i !== index));
     } else if (selectedGenres.length < 3) {
-      setSelectedGenres(prev => [...prev, genre]);
+      setSelectedGenres((prev) => [...prev, genre]);
     }
   };
 
-  const getGenreIndex = genre => selectedGenres.indexOf(genre) + 1;
+  const getGenreIndex = (genre) => selectedGenres.indexOf(genre) + 1;
 
-  const genres = ['💃 댄스', '🎤 발라드', '🪩 트로트', '🎧 힙합', '🎹 밴드', '🎷 재즈', '🎻 클래식', '🎶 팝', '🎸 록', '🤠 컨트리'];
+  const genres = [
+    '💃 댄스',
+    '🎤 발라드',
+    '🪩 트로트',
+    '🎧 힙합',
+    '🎹 밴드',
+    '🎷 재즈',
+    '🎻 클래식',
+    '🎶 팝',
+    '🎸 록',
+    '🤠 컨트리',
+  ];
+
+  const genreMapping = {
+    '💃 댄스': 'DANCE',
+    '🎤 발라드': 'BALLAD',
+    '🪩 트로트': 'TROT',
+    '🎧 힙합': 'HIPHOP',
+    '🎹 밴드': 'BAND',
+    '🎷 재즈': 'JAZZ',
+    '🎻 클래식': 'CLASSIC',
+    '🎶 팝': 'POP',
+    '🎸 록': 'ROCK',
+    '🤠 컨트리': 'COUNTRY',
+  };
 
   const handleNextClick = () => {
-    navigate('/prefersecond');
+    const selectedEng = selectedGenres.map((genre) => genreMapping[genre]);
+    console.log(selectedEng);
+    navigate('/prefersecond', {
+      state: {
+        selectedGenres: selectedEng,
+      },
+    });
   };
 
   return (
     <div css={pageStyle}>
       <AppBarInEditMode title="노래 취향" />
       <div css={progressBarContainerStyle}>
-        <div css={progressBarLabelStyle(selectedGenres.length * 10)}>{`${selectedGenres.length * 10}%`}</div>
+        <div
+          css={progressBarLabelStyle(selectedGenres.length * 10)}
+        >{`${selectedGenres.length * 10}%`}</div>
         <div css={progressBarStyle(selectedGenres.length * 10)}></div>
       </div>
       <div css={headerTextStyle}>선호 장르 3가지를 정해주세요.</div>
       <div css={bigContainerStyle}>
-        {genres.map((genre, index) => (
-          index % 2 === 0 && (
-            <div css={musicContainerStyle} key={genre}>
-              <div css={musicPreferStyle(selectedGenres.includes(genre), getGenreIndex(genre))} onClick={() => handleSelectGenre(genre)}>
-                {genre}
-              </div>
-              {genres[index + 1] && (
-                <div css={musicPreferStyle(selectedGenres.includes(genres[index + 1]), getGenreIndex(genres[index + 1]))} onClick={() => handleSelectGenre(genres[index + 1])}>
-                  {genres[index + 1]}
+        {genres.map(
+          (genre, index) =>
+            index % 2 === 0 && (
+              <div css={musicContainerStyle} key={genre}>
+                <div
+                  css={musicPreferStyle(selectedGenres.includes(genre), getGenreIndex(genre))}
+                  onClick={() => handleSelectGenre(genre)}
+                >
+                  {genre}
                 </div>
-              )}
-            </div>
-          )
-        ))}
+                {genres[index + 1] && (
+                  <div
+                    css={musicPreferStyle(
+                      selectedGenres.includes(genres[index + 1]),
+                      getGenreIndex(genres[index + 1])
+                    )}
+                    onClick={() => handleSelectGenre(genres[index + 1])}
+                  >
+                    {genres[index + 1]}
+                  </div>
+                )}
+              </div>
+            )
+        )}
       </div>
       <div css={bottomBarStyle}>
-        <Button text="다음" onClick={handleNextClick} />
+        <Button text="다음" onClick={handleNextClick} disabled={selectedGenres.length < 3} />
       </div>
     </div>
   );
