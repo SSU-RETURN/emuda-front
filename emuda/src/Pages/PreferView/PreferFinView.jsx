@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
+import { React, useEffect } from 'react';
 import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
@@ -15,7 +15,7 @@ const pageStyle = css`
   margin: 0 auto;
   max-width: 800px;
   width: 100%;
-  height: 100vh;
+  height: 105vh;
   font-family: 'Pretendard-Medium';
 `;
 
@@ -135,9 +135,16 @@ const moodMessage = (mood) => {
 
 const PreferFinView = () => {
   const location = useLocation();
+  const { state } = location;
   const { selectedGenres, selectedMoods } = location.state;
   const progress = 100;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (state && state.reSetting) {
+      console.log('reSetting이 true입니다.', state.reSetting);
+    }
+  }, [state]);
 
   const moodColors = {
     '설렐 땐': colors.lightPink,
@@ -170,6 +177,60 @@ const PreferFinView = () => {
     }
   };
 
+  const updatePreference = async (requestBody) => {
+    try {
+      const response = await axios.put(`${apiUrl}/api/preference/update`, requestBody);
+      return response.data;
+    } catch (error) {
+      console.error('취향 업데이트 실패:', error);
+      throw error;
+    }
+  };
+
+  const createPreferenceData = async (requestBody) => {
+    try {
+      const result = await createPreference(requestBody);
+      if (result.isSuccess) {
+        console.log('취향 생성 성공');
+        navigate('/main');
+      } else {
+        alert(`취향 생성 실패: ${result.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('취향 생성 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '취향 생성 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('취향 생성  중 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  const updatePreferenceData = async (requestBody) => {
+    try {
+      const result = await updatePreference(requestBody);
+      if (result.isSuccess) {
+        console.log('취향 업데이트 성공');
+        navigate('/setting');
+      } else {
+        alert(`취향 업데이트 실패: ${result.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('취향 업데이트 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '취향 업데이트 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('취향 업데이트 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
   const handleNextClick = async () => {
     const memberId = localStorage.getItem('memberId');
 
@@ -185,25 +246,10 @@ const PreferFinView = () => {
       preferenceAnxious: selectedMoods['불안할 땐'] || null,
     };
 
-    try {
-      const result = await createPreference(requestBody);
-      if (result.isSuccess) {
-        console.log('취향 생성 성공');
-        navigate('/main');
-      } else {
-        alert(`취향 생성 실패: ${result.message}`);
-      }
-    } catch (error) {
-      if (error.response) {
-        // 서버로부터 응답을 받은 경우 에러 메시지를 띄웁니다.
-        console.error('취향 생성 실패:', error.response.data);
-        const errorMessage = error.response.data.message || '취향 생성 문제가 발생했습니다.';
-        alert(`${errorMessage}`);
-      } else if (error.request) {
-        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
-      } else {
-        alert('취향 생성  중 오류가 발생했습니다.');
-      }
+    if (state.reSetting) {
+      updatePreferenceData(requestBody);
+    } else {
+      createPreferenceData(requestBody);
     }
   };
 

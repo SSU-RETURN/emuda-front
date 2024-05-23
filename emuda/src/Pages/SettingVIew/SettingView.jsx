@@ -53,6 +53,8 @@ const imageStyle = css`
 const SettingView = () => {
   const navigate = useNavigate();
 
+  let nickname = localStorage.getItem('nickname');
+
   const withdrawal = async (memberId) => {
     try {
       const response = await axios.delete(`${apiUrl}/api/member/delete`, { params: { memberId } });
@@ -62,8 +64,6 @@ const SettingView = () => {
       throw error;
     }
   };
-
-  let nickname = '서윤하';
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -100,6 +100,10 @@ const SettingView = () => {
     }
   };
 
+  const handleRePreference = () => {
+    navigate('/preferfirst', { state: { reSetting: true } });
+  };
+
   return (
     <div css={containerStyle}>
       <AppBarInEditMode text="마이페이지" />
@@ -109,7 +113,7 @@ const SettingView = () => {
         <SettingButton text="회원 정보 수정" onClick={null}></SettingButton>
         <SettingButton text="로그아웃" onClick={handleLogOut}></SettingButton>
         <SettingButton text="탈퇴하기" onClick={handleWithdrawal}></SettingButton>
-        <SettingButton text="노래취향 재설정" onClick={null}></SettingButton>
+        <SettingButton text="노래취향 재설정" onClick={handleRePreference}></SettingButton>
       </div>
       <BottomNavigationBar current="/home"></BottomNavigationBar>
     </div>

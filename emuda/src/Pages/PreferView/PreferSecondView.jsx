@@ -103,17 +103,46 @@ const bottomBarStyle = css`
 
 // Component
 const PreferSecond = () => {
-  const location = useLocation();
-  const selectedGenresEng = location.state?.selectedGenres;
-  const [selectedMoods, setSelectedMoods] = useState({});
-  const [progress, setProgress] = useState(50);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location;
+  const selectedGenresEng = location.state?.selectedGenres;
+  const [selectedMoods, setSelectedMoods] = useState({
+    '슬플 땐': '',
+    '기쁠 땐': '',
+    '화날 땐': '',
+    '설렐 땐': '',
+    '불안할 땐': '',
+  });
+  const [progress, setProgress] = useState(50);
 
   const moodTranslation = {
     신나는: 'excited',
     잔잔한: 'calm',
     모름: null,
   };
+
+  const reverseMoodTranslation = Object.fromEntries(
+    Object.entries(moodTranslation).map(([k, v]) => [v, k])
+  );
+
+  useEffect(() => {
+    if (state && state.reSetting) {
+      console.log('reSetting이 true입니다.', state);
+      const translatedMoods = Object.entries(state.selectedMoods).reduce(
+        (acc, [category, mood]) => {
+          if (mood) {
+            acc[category] = reverseMoodTranslation[mood];
+          } else {
+            acc[category] = '모름';
+          }
+          return acc;
+        },
+        {}
+      );
+      setSelectedMoods(translatedMoods);
+    }
+  }, [state]);
 
   useEffect(() => {
     const selectedCount = Object.values(selectedMoods).filter(Boolean).length;
@@ -131,12 +160,12 @@ const PreferSecond = () => {
   const handleMoodClick = (category, mood) => {
     setSelectedMoods((prev) => ({
       ...prev,
-      [category]: prev[category] === mood ? undefined : mood,
+      [category]: prev[category] === mood ? '' : mood,
     }));
   };
 
   const allMoodsSelected = Object.keys(moodColors).every(
-    (category) => selectedMoods[category] != null
+    (category) => selectedMoods[category] !== ''
   );
 
   const handleNextClick = () => {
@@ -147,13 +176,22 @@ const PreferSecond = () => {
       return acc;
     }, {});
 
-    console.log(translatedMoods);
-    navigate('/preferfin', {
-      state: {
-        selectedGenres: selectedGenresEng,
-        selectedMoods: translatedMoods,
-      },
-    });
+    if (state && state.reSetting) {
+      navigate('/preferfin', {
+        state: {
+          selectedGenres: selectedGenresEng,
+          selectedMoods: translatedMoods,
+          reSetting: true,
+        },
+      });
+    } else {
+      navigate('/preferfin', {
+        state: {
+          selectedGenres: selectedGenresEng,
+          selectedMoods: translatedMoods,
+        },
+      });
+    }
   };
 
   return (
