@@ -4,7 +4,9 @@ import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 
 // Styles
 const pageStyle = css`
@@ -123,8 +125,70 @@ const bottomBarStyle = css`
 
 // Component
 const PreferFirst = () => {
-  const [selectedGenres, setSelectedGenres] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location;
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedMoods, setSelectedMoods] = useState({
+    '슬플 땐': '',
+    '기쁠 땐': '',
+    '화날 땐': '',
+    '설렐 땐': '',
+    '불안할 땐': '',
+  });
+
+  const getPreference = async (memberId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/preference/details/${memberId}`);
+      return response.data;
+    } catch (error) {
+      console.error('취향 조회 실패:', error);
+      throw error;
+    }
+  };
+
+  const fetchData = async () => {
+    const memberId = Number(localStorage.getItem('memberId'));
+
+    try {
+      const result = await getPreference(memberId);
+      if (result.isSuccess) {
+        console.log('취향조회 성공');
+        const genres = [
+          reverseGenreMapping[result.result.genreFirst],
+          reverseGenreMapping[result.result.genreSecond],
+          reverseGenreMapping[result.result.genreThird],
+        ];
+        setSelectedGenres(genres);
+        setSelectedMoods({
+          '슬플 땐': result.result.preferenceSad,
+          '기쁠 땐': result.result.preferenceHappy,
+          '화날 땐': result.result.preferenceAngry,
+          '설렐 땐': result.result.preferenceRomance,
+          '불안할 땐': result.result.preferenceAnxious,
+        });
+      } else {
+        alert(`취향조회 실패: ${result.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('취향조회 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '취향조회 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('취향조회 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    if (state && state.reSetting) {
+      console.log('넘어온 상태에서 reSetting이 true입니다.');
+      fetchData();
+    }
+  }, [state]);
 
   const handleSelectGenre = (genre) => {
     const index = selectedGenres.indexOf(genre);
@@ -163,14 +227,28 @@ const PreferFirst = () => {
     '🤠 컨트리': 'COUNTRY',
   };
 
+  const reverseGenreMapping = Object.fromEntries(
+    Object.entries(genreMapping).map(([k, v]) => [v, k])
+  );
+
   const handleNextClick = () => {
     const selectedEng = selectedGenres.map((genre) => genreMapping[genre]);
     console.log(selectedEng);
-    navigate('/prefersecond', {
-      state: {
-        selectedGenres: selectedEng,
-      },
-    });
+    if (state && state.reSetting) {
+      navigate('/prefersecond', {
+        state: {
+          selectedGenres: selectedEng,
+          selectedMoods: selectedMoods,
+          reSetting: true,
+        },
+      });
+    } else {
+      navigate('/prefersecond', {
+        state: {
+          selectedGenres: selectedEng,
+        },
+      });
+    }
   };
 
   return (
