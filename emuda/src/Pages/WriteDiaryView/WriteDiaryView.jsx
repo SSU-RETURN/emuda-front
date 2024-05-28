@@ -152,40 +152,6 @@ const fixButtonBoxStyle = css`
   box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
-const DiaryData = [
-  {
-    id: 1,
-    emotion: 'happy',
-    image:
-      'https://images.unsplash.com/photo-1714907135093-e60f0a730574?q=80&w=1818&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    content:
-      '오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다.',
-    playlistData: [
-      {
-        id: 1,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Magnifyingglass,
-        type: 'cancel',
-      },
-      {
-        id: 2,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Magnifyingglass,
-        type: 'cancel',
-      },
-      {
-        id: 3,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Magnifyingglass,
-        type: 'cancel',
-      },
-    ],
-  },
-];
-
 const WriteDiaryView = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -212,7 +178,7 @@ const WriteDiaryView = () => {
 
   useEffect(() => {
     if (location.pathname === '/edit') {
-      setDiaryData(DiaryData[0]);
+      setDiaryData(diaryData[0]);
     } else if (location.pathname === '/write') {
       setDiaryData({
         id: null,
@@ -222,12 +188,18 @@ const WriteDiaryView = () => {
         playlistData: [],
       });
     }
+    if (location.state && location.state.selectedMusic) {
+      setDiaryData((prevData) => ({
+        ...prevData,
+        playlistData: location.state.selectedMusic,
+      }));
+    }
     const textArea = textAreaRef.current;
     if (textArea) {
       textArea.style.height = 'auto';
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.state]);
 
   const handleTextChange = (event) => {
     const textarea = event.target;
@@ -253,13 +225,13 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = () => {
+    console.log(diaryData.playlistData);
     if (location.pathname === '/edit') {
       navigate('/detail');
     } else if (location.pathname === '/write') {
       navigate('/emotionGraph');
     }
   };
-
   return (
     <Container>
       <AppBarInEditMode />
@@ -296,6 +268,7 @@ const WriteDiaryView = () => {
           value={diaryData?.content || ''}
           onChange={handleTextChange}
           placeholder="오늘 하루 무슨 일이 있었나요?"
+          ref={textAreaRef}
         />
         <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
         <button css={searchButtonStyle} onClick={handleSearchClick}>
@@ -308,10 +281,10 @@ const WriteDiaryView = () => {
           {diaryData?.playlistData?.map((item) => (
             <PlayListCell
               key={item.id}
-              image={item.image}
+              image={item.pictureKey}
               title={item.title}
               artist={item.artist}
-              type={item.type}
+              type={'cancel'}
             />
           ))}
         </div>

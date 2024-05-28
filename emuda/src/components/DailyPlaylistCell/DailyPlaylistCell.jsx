@@ -30,27 +30,27 @@ const textStyle = css`
   width: fit-content;
 `;
 
-const DailyPlaylistCell = ({ date, text, emotion }) => {
+const DailyPlaylistCell = ({ date, text, emotion, onClick }) => {
   let color;
   switch (emotion) {
-    case 'happy':
+    case 'HAPPY':
       color = colors.lightYellow;
       break;
-    case 'sad':
+    case 'SAD':
       color = colors.lightBlue;
       break;
-    case 'exciting':
+    case 'ROMANCE':
       color = colors.lightPink;
       break;
-    case 'angry':
+    case 'ANGRY':
       color = colors.lightPurple;
       break;
-    case 'anxiety':
+    case 'SURPRISE':
       color = colors.lightRed;
       break;
   }
   return (
-    <div css={listItemStyle(color)}>
+    <div css={listItemStyle(color)} onClick={onClick}>
       <div css={squareStyle(color)}></div>
       <div css={textStyle}>
         <span

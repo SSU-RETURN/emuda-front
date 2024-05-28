@@ -8,7 +8,8 @@ import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import Magnifyingglass from '../../assets/magnifyingglass';
-import Logo from '../../assets/emuda_logo.svg';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -145,38 +146,6 @@ const fixButtonBoxStyle = css`
   box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
-// 임시 데이터 -> API 연결 이후 삭제 필요
-const sampleData = [
-  {
-    id: 1,
-    title: '안녕 사랑',
-    artist: '아티스트1',
-    image: Logo,
-    description: '신나는 사람들이 많이 듣는 노래',
-  },
-  {
-    id: 2,
-    title: '안녕 바람',
-    artist: '아티스트2',
-    image: Logo,
-    description: '신나는 사람들이 많이 듣는 노래',
-  },
-  {
-    id: 3,
-    title: '안녕 해',
-    artist: '아티스트3',
-    image: Logo,
-    description: '신나는 사람들이 많이 듣는 노래',
-  },
-  {
-    id: 4,
-    title: '안녕 그대로',
-    artist: '아티스트4',
-    image: Logo,
-    description: '신나는 사람들이 많이 듣는 노래',
-  },
-];
-
 const SearchMusicView = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -191,9 +160,38 @@ const SearchMusicView = () => {
     setRecentSearches(searches);
   }, []);
 
-  const fetchSearchResults = (query) => {
-    console.log(`API 호출: 검색어 = ${query}`);
-    setSearchResults(sampleData);
+  const fetchSearchResults = async (query) => {
+    console.log(`Searching for: ${query}`);
+    try {
+      const response = await axios.get(`${apiUrl}/api/music/search`, {
+        params: {
+          keyword: query,
+          page: 0,
+        },
+      });
+      console.log('Response:', response.data);
+      if (response.data.isSuccess) {
+        // Add a unique id for each search result combining title and artist
+        const resultsWithId = response.data.result.map((item) => ({
+          ...item,
+          id: `${item.title}-${item.artist}`,
+        }));
+        setSearchResults(resultsWithId);
+      } else {
+        alert('Search failed');
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Request data:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
+    }
     setShowSearchResults(true);
   };
 
@@ -211,7 +209,6 @@ const SearchMusicView = () => {
       event.preventDefault();
       if (searchTerm.trim() !== '') {
         handleSearch(searchTerm);
-        fetchSearchResults(searchTerm);
       }
     }
   };
@@ -257,13 +254,32 @@ const SearchMusicView = () => {
     }
   };
 
-  const handleNext = () => {
-    console.log(
-      '선택된 항목:',
-      selectedItems.map((id) => sampleData.find((data) => data.id === id))
-    );
-    console.log('선택된 개수:', selectedItems.length);
-    navigate(-1);
+  const handleNext = async () => {
+    try {
+      const selectedMusic = selectedItems.map((id) => {
+        const music = searchResults.find((data) => data.id === id);
+        return {
+          id: music.id,
+          artist: music.artist,
+          title: music.title,
+          pictureKey: music.pictureKey,
+        };
+      });
+
+      // Save selected music to server
+      const response = await axios.post(`${apiUrl}/api/music/save`, {
+        musics: selectedMusic,
+      });
+
+      if (response.status === 201) {
+        // Navigate to WriteDiaryView with saved music data
+        navigate('/write', { state: { selectedMusic: response.data.result } });
+      } else {
+        alert('Error saving selected music');
+      }
+    } catch (error) {
+      console.error('Error saving selected music:', error);
+    }
   };
 
   return (
@@ -272,7 +288,12 @@ const SearchMusicView = () => {
       <div css={subContainerStyle}>
         <div css={searchContainerStyle}>
           <div css={iconStyle}>
-            <Magnifyingglass fillColor="#3D96FF" strokeColor="#3D96FF" />
+            <Magnifyingglass
+              width="20.29px"
+              height="18.71px"
+              fillColor="#3D96FF"
+              strokeColor="#3D96FF"
+            />
           </div>
           <input
             type="text"
@@ -306,6 +327,8 @@ const SearchMusicView = () => {
               >
                 <div css={searchResultIconStyle}>
                   <Magnifyingglass
+                    width="19.29px"
+                    height="18.71px"
                     fillColor={colors.lightGray03}
                     strokeColor={colors.lightGray03}
                   />
@@ -330,11 +353,10 @@ const SearchMusicView = () => {
             {searchResults.map((result) => (
               <PlayListCell
                 key={result.id}
-                image={result.image}
+                image={result.pictureKey}
                 title={result.title}
                 artist={result.artist}
                 type={'select'}
-                description={result.description}
                 isChecked={selectedItems.includes(result.id)}
                 onCheckChange={() => handleCheckboxChange(result.id)}
               />
