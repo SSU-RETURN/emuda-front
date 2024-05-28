@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import Logo from '../../assets/emuda_logo.svg';
-import { IoIosPerson } from 'react-icons/io';
+import Person_circle_fill from '../../assets/person_circle_fill.svg';
 import colors from '../../Colors/Colors';
 import { useNavigate } from 'react-router-dom';
 var AppBarInMainScreen = () => {
@@ -11,9 +11,11 @@ var AppBarInMainScreen = () => {
       <button css={ButtonStyle}>
         <img css={imgStyle} src={Logo} />
       </button>
-      <div css={MainStyle}>EMUDA</div>
+      <div css={MainStyle}>
+        <span>EMUDA</span>
+      </div>
       <button css={ButtonStyle} onClick={() => navigate('/setting')}>
-        <IoIosPerson />
+        <img src={Person_circle_fill} css={personImageStyle} />
       </button>
     </div>
   );
@@ -43,10 +45,19 @@ const MainStyle = css`
   justify-content: start;
   padding-left: 5px;
   align-items: center;
-  font-size: 22px;
+  & span {
+    margin-left: 10px;
+    font-family: 'Pretendard-Semibold';
+    font-size: 16px;
+    transform: scaleX(1.2);
+  }
   @media (min-width: 800px) {
     font-size: 30px;
   }
+`;
+const personImageStyle = css`
+  width: 30px;
+  height: 30px;
 `;
 const ButtonStyle = css`
   background-color: white;

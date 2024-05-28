@@ -2,6 +2,7 @@
 import { css } from '@emotion/react';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import colors from '../../Colors/Colors';
 
 var AppBarInEditMode = ({ text }) => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const ButtonStyle = css`
 `;
 const MainStyle = css`
   background-color: white;
-  color: black;
+  color: ${colors.darkBlue};
   width: 70%; /* 부모 너비에 의존 */
   flex: 8;
   display: flex;

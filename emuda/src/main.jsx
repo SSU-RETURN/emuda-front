@@ -19,6 +19,7 @@ import PreferSecond from './Pages/PreferView/PreferSecondView.jsx';
 import PreferFin from './Pages/PreferView/PreferFinView.jsx';
 import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGraphView.jsx';
 import SettingView from './Pages/SettingVIew/SettingView.jsx';
+import EditMemberInfoView from './Pages/EditMemberInfoView/EditMemberInfoView.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
 
   { path: '/main', element: <MainPage /> },
   { path: '/setting', element: <SettingView /> },
+  { path: '/editMemberInfo', element: <EditMemberInfoView /> },
   { path: '/preferstart', element: <PreferStart /> },
   { path: '/preferfirst', element: <PreferFirst /> },
   { path: '/prefersecond', element: <PreferSecond /> },

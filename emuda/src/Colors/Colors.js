@@ -6,10 +6,12 @@ const colors = {
   lightRed: 'rgba(255, 103, 103, 0.8)',
   lightPurple: 'rgba(158, 146, 210, 0.8)',
   mainBlue: '#3D96FF',
+  darkBlue: '#215088',
   black: '#000000',
   lightGray01: '#CDCDCD',
   lightGray02: '#F6F6F6',
   lightGray03: '#6E6E6E',
+  lightGray04: '#DEDEDE',
 };
 
 export default colors;
