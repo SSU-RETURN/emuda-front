@@ -20,10 +20,9 @@ const containerStyle = css`
   justify-content: center;
   align-items: center;
   margin: 0;
-  padding: 0;
+  padding: 50px 0px;
   max-width: 800px;
   width: 100%;
-  height: 80vh;
   overflow: hidden;
   box-sizing: border-box;
   body {

@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
-import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import AppBarInViewMode from '../../components/AppBarInViewMode/AppBarInViewMode';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
@@ -18,7 +17,7 @@ const containerStyle = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px;
+  padding: 50px 0px;
   margin: 0px;
 `;
 const subContainerStyle = css`
@@ -289,7 +288,6 @@ const DetailDiaryView = () => {
   return (
     <Container>
       <AppBarInViewMode />
-      <AppBarInEditMode />
       <div css={subContainerStyle}>
         <div css={spanContainerStyle}>
           <span css={dateLabelStyle}>{diaryData?.date || ''}</span>

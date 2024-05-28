@@ -23,9 +23,13 @@ var AppBarInEditMode = ({ text }) => {
 //사용 : <AppBarInEditMode text='일기 작성'/>
 
 const BarStyle = css`
-  position: related;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background-color: white;
-  height: 5vh;
+  height: 50px;
   padding-top: 0.5vh;
   width: 100%;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */

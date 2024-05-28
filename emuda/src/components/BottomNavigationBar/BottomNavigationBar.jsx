@@ -8,15 +8,13 @@ import Menu from '../../assets/bottomnavigationbar/menu';
 import Recommend from '../../assets/bottomnavigationbar/recommend';
 
 const navBarStyle = css`
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 15px 0 0 0;
+  padding: 15px 0 20px 0;
   background-color: #fff;
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   z-index: 100;
