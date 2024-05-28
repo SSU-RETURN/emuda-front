@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from 'react';
 import { css } from '@emotion/react';
-import emotionStyles from '../../components/EmotionStyles/EmotionStyles';
+import emotionStyles2 from '../../components/EmotionStyles/EmotionStyles2.jsx';
 
 const containerStyle = css`
   display: flex;
@@ -21,11 +21,11 @@ const barStyle = css`
 
 const SelectEmotionBar = ({ onEmotionSelect, selectedEmotion }) => {
   const emotions = [
-    { name: 'sad', displayName: '슬퍼요' },
-    { name: 'happy', displayName: '기뻐요' },
-    { name: 'anxiety', displayName: '불안해요' },
-    { name: 'exciting', displayName: '설레요' },
-    { name: 'angry', displayName: '화나요' },
+    { name: 'SAD', displayName: '슬퍼요' },
+    { name: 'HAPPY', displayName: '기뻐요' },
+    { name: 'SURPRISE', displayName: '놀랐어요' },
+    { name: 'ROMANCE', displayName: '설레요' },
+    { name: 'ANGRY', displayName: '화나요' },
   ];
 
   return (
@@ -43,7 +43,7 @@ const SelectEmotionBar = ({ onEmotionSelect, selectedEmotion }) => {
         >
           <div
             css={css`
-              ${emotionStyles[emotion.name]},
+              ${emotionStyles2[emotion.name]},
               color:emotion.name===selectedEmotion ? #000000 : #666666
             `}
             onClick={() => onEmotionSelect(emotion.name)}

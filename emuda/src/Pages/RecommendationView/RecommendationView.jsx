@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import Button from '../../components/Button/Button';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
@@ -8,6 +9,9 @@ import Logo from '../../assets/emuda_logo.svg';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import { useNavigate } from 'react-router-dom';
 import colors from '../../Colors/Colors';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
+
 const containerStyle = css`
   display: flex;
   flex-direction: column;
@@ -31,6 +35,7 @@ const containerStyle = css`
   }
   font-family: 'Pretendard-Medium';
 `;
+
 const contentStyle = css`
   display: flex;
   flex-direction: column;
@@ -42,6 +47,7 @@ const contentStyle = css`
   width: 100%;
   height: 100%;
 `;
+
 const divStyle = (color) => css`
   flex: 1;
   width: 100%;
@@ -50,16 +56,19 @@ const divStyle = (color) => css`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border: 1px solic black;
+  border: 1px solid black;
 `;
+
 const buttonTextStyle = css`
   margin-bottom: 20px;
   color: #000;
   font-size: 16px;
 `;
+
 const textStyle = css`
   margin-left: 10px;
 `;
+
 const musicIconStyle = css`
   height: 20vh;
   width: 20vh;
@@ -78,68 +87,77 @@ const musicIconStyle = css`
 const playListCellStyle = css`
   margin-bottom: 50px;
 `;
+
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
 };
 
-// Mock data for playlist cells
-const playlistData = [
-  {
-    id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Logo,
-    type: 'recommend',
-    description: 'Hello',
-  },
-  {
-    id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Logo,
-    type: 'recommend',
-    description: 'Hello',
-  },
-  {
-    id: 1,
-    title: '곡명1',
-    artist: '아티스트',
-    image: Logo,
-    type: 'recommend',
-    description: 'Hello',
-  },
-];
+const RecommendationView = ({ isDiaryWritten }) => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-var RecommendationView = ({ isDiaryWritten }) => {
-  const playlistDivStyle = (color) => css`
+  const getPlaylist = async () => {
+    try {
+      //const memberId = Number(localStorage.getItem('memberId'));
+      const response = await axios.get(`${apiUrl}/api/recommend/1/2024-05-23`);
+      // 실제 사용 시
+      // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      alert('Error while Getting Playlist');
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const playlists = await getPlaylist();
+      if (playlists && playlists.isSuccess) {
+        const aipl = playlists.result.aiPlaylist;
+        const empl = playlists.result.memberEmotionPlaylist;
+        setAiPlaylist(aipl.slice(0, 3));
+        setEmotionPlaylist(empl.slice(0, 3));
+      } else {
+        console.log('Error while Getting Playlists.');
+      }
+    } catch (error) {
+      alert('Error Fetching PlayList');
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const playlistDivStyle = (props) => css`
     ${divStyle};
-    background-color: ${color};
+    background-color: ${props.color};
     max-height: 60vh;
     overflow-y: auto;
   `;
-  const navigate = useNavigate();
-  const [playlist, setPlaylist] = useState(playlistData);
 
-  const handleSelect = (id) => {
-    setPlaylist((prevPlaylist) =>
-      prevPlaylist.map((cell) =>
-        cell.id === id ? { ...cell, type: cell.type === 'select' ? 'select' : 'cancel' } : cell
-      )
-    );
+  const navigate = useNavigate();
+  const [aiPlaylist, setAiPlaylist] = useState([]);
+  const [emotionPlaylist, setEmotionPlaylist] = useState([]);
+  const nickname = localStorage.getItem('nickname');
+  const handleRoute = (type) => {
+    navigate(`/more?type=${type}`);
   };
-  const handleRoute = () => {
-    navigate('/more');
-  };
+
   return (
     <Container>
       <Container css={containerStyle}>
         <AppBarInMainScreen />
-
         {isDiaryWritten ? (
           <div css={containerStyle}>
             <div
               css={css`
-                ${playlistDivStyle(colors.lightPink)};
+                ${playlistDivStyle({ color: colors.lightPink })};
                 margin-top: 10px;
               `}
             >
@@ -158,21 +176,21 @@ var RecommendationView = ({ isDiaryWritten }) => {
                   font-size: 18px;
                 `}
               >
-                오늘 RETURN님을 위한 추천 노래들이예요!
+                오늘 {nickname}님을 위한 추천 노래들이예요!
               </span>
-              {playlist.map((cell) => (
+              {aiPlaylist.map((cell) => (
                 <PlayListCell
                   key={cell.id}
-                  image={cell.image}
+                  image={cell.pictureKey}
                   title={cell.title}
                   artist={cell.artist}
                   css={playListCellStyle}
                   description={cell.description}
-                  onClick={() => handleSelect(cell.id)}
+                  onClick={() => null}
                 />
               ))}
               <span
-                onClick={handleRoute}
+                onClick={() => handleRoute('ai')}
                 css={css`
                   ${textStyle};
                   text-align: right;
@@ -185,7 +203,7 @@ var RecommendationView = ({ isDiaryWritten }) => {
             </div>
             <div
               css={css`
-                ${playlistDivStyle('white')};
+                ${playlistDivStyle({ color: 'white' })};
                 padding-bottom: 10px;
               `}
             >
@@ -196,10 +214,10 @@ var RecommendationView = ({ isDiaryWritten }) => {
                   font-size: 15px;
                 `}
               >
-                RETURN님은 설렐 때 이런 노래를 들었어요
+                {nickname}님은 설렐 때 이런 노래를 들었어요
               </span>
               <span
-                onClick={handleRoute}
+                onClick={() => handleRoute('emotion')}
                 css={css`
                   ${textStyle};
                   text-align: right;
@@ -209,7 +227,7 @@ var RecommendationView = ({ isDiaryWritten }) => {
               >
                 더보기&gt;
               </span>
-              {playlist.map((cell) => (
+              {emotionPlaylist.map((cell) => (
                 <PlayListCell
                   key={cell.id}
                   image={cell.image}
@@ -217,7 +235,7 @@ var RecommendationView = ({ isDiaryWritten }) => {
                   artist={cell.artist}
                   css={playListCellStyle}
                   description={cell.description}
-                  onClick={() => handleSelect(cell.id)}
+                  onClick={() => null}
                 />
               ))}
             </div>
@@ -229,7 +247,6 @@ var RecommendationView = ({ isDiaryWritten }) => {
             <Button onClick={handleRoute} text="일기 작성하기"></Button>
           </div>
         )}
-
         <BottomNavigationBar current="/recommend"></BottomNavigationBar>
       </Container>
     </Container>

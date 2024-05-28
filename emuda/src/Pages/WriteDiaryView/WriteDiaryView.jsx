@@ -225,13 +225,13 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = () => {
+    console.log(diaryData.playlistData);
     if (location.pathname === '/edit') {
       navigate('/detail');
     } else if (location.pathname === '/write') {
       navigate('/emotionGraph');
     }
   };
-
   return (
     <Container>
       <AppBarInEditMode />
