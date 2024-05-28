@@ -93,12 +93,23 @@ const Container = ({ children }) => {
 };
 
 const RecommendationView = ({ isDiaryWritten }) => {
-  const getCurrentDate = () => {
+  const getCurrentDateforAPI = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    const dayOfWeek = daysOfWeek[today.getDay()];
+
+    return `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
   };
 
   const getPlaylist = async () => {
@@ -106,7 +117,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
       //const memberId = Number(localStorage.getItem('memberId'));
       const response = await axios.get(`${apiUrl}/api/recommend/1/2024-05-23`);
       // 실제 사용 시
-      // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
+      // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -168,7 +179,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
                   font-size: 13px;
                 `}
               >
-                2024년 4월 22일 월요일
+                {getCurrentDate()}
               </span>
               <span
                 css={css`

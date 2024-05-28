@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import AppBarInMainScreen from '../../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../../components/BottomNavigationBar/BottomNavigationBar';
