@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 var AppBarInMainScreen = () => {
   const navigate = useNavigate();
   return (
-    <div css={BarStyle} onClick={() => navigate('/main')}>
+    <div css={BarStyle}>
       <button css={ButtonStyle}>
         <img css={imgStyle} src={Logo} />
       </button>
