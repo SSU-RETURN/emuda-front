@@ -102,6 +102,17 @@ const togglePasswordStyle = css`
   transform: translateY(-50%);
 `;
 
+const fixButtonBoxStyle = css`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const SignUpView = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -275,7 +286,9 @@ const SignUpView = () => {
             )}
           </div>
         </div>
-        <Button text="회원가입" onClick={handleSubmit} />
+        <div css={fixButtonBoxStyle}>
+          <Button text="회원가입" onClick={handleSubmit} />
+        </div>
       </form>
     </div>
   );
