@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
@@ -35,7 +35,7 @@ const progressBarLabelStyle = () => css`
   font-weight: bold;
 `;
 
-const progressBarStyle = (progress) => css`
+const progressBarStyle = (from, to) => css`
   width: 320px;
   height: 20px;
   background-color: #ddd;
@@ -47,9 +47,19 @@ const progressBarStyle = (progress) => css`
     content: '';
     display: block;
     height: 100%;
-    width: ${progress}%;
+    width: ${to}%;
     background-color: ${colors.mainBlue};
     border-radius: 10px;
+    animation: ${fillAnimation(from, to)} 1s ease-in-out forwards;
+  }
+`;
+
+const fillAnimation = (from, to) => keyframes`
+  from {
+    width: ${from}%;
+  }
+  to {
+    width: ${to}%;
   }
 `;
 
@@ -128,6 +138,7 @@ const PreferFirst = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
+  const [prevProgress, setPrevProgress] = useState(0);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedMoods, setSelectedMoods] = useState({
     '슬플 땐': '',
@@ -192,11 +203,14 @@ const PreferFirst = () => {
 
   const handleSelectGenre = (genre) => {
     const index = selectedGenres.indexOf(genre);
+    let newProgress = selectedGenres.length * 10;
     if (index > -1) {
       setSelectedGenres((prev) => prev.filter((_, i) => i !== index));
+      newProgress = selectedGenres.length * 10;
     } else if (selectedGenres.length < 3) {
       setSelectedGenres((prev) => [...prev, genre]);
     }
+    setPrevProgress(newProgress);
   };
 
   const getGenreIndex = (genre) => selectedGenres.indexOf(genre) + 1;
@@ -258,7 +272,7 @@ const PreferFirst = () => {
         <div
           css={progressBarLabelStyle(selectedGenres.length * 10)}
         >{`${selectedGenres.length * 10}%`}</div>
-        <div css={progressBarStyle(selectedGenres.length * 10)}></div>
+        <div css={progressBarStyle(prevProgress, selectedGenres.length * 10)}></div>
       </div>
       <div css={headerTextStyle}>선호 장르 3가지를 정해주세요.</div>
       <div css={bigContainerStyle}>
