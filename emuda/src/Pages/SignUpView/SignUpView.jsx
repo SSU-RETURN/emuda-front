@@ -1,11 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
 import { css } from '@emotion/react';
-import Logo from '../../assets/emuda_logo.svg';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../config/config';
+import colors from '../../Colors/Colors';
+import EyeIcon from '../../assets/EyeIcon';
+import EyeOffIcon from '../../assets/EyeOffIcon';
 
 const signupPageStyle = css`
   display: flex;
@@ -16,8 +18,26 @@ const signupPageStyle = css`
   justify-content: center;
   height: 100vh;
   background-color: #ffffff;
-  font-family: 'Pretendard-Regular', sans-serif;
+  font-family: 'Pretendard-Regular';
   box-sizing: border-box;
+`;
+
+const guideLabelStyle = css`
+  font-family: 'Pretendard-SemiBold';
+  color: ${colors.mainBlue};
+  margin-bottom: 4px;
+  font-size: 20px;
+  width: 100%;
+  text-align: left;
+`;
+
+const subGuideLabelStyle = css`
+  font-family: 'Pretendard-Light';
+  color: ${colors.lightGray03};
+  margin-bottom: 68px;
+  font-size: 15px;
+  width: 100%;
+  text-align: left;
 `;
 
 const formStyle = css`
@@ -27,14 +47,18 @@ const formStyle = css`
 `;
 
 const labelStyle = css`
+  font-family: 'Pretendard-Medium';
+  color: ${colors.lightGray03};
   margin-bottom: 5px;
   font-size: 14px;
 `;
 
 const labelStyle2 = css`
   margin-bottom: 5px;
+  font-family: 'Pretendard-Light';
+  color: ${colors.lightGray03};
   font-size: 10px;
-  margin-left: 10px; // 첫 번째 라벨과의 간격 조정
+  margin-left: 8px; // 첫 번째 라벨과의 간격 조정
 `;
 const labelContainerStyle = css`
   display: flex;
@@ -46,21 +70,32 @@ const inputContainerStyle = (error) => css`
   position: relative;
   padding: 12px 15px;
   margin-bottom: 20px;
-
-  border: 1px solid ${error ? 'red' : '#ccc'};
-  border-radius: 15px;
+  box-shadow: 0 4px 10px 0 ${error ? 'rgba(255, 103, 103, 0.2)' : 'rgba(151, 156, 162, 0.2)'};
+  border-radius: 5px;
   width: 100%;
   box-sizing: border-box;
+`;
+
+const nameInputContainerStyle = (error) => css`
+  ${inputContainerStyle(error)};
+  width: 70%;
+`;
+
+const idInputContainerStyle = (error) => css`
+  ${inputContainerStyle(error)};
+  width: 85%;
 `;
 
 const inputStyle = css`
   border: none;
   width: 100%;
-  font-family: 'Pretendard-Regular', sans-serif;
+  font-family: 'Pretendard-Regular';
+  &:focus {
+    outline: none;
+  }
 `;
 
 const togglePasswordStyle = css`
-  cursor: pointer;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -169,17 +204,14 @@ const SignUpView = () => {
 
   return (
     <div css={signupPageStyle}>
-      <img
-        src={Logo}
-        alt="Emuda Logo"
-        style={{ width: '120px', height: '120px', marginBottom: '30px' }}
-      />
+      <span css={guideLabelStyle}>회원가입</span>
+      <span css={subGuideLabelStyle}>회원님의 정보를 등록해주세요!</span>
       <form css={formStyle} onSubmit={handleSubmit}>
         <div css={labelContainerStyle}>
           <label css={labelStyle}>닉네임</label>
           <label css={labelStyle2}> 7자 이하로 입력해주세요 </label>
         </div>
-        <div css={inputContainerStyle(errors.name)}>
+        <div css={nameInputContainerStyle(errors.name)}>
           <input
             css={inputStyle}
             type="text"
@@ -192,7 +224,7 @@ const SignUpView = () => {
           <label css={labelStyle}>ID</label>
           <label css={labelStyle2}>5~10자로 입력해주세요</label>
         </div>
-        <div css={inputContainerStyle(errors.id)}>
+        <div css={idInputContainerStyle(errors.id)}>
           <input
             css={inputStyle}
             type="text"
@@ -213,11 +245,13 @@ const SignUpView = () => {
             value={formData.password}
             onChange={handleChange}
           />
-          <i
-            css={togglePasswordStyle}
-            className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
-            onClick={() => setShowPassword(!showPassword)}
-          />
+          <div css={togglePasswordStyle} onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? (
+              <EyeOffIcon strokeColor={colors.mainBlue} strokeOpacity={0.7} />
+            ) : (
+              <EyeIcon fillColor={colors.mainBlue} fillOpacity={0.7} />
+            )}
+          </div>
         </div>
         <div css={labelContainerStyle}>
           <label css={labelStyle}>비밀번호 확인</label>
@@ -230,11 +264,16 @@ const SignUpView = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
           />
-          <i
+          <div
             css={togglePasswordStyle}
-            className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          />
+          >
+            {showConfirmPassword ? (
+              <EyeOffIcon strokeColor={colors.mainBlue} strokeOpacity={0.7} />
+            ) : (
+              <EyeIcon fillColor={colors.mainBlue} fillOpacity={0.7} />
+            )}
+          </div>
         </div>
         <Button text="회원가입" onClick={handleSubmit} />
       </form>
