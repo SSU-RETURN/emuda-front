@@ -5,8 +5,11 @@ import { useNavigate } from 'react-router-dom';
 
 function AppBarInViewMode() {
   const navigate = useNavigate();
+  const onClickBackBtn = () => {
+    navigate('/main');
+  };
   const onClickDeleteBtn = () => {
-    navigate('/');
+    navigate('/main');
   };
   const onClickEditBtn = () => {
     navigate('/edit');
@@ -14,7 +17,7 @@ function AppBarInViewMode() {
 
   return (
     <div css={BarStyle}>
-      <button css={ButtonStyle}>
+      <button css={ButtonStyle} onClick={onClickBackBtn}>
         <IoIosArrowBack />
       </button>
       <div css={ButtonStyle}></div>
@@ -33,9 +36,11 @@ const BarStyle = css`
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  z-index: 1000;
   background-color: white;
   width: 100vw;
-  height: 5vh;
+  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: stretch;

@@ -13,9 +13,9 @@ const pageStyle = css`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
+  padding: 50px 0;
   max-width: 800px;
   width: 100%;
-  height: 105vh;
   font-family: 'Pretendard-Medium';
 `;
 

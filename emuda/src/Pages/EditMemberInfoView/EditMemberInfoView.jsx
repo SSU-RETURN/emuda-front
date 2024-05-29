@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import Person_circle_fill from '../../assets/person_circle_fill.svg';
 import '../../Fonts/Font.css';
@@ -8,6 +9,8 @@ import Button from '../../components/Button/Button';
 import colors from '../../Colors/Colors';
 import EyeIcon from '../../assets/EyeIcon';
 import EyeOffIcon from '../../assets/EyeOffIcon';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -161,20 +164,108 @@ const togglePasswordVisibilityStyle = css`
   top: 40%;
   right: 8px;
   transform: translateY(-50%);
+  cursor: pointer;
 `;
 
 const EditMemberInfoView = () => {
+  const navigate = useNavigate();
+  const [id, setId] = useState('');
   const [nickName, setNickName] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [checkNewPassword, setCheckNewPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showCheckNewPassword, setShowCheckNewPassword] = useState(false);
 
-  const isNickNameSaveEnabled = nickName.length > 0;
-  const isPasswordSaveEnabled =
-    currentPassword.length > 0 && newPassword.length > 0 && checkNewPassword.length > 0;
+  const isValidNickname = (nickname) => nickname.length <= 7;
+  const isValidPassword = (password) =>
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/.test(password);
+
+  const isNickNameSaveEnabled = isValidNickname(nickName);
+  const isPasswordSaveEnabled = isValidPassword(newPassword) && newPassword === checkNewPassword;
+
+  useEffect(() => {
+    const storedId = localStorage.getItem('id');
+    if (storedId) {
+      setId(storedId);
+    }
+  }, []);
+
+  const updateNickname = async (requestBody) => {
+    try {
+      const response = await axios.put(`${apiUrl}/api/member/nickname`, requestBody);
+      return response.data;
+    } catch (error) {
+      window.alert('닉네임 수정 실패: ' + error.message);
+      throw error;
+    }
+  };
+
+  const updatePassword = async (requestBody) => {
+    try {
+      const response = await axios.put(`${apiUrl}/api/member/passwd`, requestBody);
+      return response.data;
+    } catch (error) {
+      window.alert('비밀번호 수정 실패: ' + error.message);
+      throw error;
+    }
+  };
+
+  const handleSaveNicknameClick = async () => {
+    const memberId = localStorage.getItem('memberId');
+    const requestBody = {
+      memberId: Number(memberId),
+      newNickname: nickName,
+    };
+    try {
+      const result = await updateNickname(requestBody);
+      if (result.isSuccess) {
+        alert('닉네임 수정이 완료되었습니다.');
+        localStorage.setItem('nickname', nickName);
+      } else {
+        alert(`닉네임 수정 실패: ${result.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('닉네임 수정 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '닉네임 수정 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('닉네임 수정 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  const handleSavePasswordClick = async () => {
+    const memberId = localStorage.getItem('memberId');
+    const requestBody = {
+      memberId: Number(memberId),
+      newPasswd: newPassword,
+    };
+
+    try {
+      const result = await updatePassword(requestBody);
+      if (result.isSuccess) {
+        alert('비밀번호 수정이 완료되었습니다.');
+      } else {
+        alert(`비밀번호 수정 실패: ${result.message}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('비밀번호 수정 실패:', error.response.data);
+        const errorMessage = error.response.data.message || '비밀번호 수정 문제가 발생했습니다.';
+        alert(`${errorMessage}`);
+      } else if (error.request) {
+        alert('서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해 주세요.');
+      } else {
+        alert('비밀번호 수정 중 오류가 발생했습니다.');
+      }
+    }
+  };
+  const handleCompleteClick = async () => {
+    navigate(-1);
+  };
 
   return (
     <Container>
@@ -197,12 +288,12 @@ const EditMemberInfoView = () => {
         </div>
         <div css={nickNameBoxStyle}>
           <span css={labelSpanStyle}>ID</span>
-          <span css={idSpanStyle}>123adfadf</span>
+          <span css={idSpanStyle}>{id}</span>
         </div>
         <div css={saveButtonBoxStyle}>
           <button
             css={buttonStyle}
-            onClick={() => console.log('닉네임 저장')}
+            onClick={handleSaveNicknameClick}
             disabled={!isNickNameSaveEnabled}
           >
             저장
@@ -211,26 +302,6 @@ const EditMemberInfoView = () => {
       </div>
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>비밀번호 설정</span>
-        <span css={passwordSpanStyle}>현재 비밀번호</span>
-        <div css={inputContainerStyle}>
-          <input
-            css={inputStyle}
-            type={showCurrentPassword ? 'text' : 'password'}
-            name="currentPassword"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <div
-            css={togglePasswordVisibilityStyle}
-            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-          >
-            {showCurrentPassword ? (
-              <EyeOffIcon strokeColor="black" strokeOpacity={0.7} />
-            ) : (
-              <EyeIcon fillColor="black" fillOpacity={0.7} />
-            )}
-          </div>
-        </div>
         <span css={passwordSpanStyle}>새 비밀번호</span>
         <div css={inputContainerStyle}>
           <input
@@ -276,7 +347,7 @@ const EditMemberInfoView = () => {
         <div css={saveButtonBoxStyle}>
           <button
             css={buttonStyle}
-            onClick={() => console.log('비밀번호 저장')}
+            onClick={handleSavePasswordClick}
             disabled={!isPasswordSaveEnabled}
           >
             저장
@@ -284,7 +355,7 @@ const EditMemberInfoView = () => {
         </div>
       </div>
       <div css={fixButtonBoxStyle}>
-        <Button text="완료" onClick={() => console.log('완료 클릭')} />
+        <Button text="완료" onClick={handleCompleteClick} />
       </div>
     </Container>
   );

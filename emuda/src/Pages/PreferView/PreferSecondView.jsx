@@ -13,7 +13,7 @@ const pageStyle = css`
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  padding: 0;
+  padding: 50px 0;
   max-width: 800px;
   width: 100%;
   font-family: 'Pretendard-Medium';

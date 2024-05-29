@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
 import { css } from '@emotion/react';
+import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,7 +13,7 @@ import EyeOffIcon from '../../assets/EyeOffIcon';
 const signupPageStyle = css`
   display: flex;
   width: 100%;
-  padding: 20px;
+  padding: 50px 20px;
   flex-direction: column;
   align-items: center;
   justify-content: center;

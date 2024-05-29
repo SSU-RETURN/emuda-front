@@ -22,58 +22,70 @@ const pageStyle = css`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin: 0 auto;
-  padding: 0;
+  margin: 0;
+  padding: 70px 0px;
   max-width: 800px;
   width: 100%;
-  height: 100vh;
   font-family: 'Pretendard-Medium';
 `;
 
 // 날짜 표시 스타일
+const dateDivStyle = css`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+`;
+
 const dateLabelStyle = css`
   font-size: 20px;
+  display: block;
   color: #2c3e50;
   margin: 10px 20px;
   font-family: 'Pretendard-Bold';
-  align-self: flex-start;
 `;
 
 // 요일 표시 스타일
 const dayOfWeekStyle = css`
+  display: block;
   color: ${colors.mainBlue};
+  font-size: 23px;
   font-family: 'Pretendard-Bold';
 `;
 
 const suggestionTextStyle = css`
-  font-size: 18px;
+  font-size: 15px;
   color: #34495e;
-  margin: 0px 20px;
-  margin-bottom: 10px;
-  font-family: 'Pretendard-Bold';
+  margin: 0px 20px 10px 20px;
+  font-family: 'Pretendard-SemiBold';
   align-self: flex-start;
+  box-sizing: border-box;
 `;
 const labelContainerStyle = css`
-  width: 360px;
+  width: 100%;
   height: 60px;
   margin-bottom: 20px;
 `;
 
+const cellContainerStyle = css`
+  width: 100%;
+`;
+
 const sliderStyle = css`
-  margin: 0px 20px;
-  width: 350px;
-  height: 71px;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  /* overflow: hidden; */
 
   .slick-dots {
-    bottom: -25px;
+    margin-top: 25px;
+    display: flex;
 
     li {
       margin: 0;
 
       button {
-        width: 12px;
-        height: 12px;
-
         &::before {
           font-size: 12px;
           color: #ddf4f9;
@@ -89,17 +101,18 @@ const sliderStyle = css`
 `;
 
 const questionTextStyle = css`
+  width: 100%;
   font-size: 15px;
   color: ${colors.black};
-  margin: 0px 20px;
-  margin-bottom: 10px;
+  margin: 0px 20px 10px 20px;
+  box-sizing: border-box;
   font-family: 'Pretendard-SemiBold';
 `;
 const underquestionTextStyle = css`
   font-size: 10px;
   color: ${colors.lightGray03};
-  margin: 0px 20px;
-  margin-bottom: 10px;
+  margin: 0px 20px 10px 20px;
+  box-sizing: border-box;
   font-family: 'Pretendard-Medium';
 `;
 
@@ -108,14 +121,13 @@ const labelContainerStyle2 = css`
 `;
 
 const headerStyle = css`
-  width: 360px;
+  width: 100%;
   height: 36px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 5px;
-  margin-top: 50px;
-  margin-bottom: 0px;
+  margin: 50px 5px 0px 5px;
+  box-sizing: border-box;
 `;
 
 const calendarStyle = css`
@@ -182,6 +194,7 @@ const todayButtonStyle = css`
   border: 1px solid ${colors.mainBlue};
   font-size: 15px;
   border-radius: 10px;
+  margin-right: 20px;
   cursor: pointer;
   &:hover {
     background-color: #e0e0e0;
@@ -241,6 +254,7 @@ const MainPage = () => {
   const { formattedDate, dayOfWeek } = getCurrentDateAndWeekday();
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
+  const navigate = useNavigate();
 
   const settings = {
     dots: true,
@@ -248,9 +262,11 @@ const MainPage = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
   };
 
   const onChange = (newDate) => {
+    console.log('선택된 날짜: ', newDate.toISOString().split('T')[0]);
     setDate(newDate);
   };
 
@@ -283,26 +299,38 @@ const MainPage = () => {
       }
     }
   };
-  const navigate = useNavigate();
+
+  const handleWriteClick = () => {
+    // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
+    const formattedDate = date.toISOString().split('T')[0];
+    console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
+
+    console.log('Navigating to write view with date: ', formattedDate);
+    navigate('/write', { state: { selectedDate: formattedDate } });
+  };
+
   return (
     <div css={[pageStyle, calendarStyle, diaryStyle]}>
       <AppBarInMainScreen />
       <div css={labelContainerStyle}>
-        <div css={dateLabelStyle}>
-          {formattedDate} <span css={dayOfWeekStyle}>{dayOfWeek}</span>
+        <div css={dateDivStyle}>
+          <span css={dateLabelStyle}>{formattedDate}</span>
+          <span css={dayOfWeekStyle}>{dayOfWeek}</span>
         </div>
         <div css={suggestionTextStyle}>오늘 이 노래는 어떠세요?</div>
       </div>
-      <Slider {...settings} css={sliderStyle}>
-        <PlayListCell
-          image=""
-          title="여행"
-          artist="볼빨간 사춘기"
-          description="2024/02/12 외 5번"
-        />
-        <PlayListCell image="" title="투게더" artist="잔나비" description="2025/03/15 외 4번" />
-        <PlayListCell image="" title="챔피언" artist="싸이" description="2023/12/11 외 3번" />
-      </Slider>
+      <div css={cellContainerStyle}>
+        <Slider {...settings} css={sliderStyle}>
+          <PlayListCell
+            image=""
+            title="여행"
+            artist="볼빨간 사춘기"
+            description="2024/02/12 외 5번"
+          />
+          <PlayListCell image="" title="투게더" artist="잔나비" description="2025/03/15 외 4번" />
+          <PlayListCell image="" title="챔피언" artist="싸이" description="2023/12/11 외 3번" />
+        </Slider>
+      </div>
       <div css={headerStyle}>
         <div css={labelContainerStyle2}>
           <div css={questionTextStyle}>오늘 하루 생각나는 노래가 있었나요?</div>
@@ -324,13 +352,7 @@ const MainPage = () => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      <Button
-        text="작성하기"
-        onClick={() => navigate('/write')}
-        css={css`
-          margin-top: 10px; // 왜 간격 조정안되냐 그래서 위에 추가했는데 흠 왜 안되지 찾아보자
-        `}
-      />
+      <Button text="작성하기" onClick={handleWriteClick} />
       <BottomNavigationBar />
     </div>
   );
