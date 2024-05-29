@@ -158,7 +158,6 @@ const WriteDiaryView = () => {
   const location = useLocation();
   const memberId = localStorage.getItem('memberId');
 
-
   const [diaryData, setDiaryData] = useState({
     memberId: memberId,
     content: '',
@@ -173,12 +172,11 @@ const WriteDiaryView = () => {
     { key: 'ROMANCE', label: '설레요' },
     { key: 'SURPRISE', label: '불안해요' },
   ];
-  
+
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const textAreaHeightRef = useRef(null);
   const [imageFile, setImageFile] = useState(null);
-
 
   const Container = ({ children }) => {
     return <div css={containerStyle}>{children}</div>;
@@ -204,27 +202,38 @@ const WriteDiaryView = () => {
     }
 
     if (location.state && location.state.selectedMusic) {
-          //   const selectedMusic = Array.isArray(location.state.selectedMusic)
-    //     ? location.state.selectedMusic.filter(music => music !== null && typeof music === 'object' && music.id)
-    //     : [];
-      setDiaryData((prevData) => ({
-        ...prevData,
-        musicList: location.state.selectedMusic,
-      }));
+      setDiaryData((prevData) => {
+        // 이전에 저장된 플레이리스트 불러오기
+        const currentPlaylist = JSON.parse(localStorage.getItem('musics')) || [];
+
+        // 새로운 음악 데이터 가져오기
+        const newMusic = location.state.selectedMusic;
+
+        // 기존의 playlistData에 새로운 음악 데이터를 추가 (중복 체크)
+        const updatedPlaylist = [...currentPlaylist, ...newMusic];
+
+        // 중복된 항목 제거
+        const uniquePlaylist = Array.from(new Set(updatedPlaylist.map((music) => music.id))).map(
+          (id) => updatedPlaylist.find((music) => music.id === id)
+        );
+
+        // 업데이트된 플레이리스트를 로컬 스토리지에 저장
+        localStorage.setItem('musics', JSON.stringify(uniquePlaylist));
+
+        return {
+          ...prevData,
+          playlistData: uniquePlaylist,
+        };
+      });
     }
-    if (location.state && location.state.diaryData) {
-      setDiaryData((prevData) => ({
-        ...prevData,
-        ...location.state.diaryData,
-      }));
-    }
+
     const textArea = textAreaRef.current;
     if (textArea) {
       textArea.style.height = 'auto';
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
   }, [location.pathname, location.state]);
-  
+
   useEffect(() => {
     const textArea = textAreaRef.current;
     if (textArea && textAreaHeightRef.current) {
@@ -254,16 +263,15 @@ const WriteDiaryView = () => {
   };
 
   const handleSearchClick = () => {
-  localStorage.setItem('diaryData', JSON.stringify(diaryData));
-  console.log('Saved diaryData to localStorage before navigating to search:', diaryData); 
-  navigate('/search', { state: { diaryData } });
-};
-
+    localStorage.setItem('diaryData', JSON.stringify(diaryData));
+    console.log('Saved diaryData to localStorage before navigating to search:', diaryData);
+    navigate('/search');
+  };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      setImageFile(file); 
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setDiaryData((prevData) => ({ ...prevData, image: e.target.result }));
@@ -276,44 +284,43 @@ const WriteDiaryView = () => {
     const selectedDate = location.state?.selectedDate || new Date().toISOString().split('T')[0];
 
     const diaryDataToSend = {
-        memberId: parseInt(memberId), 
-        content: diaryData.content,
-        memberEmotion: diaryData.memberEmotion.toUpperCase(),
-        writtenDate: selectedDate, 
-        musicList: diaryData.musicList.map(music => music.id) // musicList에서 각 항목의 id 값을 사용
+      memberId: parseInt(memberId),
+      content: diaryData.content,
+      memberEmotion: diaryData.memberEmotion.toUpperCase(),
+      writtenDate: selectedDate,
+      musicList: diaryData.musicList.map((music) => music.id), // musicList에서 각 항목의 id 값을 사용
     };
 
-    console.log('Sending Diary Data:', diaryDataToSend); 
+    console.log('Sending Diary Data:', diaryDataToSend);
 
     const formData = new FormData();
-    formData.append('diary', JSON.stringify(diaryDataToSend)); 
+    formData.append('diary', JSON.stringify(diaryDataToSend));
 
     if (imageFile) {
-        formData.append('image', imageFile, imageFile.name); 
+      formData.append('image', imageFile, imageFile.name);
     }
 
     for (let key of formData.keys()) {
-        console.log(key, formData.get(key));
+      console.log(key, formData.get(key));
     }
 
     try {
-        const response = await axios.post(`${apiUrl}/api/diary/create`, formData);
-        console.log('POST successful, response:', response); 
+      const response = await axios.post(`${apiUrl}/api/diary/create`, formData);
+      console.log('POST successful, response:', response);
 
-        if (response.status === 201) {
-          const diaryID = response.data.result.id; // 서버로부터 반환된 id 값 저장
-            localStorage.removeItem('diary');
-            localStorage.removeItem('diaryData');
-            navigate('/emotionGraph', { state: { diaryID } }); // diaryID를 다음 페이지로 전달
-          } else {
-            alert('일기 작성 중 오류가 발생했습니다.');
-        }
+      if (response.status === 201) {
+        const diaryID = response.data.result.id; // 서버로부터 반환된 id 값 저장
+        localStorage.removeItem('diary');
+        localStorage.removeItem('diaryData');
+        navigate('/emotionGraph', { state: { diaryID } }); // diaryID를 다음 페이지로 전달
+      } else {
+        alert('일기 작성 중 오류가 발생했습니다1.');
+      }
     } catch (error) {
-        console.error('Error posting diary:', error);
-        alert('일기 작성 중 문제가 발생했습니다.');
+      console.error('Error posting diary:', error);
+      alert('일기 작성 중 문제가 발생했습니다2.');
     }
-};
-
+  };
 
   return (
     <Container>
@@ -326,9 +333,13 @@ const WriteDiaryView = () => {
               <button
                 css={[
                   emotionStyles[memberEmotion.key],
-                  diaryData && diaryData.memberEmotion === memberEmotion.key && selectedEmotionStyle,
+                  diaryData &&
+                    diaryData.memberEmotion === memberEmotion.key &&
+                    selectedEmotionStyle,
                 ]}
-                onClick={() => diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key })}
+                onClick={() =>
+                  diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key })
+                }
               />
               <div css={emotionLabelStyle}>{memberEmotion.label}</div>
             </div>

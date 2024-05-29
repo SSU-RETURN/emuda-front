@@ -301,6 +301,7 @@ const MainPage = () => {
   };
 
   const handleWriteClick = () => {
+    localStorage.setItem('musics', JSON.stringify([]));
     // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
     const formattedDate = date.toISOString().split('T')[0];
     console.log('작성 화면으로 이동하는 날짜: ', formattedDate);

@@ -75,8 +75,7 @@ const MoreRecommendationView = () => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        //이것도 실제 사용때는 써야해요
-        //const memberId = Number(localStorage.getItem('memberId'));
+        const memberId = Number(localStorage.getItem('memberId'));
         if (type === 'daily') {
           try {
             const response = await axios.get(`${apiUrl}/api/playlist/date/${day}`);
@@ -89,7 +88,9 @@ const MoreRecommendationView = () => {
             console.error('Error fetching daily playlist', error);
           }
         } else {
-          const response = await axios.get(`${apiUrl}/api/recommend/1/2024-05-23`);
+          const response = await axios.get(
+            `${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`
+          );
           if (response.data && response.data.isSuccess) {
             const playlists = response.data.result;
             if (type === 'ai') {
@@ -101,9 +102,6 @@ const MoreRecommendationView = () => {
             console.error('Error fetching the playlist.');
           }
         }
-
-        // 실제 사용 시
-        // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
       } catch (error) {
         alert('Error fetching playlist');
       }
