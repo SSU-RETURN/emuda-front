@@ -241,6 +241,7 @@ const MainPage = () => {
   const { formattedDate, dayOfWeek } = getCurrentDateAndWeekday();
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
+  const navigate = useNavigate();
 
   const settings = {
     dots: true,
@@ -251,6 +252,7 @@ const MainPage = () => {
   };
 
   const onChange = (newDate) => {
+    console.log('선택된 날짜: ', newDate.toISOString().split('T')[0]);
     setDate(newDate);
   };
 
@@ -283,7 +285,16 @@ const MainPage = () => {
       }
     }
   };
-  const navigate = useNavigate();
+
+  const handleWriteClick = () => {
+    // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
+    const formattedDate = date.toISOString().split('T')[0];
+    console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
+
+    console.log('Navigating to write view with date: ', formattedDate);
+    navigate('/write', { state: { selectedDate: formattedDate } });
+  };
+
   return (
     <div css={[pageStyle, calendarStyle, diaryStyle]}>
       <AppBarInMainScreen />
@@ -324,13 +335,7 @@ const MainPage = () => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      <Button
-        text="작성하기"
-        onClick={() => navigate('/write')}
-        css={css`
-          margin-top: 10px; // 왜 간격 조정안되냐 그래서 위에 추가했는데 흠 왜 안되지 찾아보자
-        `}
-      />
+      <Button text="작성하기" onClick={handleWriteClick} />
       <BottomNavigationBar />
     </div>
   );
