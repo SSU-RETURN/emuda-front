@@ -20,7 +20,7 @@ const containerStyle = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px;
+  padding: 50px 0px;
   margin: 0px;
 `;
 
@@ -41,7 +41,7 @@ const searchContainerStyle = css`
   border-radius: 7px;
   width: 100%;
   height: 38.71px;
-  margin: 10px 0px 22px 0px;
+  margin-bottom: 22px;
 `;
 
 const iconStyle = css`
@@ -284,7 +284,7 @@ const SearchMusicView = () => {
 
   return (
     <Container>
-      <AppBarInEditMode />
+      <AppBarInEditMode text="노래 검색" />
       <div css={subContainerStyle}>
         <div css={searchContainerStyle}>
           <div css={iconStyle}>

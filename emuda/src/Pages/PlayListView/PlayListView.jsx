@@ -17,10 +17,9 @@ const containerStyle = css`
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 2vh 0 5vh 0;
+  padding: 70px 0;
   max-width: 800px;
   width: 100%;
-  height: 91.5vh;
   overflow: hidden;
   box-sizing: border-box;
   .btn:active,

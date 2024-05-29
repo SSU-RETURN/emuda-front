@@ -8,7 +8,7 @@ var AppBarInMainScreen = () => {
   const navigate = useNavigate();
   return (
     <div css={BarStyle}>
-      <button css={ButtonStyle}>
+      <button css={ButtonStyle} onClick={() => navigate('/main')}>
         <img css={imgStyle} src={Logo} />
       </button>
       <div css={MainStyle}>
@@ -21,11 +21,15 @@ var AppBarInMainScreen = () => {
   );
 };
 const BarStyle = css`
-  position: related;
+  position: fixed;
+  top: 0px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background-color: white;
-  height: 5vh;
-  padding-top: 1.5vh;
-  padding-bottom: 1.5vh;
+  height: 60px;
+  padding: 13px 22px;
+  box-sizing: border-box;
   width: 100%;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */
   display: flex;
@@ -34,8 +38,8 @@ const BarStyle = css`
 `;
 
 const imgStyle = css`
-  height: 5vh;
-  width: 5vh;
+  height: 37px;
+  width: 37px;
 `;
 const MainStyle = css`
   background-color: white;

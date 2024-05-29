@@ -17,7 +17,7 @@ const containerStyle = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px;
+  padding: 50px 0px;
   margin: 0px;
 `;
 const subContainerStyle = css`
@@ -317,7 +317,7 @@ const WriteDiaryView = () => {
 
   return (
     <Container>
-      <AppBarInEditMode />
+      <AppBarInEditMode text="일기작성" />
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>오늘의 감정</span>
         <div css={colorPickerStyle}>
