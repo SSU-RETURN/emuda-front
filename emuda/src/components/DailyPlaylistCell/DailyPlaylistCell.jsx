@@ -43,10 +43,10 @@ const DailyPlaylistCell = ({ date, text, emotion, onClick }) => {
       color = colors.lightPink;
       break;
     case 'ANGRY':
-      color = colors.lightPurple;
+      color = colors.lightRed;
       break;
     case 'SURPRISE':
-      color = colors.lightRed;
+      color = colors.lightPurple;
       break;
   }
   return (
