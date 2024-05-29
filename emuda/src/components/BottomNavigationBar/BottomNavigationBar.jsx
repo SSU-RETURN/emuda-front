@@ -65,7 +65,7 @@ const BottomNavigationBarItem = ({ icon, label, route, isSelected }) => {
   );
 };
 
-export const BottomNavigationBar = ({ current }) => {
+export const BottomNavigationBar = ({ current = '/main' }) => {
   const items = [
     { label: '추천', route: '/recommend', icon: <Recommend /> },
     { label: '홈', route: '/main', icon: <Home /> },
