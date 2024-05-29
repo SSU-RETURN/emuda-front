@@ -93,6 +93,7 @@ const LoginView = () => {
         localStorage.setItem('refreshToken', loginResult.result.refreshToken);
         localStorage.setItem('nickname', loginResult.result.nickname);
         localStorage.setItem('memberId', loginResult.result.memberId);
+        localStorage.setItem('id', formData.userID);
         navigate('/preferstart');
       } else {
         alert(`로그인 실패: ${loginResult.message}`);
