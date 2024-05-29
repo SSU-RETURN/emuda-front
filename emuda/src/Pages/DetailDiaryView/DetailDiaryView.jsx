@@ -6,8 +6,9 @@ import AppBarInViewMode from '../../components/AppBarInViewMode/AppBarInViewMode
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
-import Logo from '../../assets/emuda_logo.svg';
 import EmotionChart from '../../components/EmotionChart/EmotionChart';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -144,65 +145,6 @@ const graphContainerStyle = css`
   margin-bottom: 80px;
 `;
 
-const sampleData = [20, 17, 22, 40, 0];
-const DetailDiaryData = [
-  {
-    id: 1,
-    date: '2024.03.20',
-    week: '수요일',
-    emotion: 'happy',
-    image:
-      'https://images.unsplash.com/photo-1487383298905-ee8a6b373ff9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    content:
-      '오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다. 오늘 너무 재미있었다.',
-    playlistData1: [
-      {
-        id: 1,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-      {
-        id: 2,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-      {
-        id: 3,
-        title: '곡명1',
-        artist: '아티스트',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-    ],
-    playlistData2: [
-      {
-        id: 1,
-        title: '안녕',
-        artist: '아티스트입니다.',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-      {
-        id: 2,
-        title: '이건',
-        artist: '아티',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-      {
-        id: 3,
-        title: '더미 데이터',
-        artist: '스트',
-        image: Logo,
-        description: '신날때 듣는 노래',
-      },
-    ],
-  },
-];
 
 const DetailDiaryView = () => {
   const [diaryData, setDiaryData] = useState({
@@ -216,18 +158,43 @@ const DetailDiaryView = () => {
     playlistData2: [],
   });
   const [activeTab, setActiveTab] = useState('today');
+  const storedNickname = localStorage.getItem('nickname');
 
   const emotions = [
-    { key: 'sad', label: '슬픈', color: colors.lightBlue },
-    { key: 'happy', label: '기쁜', color: colors.lightYellow },
-    { key: 'angry', label: '화났던', color: colors.lightRed },
-    { key: 'exciting', label: '설레는', color: colors.lightPink },
-    { key: 'anxiety', label: '불안한', color: colors.lightPurple },
+    { key: 'SAD', label: '슬픈', color: colors.lightBlue},
+    { key: 'HAPPY', label: '기쁜', color: colors.lightYellow },
+    { key: 'ANGRY', label: '화나는', color: colors.lightRed },
+    { key: 'ROMANCE', label: '설레는', color: colors.lightPink },
+    { key: 'SURPRISE', label: '불안한', color: colors.lightPurple },
   ];
 
   useEffect(() => {
-    setDiaryData(DetailDiaryData[0]);
-  });
+    const diaryID = 8;// 앞에 연결 후 연결 할 예정
+    fetchDiaryDetails(diaryID);
+  }, []);
+
+  const fetchDiaryDetails = async (diaryID) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/details/${diaryID}`);
+      if (response.data.isSuccess) {
+        const result = response.data.result;
+        const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', { weekday: 'long' });
+        setDiaryData({
+          ...result,
+          date: result.writtenDate,
+          week: weekDay,
+          emotion: result.memberEmotion,
+          image: result.pictureKey,
+          playlistData1: [2,3], // 실제 데이터로 교체할 예쩡
+          playlistData2: [1, 5], 
+        });
+      } else {
+        console.error('Failed to fetch diary details:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching diary details:', error);
+    }
+  };
 
   const renderImageContainer = () => {
     if (diaryData.image) {
@@ -296,7 +263,7 @@ const DetailDiaryView = () => {
           <span css={weekLabelStyle}>{diaryData?.week || ''}</span>
         </div>
         <div css={spanContainerStyle}>
-          <span css={emotionLabelStyle}>00님은 </span>
+          <span css={emotionLabelStyle}>{storedNickname}님은 </span>
           <span css={emotionLabelStyle} style={{ color: selectedEmotionColor }}>
             {selectedEmotion?.label}
           </span>
@@ -325,7 +292,7 @@ const DetailDiaryView = () => {
           {renderContent()}
         </div>
         <div css={graphContainerStyle}>
-          <EmotionChart data={sampleData} height="100%" />
+          <EmotionChart data={[20, 17, 22, 40, 0]} height="100%" /> {/* 예시 차트 데이터 넣어둠 -> 앞에 연결 후 할 예정*/}
         </div>
       </div>
     </Container>
