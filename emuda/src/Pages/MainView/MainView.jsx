@@ -75,7 +75,8 @@ const cellContainerStyle = css`
 const sliderStyle = css`
   width: 100%;
   height: auto;
-  overflow: hidden;
+  box-sizing: border-box;
+  /* overflow: hidden; */
 
   .slick-dots {
     margin-top: 25px;
@@ -85,10 +86,8 @@ const sliderStyle = css`
       margin: 0;
 
       button {
-        width: 12px;
-        height: 12px;
-
         &::before {
+          font-size: 12px;
           color: #ddf4f9;
           opacity: 1;
         }
@@ -262,6 +261,7 @@ const MainPage = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
   };
 
   const onChange = (newDate) => {
