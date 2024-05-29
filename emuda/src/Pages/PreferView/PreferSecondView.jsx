@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react';
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
 import Button from '../../components/Button/Button';
@@ -33,7 +33,7 @@ const progressBarLabelStyle = () => css`
   font-weight: bold;
 `;
 
-const progressBarStyle = (progress) => css`
+const progressBarStyle = (from, to) => css`
   width: 320px;
   height: 20px;
   background-color: #ddd;
@@ -45,9 +45,19 @@ const progressBarStyle = (progress) => css`
     content: '';
     display: block;
     height: 100%;
-    width: ${progress}%;
+    width: ${to}%;
     background-color: ${colors.mainBlue};
     border-radius: 10px;
+    animation: ${fillAnimation(from, to)} 1s ease-in-out forwards;
+  }
+`;
+
+const fillAnimation = (from, to) => keyframes`
+  from {
+    width: ${from}%;
+  }
+  to {
+    width: ${to}%;
   }
 `;
 
@@ -114,7 +124,8 @@ const PreferSecond = () => {
     '설렐 땐': '',
     '불안할 땐': '',
   });
-  const [progress, setProgress] = useState(50);
+  const [prevProgress, setPrevProgress] = useState(30);
+  const [progress, setProgress] = useState(30);
 
   const moodTranslation = {
     신나는: 'excited',
@@ -145,7 +156,13 @@ const PreferSecond = () => {
   }, [state]);
 
   useEffect(() => {
+    setPrevProgress(30);
+    setProgress(50);
+  }, []);
+
+  useEffect(() => {
     const selectedCount = Object.values(selectedMoods).filter(Boolean).length;
+    setPrevProgress(progress);
     setProgress(50 + 10 * selectedCount);
   }, [selectedMoods]);
 
@@ -199,7 +216,7 @@ const PreferSecond = () => {
       <AppBarInEditMode title="노래 취향" />
       <div css={progressBarContainerStyle}>
         <div css={progressBarLabelStyle(progress)}>{`${progress}%`}</div>
-        <div css={progressBarStyle(progress)}></div>
+        <div css={progressBarStyle(prevProgress, progress)}></div>
       </div>
       <div css={headerTextStyle}>감정별 노래 취향을 정해주세요.</div>
       {Object.entries(moodColors).map(([label, color]) => (
