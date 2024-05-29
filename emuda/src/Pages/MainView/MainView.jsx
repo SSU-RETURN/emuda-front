@@ -326,7 +326,10 @@ const MainPage = () => {
       />
       <Button
         text="작성하기"
-        onClick={() => navigate('/write')}
+        onClick={() => {
+          localStorage.setItem('musics', JSON.stringify([]));
+          navigate('/write');
+        }}
         css={css`
           margin-top: 10px; // 왜 간격 조정안되냐 그래서 위에 추가했는데 흠 왜 안되지 찾아보자
         `}

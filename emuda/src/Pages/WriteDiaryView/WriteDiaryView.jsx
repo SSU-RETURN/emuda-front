@@ -188,12 +188,33 @@ const WriteDiaryView = () => {
         playlistData: [],
       });
     }
+
     if (location.state && location.state.selectedMusic) {
-      setDiaryData((prevData) => ({
-        ...prevData,
-        playlistData: location.state.selectedMusic,
-      }));
+      setDiaryData((prevData) => {
+        // 이전에 저장된 플레이리스트 불러오기
+        const currentPlaylist = JSON.parse(localStorage.getItem('musics')) || [];
+
+        // 새로운 음악 데이터 가져오기
+        const newMusic = location.state.selectedMusic;
+
+        // 기존의 playlistData에 새로운 음악 데이터를 추가 (중복 체크)
+        const updatedPlaylist = [...currentPlaylist, ...newMusic];
+
+        // 중복된 항목 제거
+        const uniquePlaylist = Array.from(new Set(updatedPlaylist.map((music) => music.id))).map(
+          (id) => updatedPlaylist.find((music) => music.id === id)
+        );
+
+        // 업데이트된 플레이리스트를 로컬 스토리지에 저장
+        localStorage.setItem('musics', JSON.stringify(uniquePlaylist));
+
+        return {
+          ...prevData,
+          playlistData: uniquePlaylist,
+        };
+      });
     }
+
     const textArea = textAreaRef.current;
     if (textArea) {
       textArea.style.height = 'auto';
@@ -225,6 +246,7 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = () => {
+    localStorage.removeItem('musics');
     console.log(diaryData.playlistData);
     if (location.pathname === '/edit') {
       navigate('/detail');

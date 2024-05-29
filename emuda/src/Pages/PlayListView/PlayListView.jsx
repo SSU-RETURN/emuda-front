@@ -78,9 +78,8 @@ const PlayListView = () => {
 
   const fetchDailyPlaylists = async () => {
     try {
-      //const memberId = localStorage.getItem('memberId');
-      //const response = await axios.get(`${apiUrl}/api/playlist/info/${memberId}`);
-      const response = await axios.get(`${apiUrl}/api/playlist/info/1`);
+      const memberId = localStorage.getItem('memberId');
+      const response = await axios.get(`${apiUrl}/api/playlist/info/${memberId}`);
       if (response.data.isSuccess) {
         setDailyPlaylists(response.data.result);
       } else {
@@ -93,10 +92,9 @@ const PlayListView = () => {
 
   const fetchEmotionPlaylists = async (emotion) => {
     try {
-      //const memberId = localStorage.getItem('memberId');
-      //const response = await axios.get(`${apiUrl}/api/playlist/emotion/${emotion}?memberId=${memberId}&page=0`);
+      const memberId = localStorage.getItem('memberId');
       const response = await axios.get(
-        `${apiUrl}/api/playlist/emotion/${emotion}?memberId=1&page=0`
+        `${apiUrl}/api/playlist/emotion/${emotion}?memberId=${memberId}&page=0`
       );
       console.log(response.data.result);
       if (response.data.isSuccess) {

@@ -93,11 +93,40 @@ const Container = ({ children }) => {
 };
 
 const RecommendationView = ({ isDiaryWritten }) => {
+  const getColor = async () => {
+    const memberId = localStorage.getItem('memberId');
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    var response;
+    const date = `${year}-${month}-${day}`;
+    try {
+      response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+    } catch (error) {
+      alert('Error while Getting Date');
+    }
+    switch (response) {
+      case 'SAD':
+        return colors.darkBlue;
+      case 'HAPPY':
+        return colors.lightYellow;
+      case 'ANGRY':
+        return colors.lightRed;
+      case 'ROMANCE':
+        return colors.lightPink;
+      case 'ANXIETY':
+        return colors.lightPurple;
+      default:
+        return colors.white;
+    }
+  };
   const getCurrentDateforAPI = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
+
     return `${year}-${month}-${day}`;
   };
   const getCurrentDate = () => {
@@ -114,10 +143,10 @@ const RecommendationView = ({ isDiaryWritten }) => {
 
   const getPlaylist = async () => {
     try {
-      //const memberId = Number(localStorage.getItem('memberId'));
-      const response = await axios.get(`${apiUrl}/api/recommend/1/2024-05-23`);
-      // 실제 사용 시
-      // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`);
+      const memberId = Number(localStorage.getItem('memberId'));
+      const response = await axios.get(
+        `${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`
+      );
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -159,7 +188,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
   const handleRoute = (type) => {
     navigate(`/more?type=${type}`);
   };
-
+  const divColor = getColor();
   return (
     <Container>
       <Container css={containerStyle}>
@@ -168,7 +197,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
           <div css={containerStyle}>
             <div
               css={css`
-                ${playlistDivStyle({ color: colors.lightPink })};
+                ${playlistDivStyle({ color: { divColor } })};
                 margin-top: 10px;
               `}
             >
