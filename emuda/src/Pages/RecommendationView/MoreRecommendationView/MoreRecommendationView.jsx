@@ -14,10 +14,9 @@ const containerStyle = css`
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 2vh 0 10vh 0;
+  padding: 70px 0;
   max-width: 800px;
   width: 100%;
-  height: 91.5vh;
   @media screen and (max-width: 800px) {
     height: 90vh;
   }
