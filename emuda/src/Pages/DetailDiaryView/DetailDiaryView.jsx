@@ -148,7 +148,7 @@ const graphContainerStyle = css`
 
 const DetailDiaryView = () => {
   const location = useLocation();
-  const diaryId = location.state?.diaryId; // MainView에서 전달된 diaryId를 가져옴
+  const diaryId = location.state?.diaryId;
   const memberId = localStorage.getItem('memberId');
 
   const [diaryData, setDiaryData] = useState({
@@ -193,7 +193,7 @@ const DetailDiaryView = () => {
           playlistData1: [],
           playlistData2: result.playlistData2 || [],
         });
-        fetchPlaylist(result.writtenDate); // 날짜 기반으로 플레이리스트 데이터를 가져옴
+        fetchPlaylist(result.writtenDate); 
       } else {
         console.error('Failed to fetch diary details:', response.data.message);
       }
@@ -283,7 +283,7 @@ const DetailDiaryView = () => {
 
   return (
     <Container>
-      <AppBarInViewMode />
+      <AppBarInViewMode diaryId={diaryId} /> 
       <div css={subContainerStyle}>
         <div css={spanContainerStyle}>
           <span css={dateLabelStyle}>{diaryData?.date || ''}</span>

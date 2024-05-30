@@ -2,14 +2,32 @@
 import { css } from '@emotion/react';
 import { IoIosArrowBack, IoMdCreate, IoMdTrash } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 
-function AppBarInViewMode() {
+
+function AppBarInViewMode({ diaryId }) {
   const navigate = useNavigate();
   const onClickBackBtn = () => {
     navigate('/main');
   };
-  const onClickDeleteBtn = () => {
-    navigate('/main');
+  const onClickDeleteBtn = async () => {
+    if (!diaryId) {
+      console.error('Diary ID is missing');
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`${apiUrl}/api/diary/delete/${diaryId}`);
+      if (response.data.isSuccess) {
+        console.log('Diary deleted successfully');
+        navigate('/main');
+      } else {
+        console.error('Failed to delete diary:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting diary:', error);
+    }
   };
   const onClickEditBtn = () => {
     navigate('/edit');

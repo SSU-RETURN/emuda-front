@@ -273,7 +273,6 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    // const selectedDate = location.state?.selectedDate || new Date().toISOString().split('T')[0];
     const selectedDate = location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
 
 
@@ -282,7 +281,7 @@ const WriteDiaryView = () => {
         content: diaryData.content,
         memberEmotion: diaryData.memberEmotion.toUpperCase(),
         writtenDate: selectedDate, 
-        musicList: diaryData.musicList.map(music => music.id) // musicList에서 각 항목의 id 값을 사용
+        musicList: diaryData.musicList.map(music => music.id) 
     };
 
     console.log('Sending Diary Data:', diaryDataToSend); 
@@ -303,10 +302,10 @@ const WriteDiaryView = () => {
         console.log('POST successful, response:', response); 
 
         if (response.status === 201) {
-          const diaryID = response.data.result.id; // 서버로부터 반환된 id 값 저장
+          const diaryID = response.data.result.id; /
             localStorage.removeItem('diary');
             localStorage.removeItem('diaryData');
-            navigate('/emotionGraph', { state: { diaryID } }); // diaryID를 다음 페이지로 전달
+            navigate('/emotionGraph', { state: { diaryID } }); 
           } else {
             alert('일기 작성 중 오류가 발생했습니다.');
         }

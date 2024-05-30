@@ -315,14 +315,13 @@ const MainPage = () => {
           entry.date.getDate() === tileDate.getDate()
       );
       if (foundEntry) {
-        return foundEntry.emotion; // 해당 날짜의 감정에 맞는 스타일 적용
+        return foundEntry.emotion;
       }
     }
     return null;
   };
 
   const handleWriteClick = () => {
-    // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
     const formattedDate = date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
