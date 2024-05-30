@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
@@ -171,7 +171,8 @@ const MusicCardView = () => {
   }, []);
 
   const handleNext = () => {
-    navigate('/detail');
+    const location = useLocation();
+    navigate('/detail', { state: location.state.diaryID });
   };
 
   return (
@@ -188,7 +189,7 @@ const MusicCardView = () => {
                 {AiPlaylist.map((item) => (
                   <PlayListCell
                     key={item.id}
-                    image={item.image}
+                    image={item.pictureKey}
                     title={item.title}
                     artist={item.artist}
                     description={item.description}
@@ -200,7 +201,7 @@ const MusicCardView = () => {
                 {EmotionPlaylist.map((item) => (
                   <PlayListCell
                     key={item.id}
-                    image={item.image}
+                    image={item.pictureKey}
                     title={item.title}
                     artist={item.artist}
                     description={item.description}

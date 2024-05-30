@@ -1,10 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import '../../Fonts/Font.css';
 import colors from '../../Colors/Colors';
 import EmotionChart from '../../components/EmotionChart/EmotionChart';
+import { useEffect, useState } from 'react';
+import { apiUrl } from '../../config/config';
+import axios from 'axios';
 
 const Container = ({ children }) => {
   return <div css={containerStyle}>{children}</div>;
@@ -74,14 +77,30 @@ const fixButtonBoxStyle = css`
   box-shadow: 0 -1px 4px -1px ${colors.lightGray01};
 `;
 
-const sampleData = [20, 17, 22, 40, 0];
-
 const DiaryEmotionGraphView = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [data, setData] = useState([0, 0, 0, 0]); //초기데이터입니다
 
   const handleNext = () => {
-    navigate('/card');
+    navigate('/card', { state: location.state.diaryID });
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const diaryID = location.state.diaryID;
+        const response = await axios.get(`${apiUrl}/api/diary/emotion/${diaryID}`);
+        const result = response.data.result;
+        const dataArray = Object.values(result);
+        setData(dataArray);
+      } catch (error) {
+        console.log('error while getting emotions', error);
+      }
+    };
+
+    fetchData();
+  }, [location.state]);
 
   return (
     <Container>
@@ -90,7 +109,7 @@ const DiaryEmotionGraphView = () => {
         <span css={mainTitleStyle}>작성한 일기의 감정 비율을 확인해보세요!</span>
       </div>
       <div css={graphContainerStyle}>
-        <EmotionChart data={sampleData} height="100%" />
+        <EmotionChart data={data} height="100%" />
       </div>
       <span css={noticeTitleStyle}>*감정 분석 결과가 개인의 감정과 차이가 있을 수 있습니다. </span>
       <div css={fixButtonBoxStyle}>

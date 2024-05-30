@@ -144,7 +144,6 @@ const graphContainerStyle = css`
   margin-bottom: 80px;
 `;
 
-
 const DetailDiaryView = () => {
   const [diaryData, setDiaryData] = useState({
     id: null,
@@ -160,7 +159,7 @@ const DetailDiaryView = () => {
   const storedNickname = localStorage.getItem('nickname');
 
   const emotions = [
-    { key: 'SAD', label: '슬픈', color: colors.lightBlue},
+    { key: 'SAD', label: '슬픈', color: colors.lightBlue },
     { key: 'HAPPY', label: '기쁜', color: colors.lightYellow },
     { key: 'ANGRY', label: '화나는', color: colors.lightRed },
     { key: 'ROMANCE', label: '설레는', color: colors.lightPink },
@@ -168,7 +167,7 @@ const DetailDiaryView = () => {
   ];
 
   useEffect(() => {
-    const diaryID = 8;// 앞에 연결 후 연결 할 예정
+    const diaryID = 8; // 앞에 연결 후 연결 할 예정
     fetchDiaryDetails(diaryID);
   }, []);
 
@@ -177,15 +176,17 @@ const DetailDiaryView = () => {
       const response = await axios.get(`${apiUrl}/api/diary/details/${diaryID}`);
       if (response.data.isSuccess) {
         const result = response.data.result;
-        const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', { weekday: 'long' });
+        const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', {
+          weekday: 'long',
+        });
         setDiaryData({
           ...result,
           date: result.writtenDate,
           week: weekDay,
           emotion: result.memberEmotion,
           image: result.pictureKey,
-          playlistData1: [2,3], // 실제 데이터로 교체할 예쩡
-          playlistData2: [1, 5], 
+          playlistData1: [2, 3], // 실제 데이터로 교체할 예쩡
+          playlistData2: [1, 5],
         });
       } else {
         console.error('Failed to fetch diary details:', response.data.message);
@@ -251,7 +252,14 @@ const DetailDiaryView = () => {
         return null;
     }
   };
-
+  const renderEmotions = async () => {
+    location = useLocation();
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/emotion/${location.state}`);
+    } catch (error) {
+      alert('Error While Rendering Emotions');
+    }
+  };
   return (
     <Container>
       <AppBarInViewMode />
@@ -290,7 +298,7 @@ const DetailDiaryView = () => {
           {renderContent()}
         </div>
         <div css={graphContainerStyle}>
-          <EmotionChart data={[20, 17, 22, 40, 0]} height="100%" /> {/* 예시 차트 데이터 넣어둠 -> 앞에 연결 후 할 예정*/}
+          <EmotionChart data={Object.values(renderEmotions())} height="100%" />
         </div>
       </div>
     </Container>
