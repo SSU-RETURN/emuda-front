@@ -12,6 +12,7 @@ import Magnifyingglass from '../../assets/magnifyingglass';
 import photo_add from '../../assets/photo_add.svg';
 import axios from 'axios';
 import { apiUrl } from '../../config/config';
+
 const containerStyle = css`
   width: 100%;
   display: flex;
@@ -20,6 +21,7 @@ const containerStyle = css`
   padding: 50px 0px;
   margin: 0px;
 `;
+
 const subContainerStyle = css`
   display: flex;
   width: 100%;
@@ -182,49 +184,40 @@ const WriteDiaryView = () => {
     return <div css={containerStyle}>{children}</div>;
   };
 
+  const setNewPlaylist = (selectedMusic) => {
+    setDiaryData((prevData) => {
+      const currentPlaylist = JSON.parse(localStorage.getItem('musics')) || [];
+      const updatedPlaylist = [...currentPlaylist, ...selectedMusic];
+      const uniquePlaylist = Array.from(new Set(updatedPlaylist.map((music) => music.id))).map(
+        (id) => updatedPlaylist.find((music) => music.id === id)
+      );
+      localStorage.setItem('musics', JSON.stringify(uniquePlaylist));
+      return {
+        ...prevData,
+        musicList: uniquePlaylist,
+      };
+    });
+  };
+
   useEffect(() => {
     const savedDiaryData = localStorage.getItem('diaryData');
     if (savedDiaryData) {
       setDiaryData(JSON.parse(savedDiaryData));
       console.log('Restored diaryData from localStorage:', savedDiaryData);
-    } else {
-      if (location.pathname === '/edit') {
-        setDiaryData(diaryData[0]);
-      } else if (location.pathname === '/write') {
-        setDiaryData({
-          memberId: memberId,
-          content: '',
-          memberEmotion: '',
-          writtenDate: '',
-          musicList: [],
-        });
-      }
+    } else if (location.pathname === '/edit') {
+      setDiaryData(diaryData[0]);
+    } else if (location.pathname === '/write') {
+      setDiaryData((prevData) => ({
+        ...prevData,
+        memberId: memberId,
+        content: '',
+        memberEmotion: '',
+        writtenDate: '',
+      }));
     }
 
-    if (location.state && location.state.selectedMusic) {
-      setDiaryData((prevData) => {
-        // 이전에 저장된 플레이리스트 불러오기
-        const currentPlaylist = JSON.parse(localStorage.getItem('musics')) || [];
-
-        // 새로운 음악 데이터 가져오기
-        const newMusic = location.state.selectedMusic;
-
-        // 기존의 playlistData에 새로운 음악 데이터를 추가 (중복 체크)
-        const updatedPlaylist = [...currentPlaylist, ...newMusic];
-
-        // 중복된 항목 제거
-        const uniquePlaylist = Array.from(new Set(updatedPlaylist.map((music) => music.id))).map(
-          (id) => updatedPlaylist.find((music) => music.id === id)
-        );
-
-        // 업데이트된 플레이리스트를 로컬 스토리지에 저장
-        localStorage.setItem('musics', JSON.stringify(uniquePlaylist));
-
-        return {
-          ...prevData,
-          playlistData: uniquePlaylist,
-        };
-      });
+    if (location.state && Array.isArray(location.state.selectedMusic)) {
+      setNewPlaylist(location.state.selectedMusic);
     }
 
     const textArea = textAreaRef.current;
@@ -241,15 +234,19 @@ const WriteDiaryView = () => {
     }
   }, [diaryData.content]);
 
+  const onClickCancel = (id) => {
+    setDiaryData((prevData) => ({
+      ...prevData,
+      musicList: prevData.musicList.filter((music) => music.id !== id),
+    }));
+  };
+
   const handleTextChange = (event) => {
     const textArea = event.target;
     if (textArea.scrollHeight > textArea.clientHeight) {
       textArea.style.height = 'auto';
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
-
-    // const content = event.target.value;
-    // setDiaryData((prevData) => ({ ...prevData, content }));
   };
 
   const handleBlur = (event) => {
@@ -281,6 +278,7 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
+    localStorage.removeItem('musics');
     const selectedDate = location.state?.selectedDate || new Date().toISOString().split('T')[0];
 
     const diaryDataToSend = {
@@ -380,6 +378,7 @@ const WriteDiaryView = () => {
               title={item.title}
               artist={item.artist}
               type={'cancel'}
+              onClickCancel={() => onClickCancel(item.id)}
             />
           ))}
         </div>
