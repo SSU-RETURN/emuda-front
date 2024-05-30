@@ -3,7 +3,16 @@ import { css } from '@emotion/react';
 
 // The presence of 'description' does not matter
 // 'type' values: recommend, select, cancel
-function PlayListCell({ image, title, artist, description, type, isChecked, onCheckChange }) {
+function PlayListCell({
+  image,
+  title,
+  artist,
+  description,
+  type,
+  isChecked,
+  onCheckChange,
+  onClickCancle = undefined,
+}) {
   const cellBoxStyle = css`
     width: 95%;
     aspect-ratio: 5 / 1;
@@ -105,7 +114,7 @@ function PlayListCell({ image, title, artist, description, type, isChecked, onCh
           <div css={[checkboxStyle, isChecked && checkedStyle]} onClick={onCheckChange} />
         )}
         {type === 'cancel' && (
-          <button css={xMarkBtnStyle}>
+          <button css={xMarkBtnStyle} onClick={onClickCancle}>
             <i className="fa-solid fa-x" style={{ color: '#6e6e6e' }}></i>
           </button>
         )}

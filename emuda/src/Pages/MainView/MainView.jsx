@@ -2,7 +2,7 @@
 // 버튼에서 왜 마진이 안먹히지 안먹혀서 캘린더에 마진 넣어둠
 
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
@@ -16,7 +16,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
 const pageStyle = css`
   display: flex;
   flex-direction: column;
@@ -249,8 +250,22 @@ function getCurrentDateAndWeekday() {
     dayOfWeek,
   };
 }
+function getCurrentDate() {
+  const date = new Date();
 
+  const formattedDate = date
+    .toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\. /g, '-')
+    .replace(/\.$/, '');
+
+  return formattedDate;
+}
 const MainPage = () => {
+  const [playlist, setPlaylist] = useState([]);
   const { formattedDate, dayOfWeek } = getCurrentDateAndWeekday();
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
@@ -265,6 +280,15 @@ const MainPage = () => {
     arrows: false,
   };
 
+  useEffect(() => {
+    const memberId = localStorage.getItem('memberId');
+    const renderMusics = async () => {
+      const playlist = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
+      const playlistToSee = playlist.data.result.aiPlaylist.slice(0, 10);
+      setPlaylist(playlistToSee);
+    };
+    renderMusics();
+  });
   const onChange = (newDate) => {
     console.log('선택된 날짜: ', newDate.toISOString().split('T')[0]);
     setDate(newDate);
@@ -301,6 +325,7 @@ const MainPage = () => {
   };
 
   const handleWriteClick = () => {
+    localStorage.setItem('musics', JSON.stringify([]));
     // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
     const formattedDate = date.toISOString().split('T')[0];
     console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
@@ -321,14 +346,14 @@ const MainPage = () => {
       </div>
       <div css={cellContainerStyle}>
         <Slider {...settings} css={sliderStyle}>
-          <PlayListCell
-            image=""
-            title="여행"
-            artist="볼빨간 사춘기"
-            description="2024/02/12 외 5번"
-          />
-          <PlayListCell image="" title="투게더" artist="잔나비" description="2025/03/15 외 4번" />
-          <PlayListCell image="" title="챔피언" artist="싸이" description="2023/12/11 외 3번" />
+          {playlist.map((item) => (
+            <PlayListCell
+              key={item.id}
+              image={item.pictureKey}
+              title={item.title}
+              artist={item.artist}
+            />
+          ))}
         </Slider>
       </div>
       <div css={headerStyle}>
