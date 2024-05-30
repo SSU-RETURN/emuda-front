@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import AppBarInViewMode from '../../components/AppBarInViewMode/AppBarInViewMode';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
@@ -46,7 +47,7 @@ const dateLabelStyle = css`
 
 const weekLabelStyle = css`
   font-family: 'Pretendard-Bold';
-  font-size: 25px;
+  font-size: 20px;
   color: ${colors.mainBlue};
 `;
 
@@ -146,6 +147,10 @@ const graphContainerStyle = css`
 
 
 const DetailDiaryView = () => {
+  const location = useLocation();
+  const diaryId = location.state?.diaryId; // MainView에서 전달된 diaryId를 가져옴
+  const memberId = localStorage.getItem('memberId');
+
   const [diaryData, setDiaryData] = useState({
     id: null,
     date: '',
@@ -168,13 +173,14 @@ const DetailDiaryView = () => {
   ];
 
   useEffect(() => {
-    const diaryID = 8;// 앞에 연결 후 연결 할 예정
-    fetchDiaryDetails(diaryID);
-  }, []);
+    if (diaryId) {
+      fetchDiaryDetails(diaryId);
+    }
+  }, [diaryId]);
 
-  const fetchDiaryDetails = async (diaryID) => {
+  const fetchDiaryDetails = async (diaryId) => {
     try {
-      const response = await axios.get(`${apiUrl}/api/diary/details/${diaryID}`);
+      const response = await axios.get(`${apiUrl}/api/diary/details/${diaryId}`);
       if (response.data.isSuccess) {
         const result = response.data.result;
         const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', { weekday: 'long' });
@@ -184,9 +190,10 @@ const DetailDiaryView = () => {
           week: weekDay,
           emotion: result.memberEmotion,
           image: result.pictureKey,
-          playlistData1: [2,3], // 실제 데이터로 교체할 예쩡
-          playlistData2: [1, 5], 
+          playlistData1: [],
+          playlistData2: result.playlistData2 || [],
         });
+        fetchPlaylist(result.writtenDate); // 날짜 기반으로 플레이리스트 데이터를 가져옴
       } else {
         console.error('Failed to fetch diary details:', response.data.message);
       }
@@ -194,6 +201,28 @@ const DetailDiaryView = () => {
       console.error('Error fetching diary details:', error);
     }
   };
+
+  const fetchPlaylist = async (writtenDate) => {
+    try {
+      const formattedDate = writtenDate.split('T')[0];
+      const response = await axios.get(`${apiUrl}/api/playlist/date/${formattedDate}`, {
+        params: {
+          memberId: memberId,
+        },
+      });
+      if (response.data.isSuccess) {
+        setDiaryData((prevData) => ({
+          ...prevData,
+          playlistData1: response.data.result || [],
+        }));
+      } else {
+        console.error('Failed to fetch playlist:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching playlist:', error);
+    }
+  };
+  
 
   const renderImageContainer = () => {
     if (diaryData.image) {
@@ -219,7 +248,7 @@ const DetailDiaryView = () => {
               {diaryData?.playlistData1?.map((item) => (
                 <PlayListCell
                   key={item.id}
-                  image={item.image}
+                  image={item.pictureKey}
                   title={item.title}
                   artist={item.artist}
                   type={'recomand'}
@@ -261,11 +290,11 @@ const DetailDiaryView = () => {
           <span css={weekLabelStyle}>{diaryData?.week || ''}</span>
         </div>
         <div css={spanContainerStyle}>
-          <span css={emotionLabelStyle}>{storedNickname}님은 </span>
-          <span css={emotionLabelStyle} style={{ color: selectedEmotionColor }}>
-            {selectedEmotion?.label}
+          <span css={emotionLabelStyle}>{storedNickname}님은&nbsp;</span>
+          <span css={emotionLabelStyle} style={{ backgroundColor: selectedEmotionColor, color: 'black', padding: '0 0px', borderRadius: '3px' }}>
+            {selectedEmotion?.label} 하루
           </span>
-          <span css={emotionLabelStyle}>하루를 보냈어요!</span>
+          <span css={emotionLabelStyle}>를 보냈어요!</span>
         </div>
         {renderImageContainer()}
         <div css={textFieldStyle}>{diaryData?.content || ''}</div>

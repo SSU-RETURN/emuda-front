@@ -11,34 +11,34 @@ const baseStyle = css`
 `;
 
 const emotionStyles = {
-  happy: css`
-    ${baseStyle};
-    background: ${colors.lightYellow}; // 기쁨
-  `,
-  sad: css`
-    ${baseStyle};
-    background: ${colors.lightBlue}; // 슬픔
-  `,
-  exciting: css`
-    ${baseStyle};
-    background: ${colors.lightPink}; // 설렘
-  `,
-  anxiety: css`
-    ${baseStyle};
-    background: ${colors.lightPurple}; // 불안
-  `,
-  angry: css`
-    ${baseStyle};
-    background: ${colors.lightRed}; // 화
-  `,
-  today: css`
+  HAPPY: css`
+  ${baseStyle};
+  background: ${colors.lightYellow}; // 기쁨
+`,
+  SAD: css`
+  ${baseStyle};
+  background: ${colors.lightBlue}; // 슬픔
+`,
+  ROMANCE: css`
+  ${baseStyle};
+  background: ${colors.lightPink}; // 설렘
+`,
+  ANXIETY: css`
+  ${baseStyle};
+  background: ${colors.lightPurple}; // 불안
+`,
+  ANGRY: css`
+  ${baseStyle};
+  background: ${colors.lightRed}; // 화
+`,
+  TODAY: css`
     ${baseStyle};
     background: white; // 오늘
     border: 2px solid ${colors.mainBlue};
     // background: ${colors.mainBlue}; // 오늘
     `,
 
-  select: css`
+  SELECT: css`
     ${baseStyle};
     background: ${colors.mainBlue}; // 클릭 날짜
 `

@@ -1,8 +1,5 @@
-// 년도 눌렀을 때 이동하는거 있 or 없
-// 버튼에서 왜 마진이 안먹히지 안먹혀서 캘린더에 마진 넣어둠
-
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
@@ -16,6 +13,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { apiUrl } from '../../config/config';
+
 
 const pageStyle = css`
   display: flex;
@@ -176,14 +176,14 @@ const calendarStyle = css`
 
   // 오늘 날짜에 대한 스타일
   .react-calendar__tile--now {
-    ${emotionStyles.today};
+    ${emotionStyles.TODAY};
   }
 
   // 선택한 날짜 스타일 적용
   .react-calendar__tile:enabled:hover,
   .react-calendar__tile:enabled:focus,
   .react-calendar__tile--active {
-    ${emotionStyles.select};
+    ${emotionStyles.SELECT};
   }
 `;
 
@@ -202,32 +202,25 @@ const todayButtonStyle = css`
 `;
 
 const diaryStyle = css`
-  .exciting {
-    ${emotionStyles.exciting};
+  .HAPPY {
+    ${emotionStyles.HAPPY};
   }
-  .happy {
-    ${emotionStyles.happy};
+  .SAD {
+    ${emotionStyles.SAD};
   }
-  .sad {
-    ${emotionStyles.sad};
+  .ANGRY {
+    ${emotionStyles.ANGRY};
   }
-  .angry {
-    ${emotionStyles.angry};
+  .ANXIETY {
+    ${emotionStyles.ANXIETY};
   }
-  .anxiety {
-    ${emotionStyles.anxiety};
+  .ROMANCE {
+    ${emotionStyles.ROMANCE};
   }
-  .today {
-    ${emotionStyles.today};
+  .TODAY {
+    ${emotionStyles.TODAY};
   }
 `;
-
-// 감정 정보를 포함하는 일기 날짜 배열
-const diaryEntries = [
-  { date: new Date(2024, 4, 17), emotion: 'exciting' },
-  { date: new Date(2024, 4, 23), emotion: 'happy' },
-  { date: new Date(2024, 4, 30), emotion: 'angry' },
-];
 
 function getCurrentDateAndWeekday() {
   const date = new Date();
@@ -255,6 +248,29 @@ const MainPage = () => {
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
   const navigate = useNavigate();
+  const memberId = localStorage.getItem('memberId');
+  const [diaryEntries, setDiaryEntries] = useState([]);
+
+  useEffect(() => {
+    const fetchDiaryEntries = async () => {
+      try {
+        const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth() + 1).padStart(2, '0')}-01`;
+        const response = await axios.get(`${apiUrl}/api/diary/monthly/${memberId}?YearMonth=${yearMonth}`);
+        if (response.data.isSuccess) {
+          const entries = response.data.result.map(entry => ({
+            date: new Date(entry.writtenDate),
+            emotion: entry.memberEmotion,
+            id: entry.id 
+          }));
+          setDiaryEntries(entries);
+        }
+      } catch (error) {
+        console.error('Failed to fetch diary entries', error);
+      }
+    };
+    fetchDiaryEntries();
+  }, [activeStartDate, memberId]);
+
 
   const settings = {
     dots: true,
@@ -266,8 +282,12 @@ const MainPage = () => {
   };
 
   const onChange = (newDate) => {
-    console.log('선택된 날짜: ', newDate.toISOString().split('T')[0]);
-    setDate(newDate);
+    console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\. /g, '-').replace(/\.$/, ''));
+    setDate(newDate); 
   };
 
   const goToToday = () => {
@@ -298,15 +318,32 @@ const MainPage = () => {
         return foundEntry.emotion; // 해당 날짜의 감정에 맞는 스타일 적용
       }
     }
+    return null;
   };
 
   const handleWriteClick = () => {
     // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
-    const formattedDate = date.toISOString().split('T')[0];
-    console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
+    const formattedDate = date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\. /g, '-').replace(/\.$/, '');
 
-    console.log('Navigating to write view with date: ', formattedDate);
-    navigate('/write', { state: { selectedDate: formattedDate } });
+    const foundEntry = diaryEntries.find(
+      (entry) =>
+        entry.date.getFullYear() === date.getFullYear() &&
+        entry.date.getMonth() === date.getMonth() &&
+        entry.date.getDate() === date.getDate()
+    );
+
+    if (foundEntry) {
+      console.log('Navigating to write view with date: ', foundEntry.id);
+      navigate('/detail', { state: { diaryId: foundEntry.id } });
+    } else {
+      console.log('Navigating to write view with date: ', formattedDate);
+      navigate('/write', { state: { selectedDate: formattedDate } });
+    }
+    
   };
 
   return (

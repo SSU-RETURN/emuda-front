@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import React, { useState, useRef, useEffect } from 'react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import { useNavigate, useLocation } from 'react-router-dom';
-import emotionStyles from '../../components/EmotionStyles/EmotionStyles2';
+import emotionStyles from '../../components/EmotionStyles/EmotionStyles';
 import Button from '../../components/Button/Button';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import '../../Fonts/Font.css';
@@ -171,7 +171,7 @@ const WriteDiaryView = () => {
     { key: 'HAPPY', label: '기뻐요' },
     { key: 'ANGRY', label: '화나요' },
     { key: 'ROMANCE', label: '설레요' },
-    { key: 'SURPRISE', label: '불안해요' },
+    { key: 'ANXIETY', label: '불안해요' },
   ];
   
   const fileInputRef = useRef(null);
@@ -273,7 +273,9 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    const selectedDate = location.state?.selectedDate || new Date().toISOString().split('T')[0];
+    // const selectedDate = location.state?.selectedDate || new Date().toISOString().split('T')[0];
+    const selectedDate = location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
+
 
     const diaryDataToSend = {
         memberId: parseInt(memberId), 
