@@ -29,8 +29,9 @@ function AppBarInViewMode({ diaryId }) {
       console.error('Error deleting diary:', error);
     }
   };
+
   const onClickEditBtn = () => {
-    navigate('/edit');
+    navigate('/edit', { state: { diaryId } });
   };
 
   return (

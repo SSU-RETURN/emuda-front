@@ -12,6 +12,7 @@ import Magnifyingglass from '../../assets/magnifyingglass';
 import photo_add from '../../assets/photo_add.svg';
 import axios from 'axios';
 import { apiUrl } from '../../config/config';
+
 const containerStyle = css`
   width: 100%;
   display: flex;
@@ -165,7 +166,8 @@ const WriteDiaryView = () => {
     memberEmotion: '',
     musicList: [],
     image: '',
-  });
+  });  
+  
   const emotions = [
     { key: 'SAD', label: '슬퍼요' },
     { key: 'HAPPY', label: '기뻐요' },
@@ -174,17 +176,25 @@ const WriteDiaryView = () => {
     { key: 'ANXIETY', label: '불안해요' },
   ];
   
+  
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const textAreaHeightRef = useRef(null);
   const [imageFile, setImageFile] = useState(null);
-
+  const [isEditMode, setIsEditMode] = useState(false); // 수정 모드 여부
+  const [diaryId, setDiaryId] = useState(null); // 수정할 일기의 ID
 
   const Container = ({ children }) => {
     return <div css={containerStyle}>{children}</div>;
   };
 
   useEffect(() => {
+    if (location.state && location.state.diaryId) {
+      setIsEditMode(true); // 수정 모드 설정
+      setDiaryId(location.state.diaryId); // 수정할 일기의 ID 설정
+      fetchDiaryDetails(location.state.diaryId); // 일기 상세 정보 가져오기
+    }
+    else{
     const savedDiaryData = localStorage.getItem('diaryData');
     if (savedDiaryData) {
       setDiaryData(JSON.parse(savedDiaryData));
@@ -212,6 +222,7 @@ const WriteDiaryView = () => {
         musicList: location.state.selectedMusic,
       }));
     }
+  }
     if (location.state && location.state.diaryData) {
       setDiaryData((prevData) => ({
         ...prevData,
@@ -232,6 +243,29 @@ const WriteDiaryView = () => {
     }
   }, [diaryData.content]);
 
+  const fetchDiaryDetails = async (diaryId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/details/${diaryId}`);
+      if (response.data.isSuccess) {
+        const result = response.data.result;
+        setDiaryData({
+          memberId: memberId,
+          content: result.content,
+          memberEmotion: result.memberEmotion,
+          writtenDate: result.writtenDate,
+          musicList: result.musicList || [], // musicList가 undefined일 경우 빈 배열로 초기화
+          image: result.pictureKey,
+        });
+        console.log('수정할 데이터 받아오기', setDiaryData);
+      } else {
+        console.error('Failed to fetch diary details:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching diary details:', error);
+    }
+  };
+
+
   const handleTextChange = (event) => {
     const textArea = event.target;
     if (textArea.scrollHeight > textArea.clientHeight) {
@@ -239,8 +273,8 @@ const WriteDiaryView = () => {
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
 
-    // const content = event.target.value;
-    // setDiaryData((prevData) => ({ ...prevData, content }));
+    // setDiaryData((prevData) => ({ ...prevData, content: event.target.value }));
+    // ㅇ거 풀면 연속입력 안됨
   };
 
   const handleBlur = (event) => {
@@ -275,13 +309,13 @@ const WriteDiaryView = () => {
   const handleNext = async () => {
     const selectedDate = location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
 
-
     const diaryDataToSend = {
         memberId: parseInt(memberId), 
         content: diaryData.content,
         memberEmotion: diaryData.memberEmotion.toUpperCase(),
         writtenDate: selectedDate, 
-        musicList: diaryData.musicList.map(music => music.id) 
+        musicList: diaryData.musicList.map(music => music.id) || [],
+        pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
     };
 
     console.log('Sending Diary Data:', diaryDataToSend); 
@@ -298,17 +332,35 @@ const WriteDiaryView = () => {
     }
 
     try {
+      if (isEditMode && diaryId) {
+        // 수정 모드일 때 수정 API 호출
+        console.log('수정기능에 들어옴'); 
+        const response = await axios.put(`${apiUrl}/api/diary/update`, {
+          diaryId: diaryId,
+          content: diaryData.content,
+          pictureKey: imageFile ? URL.createObjectURL(imageFile) : diaryData.image, // 수정된 부분: 이미지 파일 경로 설정
+        });
+        console.log('수정 데이터 전송', response); 
+        if (response.data.isSuccess) {
+          navigate('/detail', { state: { diaryId } });
+          console.log('수정기능 완료'); 
+        } else {
+          alert('일기 수정 중 오류가 발생했습니다.');
+        }
+      }
+      else{
         const response = await axios.post(`${apiUrl}/api/diary/create`, formData);
         console.log('POST successful, response:', response); 
 
         if (response.status === 201) {
-          const diaryID = response.data.result.id; /
+          const diaryID = response.data.result.id;
             localStorage.removeItem('diary');
             localStorage.removeItem('diaryData');
             navigate('/emotionGraph', { state: { diaryID } }); 
           } else {
             alert('일기 작성 중 오류가 발생했습니다.');
         }
+      }
     } catch (error) {
         console.error('Error posting diary:', error);
         alert('일기 작성 중 문제가 발생했습니다.');
@@ -318,7 +370,7 @@ const WriteDiaryView = () => {
 
   return (
     <Container>
-      <AppBarInEditMode text="일기작성" />
+      <AppBarInEditMode text={isEditMode ? '일기수정' : '일기작성'} />
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>오늘의 감정</span>
         <div css={colorPickerStyle}>
@@ -329,7 +381,13 @@ const WriteDiaryView = () => {
                   emotionStyles[memberEmotion.key],
                   diaryData && diaryData.memberEmotion === memberEmotion.key && selectedEmotionStyle,
                 ]}
-                onClick={() => diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key })}
+                // onClick={() => diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key })}
+                onClick={() => {
+                  if (!isEditMode) { // 수정 모드일 때는 클릭 비활성화
+                    diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key });
+                  }
+                }}
+                disabled={isEditMode} // 수정 모드일 때 버튼 비활성화
               />
               <div css={emotionLabelStyle}>{memberEmotion.label}</div>
             </div>
@@ -355,6 +413,8 @@ const WriteDiaryView = () => {
           placeholder="오늘 하루 무슨 일이 있었나요?"
           ref={textAreaRef}
         />
+        {!isEditMode && ( // 수정 모드가 아닐 때만 플레이리스트 검색 가능
+        <>
         <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
         <button css={searchButtonStyle} onClick={handleSearchClick}>
           <div>
@@ -373,9 +433,12 @@ const WriteDiaryView = () => {
             />
           ))}
         </div>
+        </>
+      )}
       </div>
+
       <div css={fixButtonBoxStyle}>
-        <Button text="작성하기" onClick={handleNext} />
+        <Button text={isEditMode ? '수정하기' : '작성하기'} onClick={handleNext} />
       </div>
     </Container>
   );
