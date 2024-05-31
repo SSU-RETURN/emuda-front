@@ -145,7 +145,6 @@ const graphContainerStyle = css`
   margin-bottom: 80px;
 `;
 
-
 const DetailDiaryView = () => {
   const location = useLocation();
   const diaryId = location.state?.diaryId;
@@ -165,7 +164,7 @@ const DetailDiaryView = () => {
   const storedNickname = localStorage.getItem('nickname');
 
   const emotions = [
-    { key: 'SAD', label: '슬픈', color: colors.lightBlue},
+    { key: 'SAD', label: '슬픈', color: colors.lightBlue },
     { key: 'HAPPY', label: '기쁜', color: colors.lightYellow },
     { key: 'ANGRY', label: '화나는', color: colors.lightRed },
     { key: 'ROMANCE', label: '설레는', color: colors.lightPink },
@@ -183,7 +182,9 @@ const DetailDiaryView = () => {
       const response = await axios.get(`${apiUrl}/api/diary/details/${diaryId}`);
       if (response.data.isSuccess) {
         const result = response.data.result;
-        const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', { weekday: 'long' });
+        const weekDay = new Date(result.writtenDate).toLocaleDateString('ko-KR', {
+          weekday: 'long',
+        });
         setDiaryData({
           ...result,
           date: result.writtenDate,
@@ -192,6 +193,7 @@ const DetailDiaryView = () => {
           image: result.pictureKey,
           playlistData1: [],
           playlistData2: result.playlistData2 || [],
+
         });
         fetchPlaylist(result.writtenDate); 
       } else {
@@ -280,7 +282,14 @@ const DetailDiaryView = () => {
         return null;
     }
   };
-
+  const renderEmotions = async () => {
+    location = useLocation();
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/emotion/${location.state}`);
+    } catch (error) {
+      alert('Error While Rendering Emotions');
+    }
+  };
   return (
     <Container>
       <AppBarInViewMode diaryId={diaryId} /> 
@@ -319,7 +328,7 @@ const DetailDiaryView = () => {
           {renderContent()}
         </div>
         <div css={graphContainerStyle}>
-          <EmotionChart data={[20, 17, 22, 40, 0]} height="100%" /> {/* 예시 차트 데이터 넣어둠 -> 앞에 연결 후 할 예정*/}
+          <EmotionChart data={Object.values(renderEmotions())} height="100%" />
         </div>
       </div>
     </Container>

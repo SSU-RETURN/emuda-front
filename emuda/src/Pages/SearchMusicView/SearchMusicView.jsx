@@ -154,6 +154,7 @@ const SearchMusicView = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedMusicData, setSelectedMusicData] = useState([]);
 
   useEffect(() => {
     const searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
@@ -171,7 +172,6 @@ const SearchMusicView = () => {
       });
       console.log('Response:', response.data);
       if (response.data.isSuccess) {
-        // Add a unique id for each search result combining title and artist
         const resultsWithId = response.data.result.map((item) => ({
           ...item,
           id: `${item.title}-${item.artist}`,
@@ -247,32 +247,30 @@ const SearchMusicView = () => {
   };
 
   const handleCheckboxChange = (id) => {
+    const selectedMusic = searchResults.find((data) => data.id === id);
     if (selectedItems.includes(id)) {
       setSelectedItems(selectedItems.filter((item) => item !== id));
+      setSelectedMusicData(selectedMusicData.filter((music) => music.id !== id));
     } else {
       setSelectedItems([...selectedItems, id]);
+      setSelectedMusicData([...selectedMusicData, selectedMusic]);
     }
   };
 
   const handleNext = async () => {
     try {
-      const selectedMusic = selectedItems.map((id) => {
-        const music = searchResults.find((data) => data.id === id);
-        return {
-          id: music.id,
-          artist: music.artist,
-          title: music.title,
-          pictureKey: music.pictureKey,
-        };
-      });
+      const selectedMusic = selectedMusicData.map((music) => ({
+        id: music.id,
+        artist: music.artist,
+        title: music.title,
+        pictureKey: music.pictureKey,
+      }));
 
-      // Save selected music to server
       const response = await axios.post(`${apiUrl}/api/music/save`, {
         musics: selectedMusic,
       });
-
+      console.log(response.data.result);
       if (response.status === 201) {
-        // Navigate to WriteDiaryView with saved music data
         navigate('/write', { state: { selectedMusic: response.data.result } });
       } else {
         alert('Error saving selected music');
