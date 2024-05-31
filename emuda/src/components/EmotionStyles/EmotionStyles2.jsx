@@ -23,7 +23,7 @@ const emotionStyles2 = {
     ${baseStyle};
     background: ${colors.lightPink}; // 설렘
   `,
-  SURPRISE: css`
+  ANXIETY: css`
     ${baseStyle};
     background: ${colors.lightPurple}; // 불안
   `,
