@@ -231,7 +231,6 @@ const DetailDiaryView = () => {
   };
     const fetchRecommendedPlaylist = async (memberId, writtenDate) => {
     try {
-      // writtenDate를 'YYYY-MM-DD' 형식으로 포맷팅
       const formattedDate = new Date(writtenDate).toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -264,7 +263,7 @@ const DetailDiaryView = () => {
     return null;
   };
 
-  const fetchEmotionGraph = async (diaryId) => { // 수정된 부분
+  const fetchEmotionGraph = async (diaryId) => {
     try {
       const response = await axios.get(`${apiUrl}/api/diary/emotion/${diaryId}`);
       if (response.data.isSuccess) {

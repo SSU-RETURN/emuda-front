@@ -226,7 +226,6 @@ function getCurrentDateAndWeekday() {
   const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
   const dayOfWeek = weekdays[date.getDay()];
 
-  // 날짜를 YYYY.MM.DD 형식으로 포맷
   const formattedDate = date
     .toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -288,49 +287,35 @@ const MainPage = () => {
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
 
-  // 취향 플리 갱신 함수
-  const updatePreferencePlaylist = async () => {
-    try {
-      console.log('Updating preference playlist...'); // 로그 추가
-      
-      const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
-        memberId: parseInt(memberId),
-        // date: '2024-05-30'
-        date: currentDate,
-      });
-      console.log('Update response:', response.data); // 로그 추가
-
-      // 갱신이 성공했거나 이미 갱신되어 있으면 플레이리스트를 가져옴
-      if (response.data.isSuccess) {
+    const updatePreferencePlaylist = async () => {
+      try {
+        console.log('취향플리 업데이트중');
+        const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
+          memberId: parseInt(memberId),
+          date: currentDate,
+        });
+        console.log('Update response:', response.data);
         fetchPreferencePlaylist();
-      } else {
-        //else if(CODE==){
-        fetchPreferencePlaylist();
+      } catch (error) {
+        console.log('오류가 발생했습니다.', error);
       }
-    } catch (error) {
-      console.error('Failed to update preference playlist', error);
-
-    }
-  };
-
-  // 취향 플리 검색 함수
-  const fetchPreferencePlaylist = async () => {
-    try {
-      console.log('Fetching preference playlist...'); // 로그 추가
-      const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
-      if (response.data.isSuccess) {
-        console.log('Fetch response:', response.data.result); // 로그 추가
-        setPlaylist(response.data.result);
+    };
+  
+    const fetchPreferencePlaylist = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
+        if (response.data.isSuccess) {
+          console.log('Fetch response:', response.data.result);
+          setPlaylist(response.data.result); 
+        }
+      } catch (error) {
+        console.error('Failed to fetch preference playlist', error);
       }
-    } catch (error) {
-      console.error('Failed to fetch preference playlist', error);
-    }
-  };
-
-  // 컴포넌트가 마운트될 때 취향 플리 갱신 함수 호출
-  useEffect(() => {
-    updatePreferencePlaylist();
-  }, []);
+    };
+  
+    useEffect(() => {
+      updatePreferencePlaylist(); 
+    }, []);
 
 
   const settings = {
@@ -341,20 +326,6 @@ const MainPage = () => {
     slidesToScroll: 1,
     arrows: false,
   };
-
-useEffect(() => {
-  const memberId = localStorage.getItem('memberId'); 
-  const renderMusics = async () => {
-    try {
-      const playlist = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
-      const playlistToSee = playlist.data.result.aiPlaylist.slice(0, 10);
-      setPlaylist(playlistToSee);
-    } catch (error) {
-      console.error('Failed to fetch playlist', error);
-    }
-  };
-  renderMusics();
-}, [memberId]);
 
   const onChange = (newDate) => {
     console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
