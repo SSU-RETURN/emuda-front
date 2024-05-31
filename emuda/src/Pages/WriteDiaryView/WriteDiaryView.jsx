@@ -320,8 +320,7 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    const selectedDate = location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
-
+    const selectedDate = diaryData.writtenDate || location.state?.selectedDate
     const diaryDataToSend = {
         memberId: parseInt(memberId), 
         content: diaryData.content,

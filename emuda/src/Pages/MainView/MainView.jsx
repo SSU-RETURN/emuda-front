@@ -241,6 +241,7 @@ function getCurrentDateAndWeekday() {
     dayOfWeek,
   };
 }
+
 function getCurrentDate() {
   const date = new Date();
 
@@ -250,14 +251,14 @@ function getCurrentDate() {
       month: '2-digit',
       day: '2-digit',
     })
-    .replace(/\. /g, '-')
-    .replace(/\.$/, '');
+    .replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
 
   return formattedDate;
 }
 const MainPage = () => {
   const [playlist, setPlaylist] = useState([]);
   const { formattedDate, dayOfWeek } = getCurrentDateAndWeekday();
+  const currentDate = getCurrentDate();
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
   const navigate = useNavigate();
@@ -286,6 +287,51 @@ const MainPage = () => {
     };
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
+
+  // 취향 플리 갱신 함수
+  const updatePreferencePlaylist = async () => {
+    try {
+      console.log('Updating preference playlist...'); // 로그 추가
+      
+      const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
+        memberId: parseInt(memberId),
+        // date: '2024-05-30'
+        date: currentDate,
+      });
+      console.log('Update response:', response.data); // 로그 추가
+
+      // 갱신이 성공했거나 이미 갱신되어 있으면 플레이리스트를 가져옴
+      if (response.data.isSuccess) {
+        fetchPreferencePlaylist();
+      } else {
+        //else if(CODE==){
+        fetchPreferencePlaylist();
+      }
+    } catch (error) {
+      console.error('Failed to update preference playlist', error);
+
+    }
+  };
+
+  // 취향 플리 검색 함수
+  const fetchPreferencePlaylist = async () => {
+    try {
+      console.log('Fetching preference playlist...'); // 로그 추가
+      const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
+      if (response.data.isSuccess) {
+        console.log('Fetch response:', response.data.result); // 로그 추가
+        setPlaylist(response.data.result);
+      }
+    } catch (error) {
+      console.error('Failed to fetch preference playlist', error);
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 취향 플리 갱신 함수 호출
+  useEffect(() => {
+    updatePreferencePlaylist();
+  }, []);
+
 
   const settings = {
     dots: true,
@@ -348,7 +394,6 @@ useEffect(() => {
     // return `${date.getMonth() + 1}월`;
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   };
-
   const tileClassName = ({ date: tileDate, view }) => {
     if (view === 'month') {
       const foundEntry = diaryEntries.find(
