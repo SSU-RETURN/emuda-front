@@ -263,6 +263,9 @@ const MainPage = () => {
   const navigate = useNavigate();
   const memberId = localStorage.getItem('memberId');
   const [diaryEntries, setDiaryEntries] = useState([]);
+  const [buttonText, setButtonText] = useState();
+  const [showButton, setShowButton] = useState(false);
+
 
   useEffect(() => {
     const fetchDiaryEntries = async () => {
@@ -283,7 +286,6 @@ const MainPage = () => {
     };
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
-
 
   const settings = {
     dots: true,
@@ -315,6 +317,20 @@ useEffect(() => {
       day: '2-digit'
     }).replace(/\. /g, '-').replace(/\.$/, ''));
     setDate(newDate); 
+
+    const foundEntry = diaryEntries.find(
+      (entry) =>
+        entry.date.getFullYear() === newDate.getFullYear() &&
+        entry.date.getMonth() === newDate.getMonth() &&
+        entry.date.getDate() === newDate.getDate()
+    );
+
+    if (foundEntry) {
+      setButtonText('보러가기');
+    } else {
+      setButtonText('작성하기');
+    }
+    setShowButton(true); 
   };
 
   const goToToday = () => {
@@ -417,8 +433,9 @@ useEffect(() => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      <Button text="작성하기" onClick={handleWriteClick} />
-      <BottomNavigationBar />
+      {showButton && (
+        <Button text={buttonText} onClick={handleWriteClick} />
+      )}      <BottomNavigationBar />
     </div>
   );
 };

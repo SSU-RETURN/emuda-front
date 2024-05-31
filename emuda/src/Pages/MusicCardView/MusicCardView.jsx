@@ -172,7 +172,9 @@ const MusicCardView = () => {
   }, []);
 
   const handleNext = () => {
-    navigate('/detail', { state: location.state.diaryID });
+    // navigate('/detail', { state: location.state.diaryID });
+    navigate('/main', { state: location.state.diaryID });
+
   };
 
   return (
