@@ -49,7 +49,7 @@ const dateLabelStyle = css`
 const dayOfWeekStyle = css`
   display: block;
   color: ${colors.mainBlue};
-  font-size: 23px;
+  font-size: 20px;
   font-family: 'Pretendard-Bold';
 `;
 
@@ -294,15 +294,20 @@ const MainPage = () => {
     arrows: false,
   };
 
-  useEffect(() => {
-    const memberId = localStorage.getItem('memberId');
-    const renderMusics = async () => {
+useEffect(() => {
+  const memberId = localStorage.getItem('memberId'); 
+  const renderMusics = async () => {
+    try {
       const playlist = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
       const playlistToSee = playlist.data.result.aiPlaylist.slice(0, 10);
       setPlaylist(playlistToSee);
-    };
-    renderMusics();
-  });
+    } catch (error) {
+      console.error('Failed to fetch playlist', error);
+    }
+  };
+  renderMusics();
+}, [memberId]);
+
   const onChange = (newDate) => {
     console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -364,14 +369,9 @@ const MainPage = () => {
       console.log('Navigating to write view with date: ', formattedDate);
       navigate('/write', { state: { selectedDate: formattedDate } });
     }
-// 충돌 해결하다가혹시 몰라서 주석처리 해놓음(별 문제 없다면 지워도됨)
-//     localStorage.setItem('musics', JSON.stringify([]));
-//     // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
-//     const formattedDate = date.toISOString().split('T')[0];
-//     console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
 
-//     console.log('Navigating to write view with date: ', formattedDate);
-//     navigate('/write', { state: { selectedDate: formattedDate } });
+// 충돌 해결 부분
+    localStorage.setItem('musics', JSON.stringify([]));
   };
 
   return (

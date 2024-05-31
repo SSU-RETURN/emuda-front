@@ -205,9 +205,9 @@ const WriteDiaryView = () => {
 
   useEffect(() => {
     if (location.state && location.state.diaryId) {
-      setIsEditMode(true); // 수정 모드 설정
-      setDiaryId(location.state.diaryId); // 수정할 일기의 ID 설정
-      fetchDiaryDetails(location.state.diaryId); // 일기 상세 정보 가져오기
+      setIsEditMode(true);
+      setDiaryId(location.state.diaryId); 
+      fetchDiaryDetails(location.state.diaryId); 
     }
     else{
     const savedDiaryData = localStorage.getItem('diaryData');
@@ -231,6 +231,7 @@ const WriteDiaryView = () => {
         ...prevData,
         ...location.state.diaryData,
       }));
+    }
 
     if (location.state && Array.isArray(location.state.selectedMusic)) {
       setNewPlaylist(location.state.selectedMusic);
@@ -328,9 +329,8 @@ const WriteDiaryView = () => {
         writtenDate: selectedDate, 
         musicList: diaryData.musicList.map(music => music.id) || [],
         pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
-    localStorage.removeItem('musics');
-
     };
+    localStorage.removeItem('musics');
 
     console.log('Sending Diary Data:', diaryDataToSend);
 
@@ -347,12 +347,11 @@ const WriteDiaryView = () => {
 
     try {
       if (isEditMode && diaryId) {
-        // 수정 모드일 때 수정 API 호출
         console.log('수정기능에 들어옴'); 
         const response = await axios.put(`${apiUrl}/api/diary/update`, {
           diaryId: diaryId,
           content: diaryData.content,
-          pictureKey: imageFile ? URL.createObjectURL(imageFile) : diaryData.image, // 수정된 부분: 이미지 파일 경로 설정
+          pictureKey: imageFile ? URL.createObjectURL(imageFile) : diaryData.image,
         });
         console.log('수정 데이터 전송', response); 
         if (response.data.isSuccess) {
@@ -397,13 +396,12 @@ const WriteDiaryView = () => {
                     diaryData.memberEmotion === memberEmotion.key &&
                     selectedEmotionStyle,
                 ]}
-                // onClick={() => diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key })}
                 onClick={() => {
-                  if (!isEditMode) { // 수정 모드일 때는 클릭 비활성화
+                  if (!isEditMode) { 
                     diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key });
                   }
                 }}
-                disabled={isEditMode} // 수정 모드일 때 버튼 비활성화
+                disabled={isEditMode} 
               />
               <div css={emotionLabelStyle}>{memberEmotion.label}</div>
             </div>
@@ -429,7 +427,7 @@ const WriteDiaryView = () => {
           placeholder="오늘 하루 무슨 일이 있었나요?"
           ref={textAreaRef}
         />
-        {!isEditMode && ( // 수정 모드가 아닐 때만 플레이리스트 검색 가능
+        {!isEditMode && ( 
         <>
         <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
         <button css={searchButtonStyle} onClick={handleSearchClick}>

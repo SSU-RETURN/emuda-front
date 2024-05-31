@@ -282,14 +282,7 @@ const DetailDiaryView = () => {
         return null;
     }
   };
-  const renderEmotions = async () => {
-    location = useLocation();
-    try {
-      const response = await axios.get(`${apiUrl}/api/diary/emotion/${location.state}`);
-    } catch (error) {
-      alert('Error While Rendering Emotions');
-    }
-  };
+
   return (
     <Container>
       <AppBarInViewMode diaryId={diaryId} /> 
@@ -328,7 +321,7 @@ const DetailDiaryView = () => {
           {renderContent()}
         </div>
         <div css={graphContainerStyle}>
-          <EmotionChart data={Object.values(renderEmotions())} height="100%" />
+          <EmotionChart data={[20, 17, 22, 40, 0]} height="100%" /> {/* 예시 차트 데이터 넣어둠 -> 앞에 연결 후 할 예정*/}
         </div>
       </div>
     </Container>

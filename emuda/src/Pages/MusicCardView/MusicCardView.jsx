@@ -165,13 +165,13 @@ const MusicCardView = () => {
   const navigate = useNavigate();
   const [AiPlaylist, setAiPlaylist] = useState([]);
   const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
+  const location = useLocation();
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const handleNext = () => {
-    const location = useLocation();
     navigate('/detail', { state: location.state.diaryID });
   };
 
