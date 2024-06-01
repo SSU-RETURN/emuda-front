@@ -49,7 +49,7 @@ const dateLabelStyle = css`
 const dayOfWeekStyle = css`
   display: block;
   color: ${colors.mainBlue};
-  font-size: 23px;
+  font-size: 20px;
   font-family: 'Pretendard-Bold';
 `;
 
@@ -226,7 +226,6 @@ function getCurrentDateAndWeekday() {
   const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
   const dayOfWeek = weekdays[date.getDay()];
 
-  // 날짜를 YYYY.MM.DD 형식으로 포맷
   const formattedDate = date
     .toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -241,6 +240,7 @@ function getCurrentDateAndWeekday() {
     dayOfWeek,
   };
 }
+
 function getCurrentDate() {
   const date = new Date();
 
@@ -250,19 +250,22 @@ function getCurrentDate() {
       month: '2-digit',
       day: '2-digit',
     })
-    .replace(/\. /g, '-')
-    .replace(/\.$/, '');
+    .replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
 
   return formattedDate;
 }
 const MainPage = () => {
   const [playlist, setPlaylist] = useState([]);
   const { formattedDate, dayOfWeek } = getCurrentDateAndWeekday();
+  const currentDate = getCurrentDate();
   const [date, setDate] = useState(new Date());
   const [activeStartDate, setActiveStartDate] = useState(new Date());
   const navigate = useNavigate();
   const memberId = localStorage.getItem('memberId');
   const [diaryEntries, setDiaryEntries] = useState([]);
+  const [buttonText, setButtonText] = useState();
+  const [showButton, setShowButton] = useState(false);
+
 
   useEffect(() => {
     const fetchDiaryEntries = async () => {
@@ -284,6 +287,36 @@ const MainPage = () => {
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
 
+    const updatePreferencePlaylist = async () => {
+      try {
+        console.log('취향플리 업데이트중');
+        const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
+          memberId: parseInt(memberId),
+          date: currentDate,
+        });
+        console.log('Update response:', response.data);
+        fetchPreferencePlaylist();
+      } catch (error) {
+        console.log('오류가 발생했습니다.', error);
+      }
+    };
+  
+    const fetchPreferencePlaylist = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
+        if (response.data.isSuccess) {
+          console.log('Fetch response:', response.data.result);
+          setPlaylist(response.data.result); 
+        }
+      } catch (error) {
+        console.error('Failed to fetch preference playlist', error);
+      }
+    };
+  
+    useEffect(() => {
+      updatePreferencePlaylist(); 
+    }, []);
+
 
   const settings = {
     dots: true,
@@ -294,15 +327,6 @@ const MainPage = () => {
     arrows: false,
   };
 
-  useEffect(() => {
-    const memberId = localStorage.getItem('memberId');
-    const renderMusics = async () => {
-      const playlist = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
-      const playlistToSee = playlist.data.result.aiPlaylist.slice(0, 10);
-      setPlaylist(playlistToSee);
-    };
-    renderMusics();
-  });
   const onChange = (newDate) => {
     console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -310,6 +334,20 @@ const MainPage = () => {
       day: '2-digit'
     }).replace(/\. /g, '-').replace(/\.$/, ''));
     setDate(newDate); 
+
+    const foundEntry = diaryEntries.find(
+      (entry) =>
+        entry.date.getFullYear() === newDate.getFullYear() &&
+        entry.date.getMonth() === newDate.getMonth() &&
+        entry.date.getDate() === newDate.getDate()
+    );
+
+    if (foundEntry) {
+      setButtonText('보러가기');
+    } else {
+      setButtonText('작성하기');
+    }
+    setShowButton(true); 
   };
 
   const goToToday = () => {
@@ -327,7 +365,6 @@ const MainPage = () => {
     // return `${date.getMonth() + 1}월`;
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   };
-
   const tileClassName = ({ date: tileDate, view }) => {
     if (view === 'month') {
       const foundEntry = diaryEntries.find(
@@ -364,14 +401,9 @@ const MainPage = () => {
       console.log('Navigating to write view with date: ', formattedDate);
       navigate('/write', { state: { selectedDate: formattedDate } });
     }
-// 충돌 해결하다가혹시 몰라서 주석처리 해놓음(별 문제 없다면 지워도됨)
-//     localStorage.setItem('musics', JSON.stringify([]));
-//     // navigate 함수를 사용하여 선택된 날짜와 함께 WriteDiaryView로 이동
-//     const formattedDate = date.toISOString().split('T')[0];
-//     console.log('작성 화면으로 이동하는 날짜: ', formattedDate);
 
-//     console.log('Navigating to write view with date: ', formattedDate);
-//     navigate('/write', { state: { selectedDate: formattedDate } });
+// 충돌 해결 부분
+    localStorage.setItem('musics', JSON.stringify([]));
   };
 
   return (
@@ -417,8 +449,9 @@ const MainPage = () => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      <Button text="작성하기" onClick={handleWriteClick} />
-      <BottomNavigationBar />
+      {showButton && (
+        <Button text={buttonText} onClick={handleWriteClick} />
+      )}      <BottomNavigationBar />
     </div>
   );
 };

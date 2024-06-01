@@ -149,6 +149,9 @@ const DetailDiaryView = () => {
   const location = useLocation();
   const diaryId = location.state?.diaryId;
   const memberId = localStorage.getItem('memberId');
+  const [activeTab, setActiveTab] = useState('today');
+  const storedNickname = localStorage.getItem('nickname');
+  const [emotionGraphData, setEmotionGraphData] = useState([]); // 수정된 부분
 
   const [diaryData, setDiaryData] = useState({
     id: null,
@@ -160,20 +163,20 @@ const DetailDiaryView = () => {
     playlistData1: [],
     playlistData2: [],
   });
-  const [activeTab, setActiveTab] = useState('today');
-  const storedNickname = localStorage.getItem('nickname');
 
   const emotions = [
     { key: 'SAD', label: '슬픈', color: colors.lightBlue },
     { key: 'HAPPY', label: '기쁜', color: colors.lightYellow },
     { key: 'ANGRY', label: '화나는', color: colors.lightRed },
     { key: 'ROMANCE', label: '설레는', color: colors.lightPink },
-    { key: 'SURPRISE', label: '불안한', color: colors.lightPurple },
+    { key: 'ANXIETY', label: '불안한', color: colors.lightPurple },
   ];
 
   useEffect(() => {
     if (diaryId) {
       fetchDiaryDetails(diaryId);
+      fetchEmotionGraph(diaryId); // 수정된 부분
+
     }
   }, [diaryId]);
 
@@ -196,6 +199,8 @@ const DetailDiaryView = () => {
 
         });
         fetchPlaylist(result.writtenDate); 
+        fetchRecommendedPlaylist(memberId, result.writtenDate); // 추천 플레이리스트 가져오기
+
       } else {
         console.error('Failed to fetch diary details:', response.data.message);
       }
@@ -224,7 +229,28 @@ const DetailDiaryView = () => {
       console.error('Error fetching playlist:', error);
     }
   };
-  
+    const fetchRecommendedPlaylist = async (memberId, writtenDate) => {
+    try {
+      const formattedDate = new Date(writtenDate).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
+      const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${formattedDate}`);
+      if (response.data.isSuccess) {
+        setDiaryData((prevData) => ({
+          ...prevData,
+          playlistData2: response.data.result.aiPlaylist || [],
+        }));
+      } 
+      else {
+        console.error('Failed to fetch recommended playlist:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching recommended playlist:', error);
+    }
+  };
+
 
   const renderImageContainer = () => {
     if (diaryData.image) {
@@ -236,6 +262,21 @@ const DetailDiaryView = () => {
     }
     return null;
   };
+
+  const fetchEmotionGraph = async (diaryId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/emotion/${diaryId}`);
+      if (response.data.isSuccess) {
+        const result = response.data.result;
+        setEmotionGraphData([result.sad, result.happy, result.angry, result.surprise]);
+      } else {
+        console.error('Failed to fetch emotion graph:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching emotion graph:', error);
+    }
+  };
+
 
   const selectedEmotion = emotions.find((e) => e.key === diaryData.emotion);
   const selectedEmotionColor = selectedEmotion ? selectedEmotion.color : 'red';
@@ -268,7 +309,7 @@ const DetailDiaryView = () => {
               {diaryData?.playlistData2?.map((item) => (
                 <PlayListCell
                   key={item.id}
-                  image={item.image}
+                  image={item.pictureKey}
                   title={item.title}
                   artist={item.artist}
                   type={item.type}
@@ -282,14 +323,7 @@ const DetailDiaryView = () => {
         return null;
     }
   };
-  const renderEmotions = async () => {
-    location = useLocation();
-    try {
-      const response = await axios.get(`${apiUrl}/api/diary/emotion/${location.state}`);
-    } catch (error) {
-      alert('Error While Rendering Emotions');
-    }
-  };
+
   return (
     <Container>
       <AppBarInViewMode diaryId={diaryId} /> 
@@ -328,7 +362,7 @@ const DetailDiaryView = () => {
           {renderContent()}
         </div>
         <div css={graphContainerStyle}>
-          <EmotionChart data={Object.values(renderEmotions())} height="100%" />
+          <EmotionChart data={emotionGraphData} height="100%" /> {/* 수정된 부분 */}
         </div>
       </div>
     </Container>
