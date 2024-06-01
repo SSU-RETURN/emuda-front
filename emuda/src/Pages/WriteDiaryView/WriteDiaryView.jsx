@@ -159,6 +159,8 @@ const WriteDiaryView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const memberId = localStorage.getItem('memberId');
+  const initialWrittenDate = location.state?.selectedDate || '';
+
 
   const [diaryData, setDiaryData] = useState({
     memberId: memberId,
@@ -166,6 +168,7 @@ const WriteDiaryView = () => {
     memberEmotion: '',
     musicList: [],
     image: '',
+    writtenDate: initialWrittenDate,
   });  
   
   const emotions = [
@@ -204,6 +207,8 @@ const WriteDiaryView = () => {
   };
 
   useEffect(() => {
+    console.log('initialWrittenDate:', initialWrittenDate); // 추가된 콘솔 로그
+
     if (location.state && location.state.diaryId) {
       setIsEditMode(true);
       setDiaryId(location.state.diaryId); 
@@ -211,8 +216,10 @@ const WriteDiaryView = () => {
     }
     else{
     const savedDiaryData = localStorage.getItem('diaryData');
+    const savedDate = localStorage.getItem('writtenDate'); // writtenDate를 로컬 스토리지에서 가져오기
     if (savedDiaryData) {
       setDiaryData(JSON.parse(savedDiaryData));
+      
       console.log('Restored diaryData from localStorage:', savedDiaryData);
     } else if (location.pathname === '/edit') {
       setDiaryData(diaryData[0]);
@@ -222,7 +229,7 @@ const WriteDiaryView = () => {
         memberId: memberId,
         content: '',
         memberEmotion: '',
-        writtenDate: '',
+        writtenDate: savedDate || initialWrittenDate, // 저장된 날짜를 복원
       }));
     }
   }
@@ -303,6 +310,7 @@ const WriteDiaryView = () => {
 
   const handleSearchClick = () => {
     localStorage.setItem('diaryData', JSON.stringify(diaryData));
+    localStorage.setItem('writtenDate', diaryData.writtenDate); // writtenDate를 로컬 스토리지에 저장
     console.log('Saved diaryData to localStorage before navigating to search:', diaryData);
     navigate('/search');
   };
@@ -320,7 +328,12 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
+    // const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
+    console.log('diaryData.writtenDate:', diaryData.writtenDate);
+    console.log('location.state?.selectedDate:', location.state?.selectedDate);
+    const selectedDate = diaryData.writtenDate || location.state?.selectedDate;
+    console.log('selectedDate:', selectedDate);
+
     const diaryDataToSend = {
         memberId: parseInt(memberId), 
         content: diaryData.content,
@@ -330,6 +343,7 @@ const WriteDiaryView = () => {
         pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
     };
     localStorage.removeItem('musics');
+    localStorage.removeItem('writtenDate'); // writtenDate를 로컬 스토리지에서 제거
 
     console.log('Sending Diary Data:', diaryDataToSend);
 
