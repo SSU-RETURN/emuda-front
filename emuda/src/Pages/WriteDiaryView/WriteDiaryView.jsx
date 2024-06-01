@@ -180,8 +180,8 @@ const WriteDiaryView = () => {
   const textAreaRef = useRef(null);
   const textAreaHeightRef = useRef(null);
   const [imageFile, setImageFile] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false); 
-  const [diaryId, setDiaryId] = useState(null); 
+  const [isEditMode, setIsEditMode] = useState(false); // 수정 모드 여부
+  const [diaryId, setDiaryId] = useState(null); // 수정할 일기의 ID
 
 
   const Container = ({ children }) => {
@@ -261,7 +261,7 @@ const WriteDiaryView = () => {
           content: result.content,
           memberEmotion: result.memberEmotion,
           writtenDate: result.writtenDate,
-          musicList: result.musicList || [],
+          musicList: result.musicList || [], // musicList가 undefined일 경우 빈 배열로 초기화
           image: result.pictureKey,
         });
         console.log('수정할 데이터 받아오기', setDiaryData);
@@ -320,7 +320,7 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    const selectedDate = diaryData.writtenDate || location.state?.selectedDate
+    const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
     const diaryDataToSend = {
         memberId: parseInt(memberId), 
         content: diaryData.content,
