@@ -39,6 +39,15 @@ const subTitleStyle = css`
   margin-left: 20px;
 `;
 
+// const dateTitleStyle = css`
+//   width: 100%;
+//   font-family: 'Pretendard';
+//   font-size: 10px;
+//   text-align: left;
+//   white-space: pre-line; 
+//   margin-left: 20px;
+// `;
+
 const colorPickerStyle = css`
   display: flex;
   justify-content: space-around;
@@ -464,8 +473,9 @@ const WriteDiaryView = () => {
     <Container>
       <AppBarInEditMode text={isEditMode ? '일기수정' : '일기작성'} />
       <div css={subContainerStyle}>
+        {/* <span css={dateTitleStyle}>{formatDateString(diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10))}</span>
+        <span css={subTitleStyle}>오늘의 감정</span> */}
         <span css={subTitleStyle}>{formatDateString(diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10))}{'\n'}오늘의 감정</span>
-        {/* <span css={subTitleStyle}>{formatDateString(diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10))}의 감정</span> */}
         <div css={colorPickerStyle}>
           {emotions.map((memberEmotion) => (
             <div key={memberEmotion.key}>
