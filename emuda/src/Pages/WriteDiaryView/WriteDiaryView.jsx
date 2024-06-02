@@ -328,10 +328,9 @@ const WriteDiaryView = () => {
   };
 
   const handleNext = async () => {
-    // const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
     console.log('diaryData.writtenDate:', diaryData.writtenDate);
     console.log('location.state?.selectedDate:', location.state?.selectedDate);
-    const selectedDate = diaryData.writtenDate || location.state?.selectedDate;
+    const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
     console.log('selectedDate:', selectedDate);
 
     const diaryDataToSend = {
