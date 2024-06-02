@@ -283,7 +283,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
               {emotionPlaylist.map((cell) => (
                 <PlayListCell
                   key={cell.id}
-                  image={cell.image}
+                  image={cell.pictureKey}
                   title={cell.title}
                   artist={cell.artist}
                   css={playListCellStyle}
