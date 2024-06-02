@@ -61,7 +61,10 @@ const divStyle = (color) => css`
 const buttonTextStyle = css`
   margin-bottom: 20px;
   color: #000;
+  margin-top: 30px;
+  margin-bottom: 30px;
   font-size: 16px;
+  white-space: pre-line; 
 `;
 
 const textStyle = css`
@@ -69,9 +72,10 @@ const textStyle = css`
 `;
 
 const musicIconStyle = css`
-  height: 20vh;
-  width: 20vh;
-  margin-bottom: 20px;
+  height: 15vh;
+  width: 15vh;
+  margin-top: 80px;
+  // margin-bottom: 20px;
   @keyframes rotate {
     from {
       transform: rotate(0deg);
@@ -80,11 +84,14 @@ const musicIconStyle = css`
       transform: rotate(360deg);
     }
   }
-  animation: rotate 1s linear infinite;
+  animation: rotate 10s linear infinite;
 `;
 
 const playListCellStyle = css`
   margin-bottom: 50px;
+`;
+const buttonStyle = css`
+  width: 250px; 
 `;
 
 const Container = ({ children }) => {
@@ -163,9 +170,12 @@ const RecommendationView = ({ isDiaryWritten }) => {
         setEmotionPlaylist(empl.slice(0, 3));
       } else {
         console.log('Error while Getting Playlists.');
+        setDiaryWritten(false); 
+
       }
     } catch (error) {
       alert('Error Fetching PlayList');
+      setDiaryWritten(false); 
     }
   };
 
@@ -183,16 +193,20 @@ const RecommendationView = ({ isDiaryWritten }) => {
   const navigate = useNavigate();
   const [aiPlaylist, setAiPlaylist] = useState([]);
   const [emotionPlaylist, setEmotionPlaylist] = useState([]);
+  const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten); 
   const nickname = localStorage.getItem('nickname');
   const handleRoute = (type) => {
     navigate(`/more?type=${type}`);
+  };
+  const handleDiaryRoute = () => {
+    navigate('/write');
   };
   const divColor = getColor();
   return (
     <Container>
       <Container css={containerStyle}>
         <AppBarInMainScreen />
-        {isDiaryWritten ? (
+        {diaryWritten ? (
           <div css={containerStyle}>
             <div
               css={css`
@@ -269,7 +283,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
               {emotionPlaylist.map((cell) => (
                 <PlayListCell
                   key={cell.id}
-                  image={cell.image}
+                  image={cell.pictureKey}
                   title={cell.title}
                   artist={cell.artist}
                   css={playListCellStyle}
@@ -282,8 +296,9 @@ const RecommendationView = ({ isDiaryWritten }) => {
         ) : (
           <div css={contentStyle}>
             <img src={Logo} css={musicIconStyle} alt="Music Note" />
-            <div css={buttonTextStyle}>노래 추천을 위해 오늘의 일기를 작성해주세요.</div>
-            <Button onClick={handleRoute} text="일기 작성하기"></Button>
+            <div css={buttonTextStyle}>노래 추천을 위해{'\n'}오늘의 일기를 작성해주세요.</div>
+            <Button onClick={handleDiaryRoute} text="일기 작성하러 가기" css={buttonStyle}></Button> 
+            {/* 왜 버튼 스타일 적용이 안될까요... */}
           </div>
         )}
         <BottomNavigationBar current="/recommend"></BottomNavigationBar>
