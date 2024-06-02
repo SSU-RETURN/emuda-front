@@ -28,7 +28,6 @@ const contentStyle = css`
   flex: 1;
 `;
 
-
 const errorIconStyle = css`
   width: 150px;
   height: 136px;
