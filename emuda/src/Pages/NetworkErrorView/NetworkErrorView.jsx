@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import React from 'react';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
-import ErrorIcon from '../../assets/ErrorIcon.svg'; // 네트워크 연결 오류 아이콘 경로를 설정하세요.
+import ErrorIcon from '../../assets/ErrorIcon.svg';
 
 const pageStyle = css`
   display: flex;
