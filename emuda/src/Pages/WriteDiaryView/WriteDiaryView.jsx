@@ -198,6 +198,15 @@ const WriteDiaryView = () => {
   const memberId = localStorage.getItem('memberId');
   const initialWrittenDate = location.state?.selectedDate || '';
 
+  const fileInputRef = useRef(null);
+  const textAreaRef = useRef(null);
+  const textAreaHeightRef = useRef(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false); 
+  const [diaryId, setDiaryId] = useState(null); 
+  const [loading, setLoading] = useState(false);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false); 
+
 
   const [diaryData, setDiaryData] = useState({
     memberId: memberId,
@@ -215,14 +224,6 @@ const WriteDiaryView = () => {
     { key: 'ROMANCE', label: '설레요' },
     { key: 'ANXIETY', label: '불안해요' },
   ];
-
-  const fileInputRef = useRef(null);
-  const textAreaRef = useRef(null);
-  const textAreaHeightRef = useRef(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false); // 수정 모드 여부
-  const [diaryId, setDiaryId] = useState(null); // 수정할 일기의 ID
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   const Container = ({ children }) => {
     return <div css={containerStyle}>{children}</div>;
@@ -253,7 +254,7 @@ const WriteDiaryView = () => {
   };
 
   useEffect(() => {
-    console.log('initialWrittenDate:', initialWrittenDate); // 추가된 콘솔 로그
+    console.log('initialWrittenDate:', initialWrittenDate);
 
     if (location.state && location.state.diaryId) {
       setIsEditMode(true);
@@ -262,7 +263,7 @@ const WriteDiaryView = () => {
     }
     else{
     const savedDiaryData = localStorage.getItem('diaryData');
-    const savedDate = localStorage.getItem('writtenDate'); // writtenDate를 로컬 스토리지에서 가져오기
+    const savedDate = localStorage.getItem('writtenDate'); 
     if (savedDiaryData) {
       setDiaryData(JSON.parse(savedDiaryData));
       
@@ -275,7 +276,7 @@ const WriteDiaryView = () => {
         memberId: memberId,
         content: '',
         memberEmotion: '',
-        writtenDate: savedDate || initialWrittenDate, // 저장된 날짜를 복원
+        writtenDate: savedDate || initialWrittenDate,
       }));
     }
   }
@@ -314,7 +315,7 @@ const WriteDiaryView = () => {
           content: result.content,
           memberEmotion: result.memberEmotion,
           writtenDate: result.writtenDate,
-          musicList: result.musicList || [], // musicList가 undefined일 경우 빈 배열로 초기화
+          musicList: result.musicList || [], 
           image: result.pictureKey,
         });
         console.log('수정할 데이터 받아오기', setDiaryData);
@@ -341,7 +342,7 @@ const WriteDiaryView = () => {
     }
 
     // setDiaryData((prevData) => ({ ...prevData, content: event.target.value }));
-    // ㅇ거 풀면 연속입력 안됨
+    // 이거 주석풀면 일기 내용 연속입력 안됨
   };
 
   const handleBlur = (event) => {
@@ -352,11 +353,14 @@ const WriteDiaryView = () => {
     if (textArea) {
       textAreaHeightRef.current = textArea.scrollHeight;
     }
-  };
+
+    if (!isEditMode) { 
+      updateButtonState(diaryData.memberEmotion, content);
+    }  };
 
   const handleSearchClick = () => {
     localStorage.setItem('diaryData', JSON.stringify(diaryData));
-    localStorage.setItem('writtenDate', diaryData.writtenDate); // writtenDate를 로컬 스토리지에 저장
+    localStorage.setItem('writtenDate', diaryData.writtenDate);
     console.log('Saved diaryData to localStorage before navigating to search:', diaryData);
     navigate('/search');
   };
@@ -373,8 +377,20 @@ const WriteDiaryView = () => {
     }
   };
 
+  const handleEmotionClick = (emotion) => {
+    setDiaryData((prevData) => ({ ...prevData, memberEmotion: emotion }));
+
+    if (!isEditMode) {
+      updateButtonState(emotion, diaryData.content);
+    }  
+  };
+
+  const updateButtonState = (emotion, content) => {
+    setIsButtonEnabled(emotion !== '' && content !== '');
+  };
+  
   const handleNext = async () => {
-    setLoading(true); // 로딩 시작
+    setLoading(true);
     console.log('diaryData.writtenDate:', diaryData.writtenDate);
     console.log('location.state?.selectedDate:', location.state?.selectedDate);
     const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
@@ -389,7 +405,7 @@ const WriteDiaryView = () => {
         pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
     };
     localStorage.removeItem('musics');
-    localStorage.removeItem('writtenDate'); // writtenDate를 로컬 스토리지에서 제거
+    localStorage.removeItem('writtenDate');
 
     console.log('Sending Diary Data:', diaryDataToSend);
 
@@ -438,7 +454,7 @@ const WriteDiaryView = () => {
       console.error('Error posting diary:', error);
       alert('일기 작성 중 문제가 발생했습니다2.');
     } finally {
-      setLoading(false); // 로딩 끝
+      setLoading(false);
     }
 
   };
@@ -461,6 +477,7 @@ const WriteDiaryView = () => {
                     selectedEmotionStyle,
                 ]}
                 onClick={() => {
+                  handleEmotionClick(memberEmotion.key)
                   if (!isEditMode) { 
                     diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key });
                   }
@@ -517,7 +534,8 @@ const WriteDiaryView = () => {
       </div>
 
       <div css={fixButtonBoxStyle}>
-        <Button text={isEditMode ? '수정하기' : '작성하기'} onClick={handleNext} />
+      <Button text={isEditMode ? '수정하기' : '작성하기'} onClick={handleNext} disabled={!isEditMode && !isButtonEnabled} /> 
+
       </div>
       {loading && (
         <div css={spinnerOverlayStyle}>
