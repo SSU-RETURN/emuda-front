@@ -23,7 +23,7 @@ const SelectEmotionBar = ({ onEmotionSelect, selectedEmotion }) => {
   const emotions = [
     { name: 'SAD', displayName: '슬퍼요' },
     { name: 'HAPPY', displayName: '기뻐요' },
-    { name: 'SURPRISE', displayName: '놀랐어요' },
+    { name: 'ANXIETY', displayName: '불안해요' },
     { name: 'ROMANCE', displayName: '설레요' },
     { name: 'ANGRY', displayName: '화나요' },
   ];
