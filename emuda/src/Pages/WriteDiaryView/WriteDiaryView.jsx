@@ -398,6 +398,10 @@ const WriteDiaryView = () => {
     setIsButtonEnabled(emotion !== '' && content !== '');
   };
   
+    useEffect(() => {
+      updateButtonState(diaryData.memberEmotion, diaryData.content);
+    }, [diaryData]);
+  
   const handleNext = async () => {
     setLoading(true);
     console.log('diaryData.writtenDate:', diaryData.writtenDate);
