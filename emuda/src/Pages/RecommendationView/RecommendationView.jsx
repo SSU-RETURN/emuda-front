@@ -7,7 +7,7 @@ import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMain
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
 import Logo from '../../assets/emuda_logo.svg';
 import PlayListCell from '../../components/PlayListCell/PlayListCell';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import colors from '../../Colors/Colors';
 import axios from 'axios';
 import { apiUrl } from '../../config/config';
@@ -17,22 +17,24 @@ const containerStyle = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  padding: 70px 0;
+  margin: 0;
+  padding: 50px 0px;
   max-width: 800px;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  .btn:active,
-  .btn:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-  }
-  font-family: 'Pretendard-Medium';
+`;
+
+const subContainerStyle = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  padding: 0px;
+  box-sizing: border-box;
 `;
 
 const contentStyle = css`
@@ -41,41 +43,38 @@ const contentStyle = css`
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  margin-top: 10px;
   text-align: center;
   width: 100%;
-  height: 100%;
-`;
-
-const divStyle = (color) => css`
-  flex: 1;
-  width: 100%;
-  overflow: visible;
-  background-color: ${color};
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  border: 1px solid black;
 `;
 
 const buttonTextStyle = css`
-  margin-bottom: 20px;
   color: #000;
-  margin-top: 30px;
+  margin-top: 70px;
   margin-bottom: 30px;
   font-size: 16px;
-  white-space: pre-line; 
+  white-space: pre-line;
 `;
 
 const textStyle = css`
-  margin-left: 10px;
+  width: 100%;
+`;
+
+const infoSpanStyle = css`
+  height: 100px;
+  width: 100%;
+  text-align: center;
+  align-content: center;
+  font-family: 'Pretendard-Light';
+  color: black;
+  font-size: 15px;
+  background-color: ${colors.lightGray02};
+  opacity: 0.5;
+  border-radius: 10px;
 `;
 
 const musicIconStyle = css`
-  height: 15vh;
   width: 15vh;
-  margin-top: 80px;
-  // margin-bottom: 20px;
+  margin-top: 140px;
   @keyframes rotate {
     from {
       transform: rotate(0deg);
@@ -88,10 +87,13 @@ const musicIconStyle = css`
 `;
 
 const playListCellStyle = css`
-  margin-bottom: 50px;
+  width: 100%;
 `;
+
 const buttonStyle = css`
-  width: 250px; 
+  width: 100%;
+  padding: 0px 72px;
+  box-sizing: border-box;
 `;
 
 const Container = ({ children }) => {
@@ -99,210 +101,283 @@ const Container = ({ children }) => {
 };
 
 const RecommendationView = ({ isDiaryWritten }) => {
-  const getColor = async () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [aiPlaylist, setAiPlaylist] = useState([]);
+  const [emotionPlaylist, setEmotionPlaylist] = useState([]);
+  const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten);
+  const [emotion, setEmotion] = useState(colors.white);
+  const [divColor, setDivColor] = useState(colors.white);
+  const nickname = localStorage.getItem('nickname');
+
+  const getColor = async (date) => {
     const memberId = localStorage.getItem('memberId');
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    var response;
-    const date = `${year}-${month}-${day}`;
     try {
-      response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+      const response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+      console.log('Diary emotion:', response.data.result.emotion);
+      setEmotion(response.data.result.emotion);
+
+      switch (response.data.result.emotion) {
+        case 'SAD':
+          return colors.lightBlue;
+        case 'HAPPY':
+          return colors.lightYellow;
+        case 'ANGRY':
+          return colors.lightRed;
+        case 'ROMANCE':
+          return colors.lightPink;
+        case 'ANXIETY':
+          return colors.lightPurple;
+        default:
+          return colors.white;
+      }
     } catch (error) {
       alert('Error while Getting Date');
-    }
-    switch (response) {
-      case 'SAD':
-        return colors.darkBlue;
-      case 'HAPPY':
-        return colors.lightYellow;
-      case 'ANGRY':
-        return colors.lightRed;
-      case 'ROMANCE':
-        return colors.lightPink;
-      case 'ANXIETY':
-        return colors.lightPurple;
-      default:
-        return colors.white;
+      return colors.white;
     }
   };
+
   const getCurrentDateforAPI = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-
     return `${year}-${month}-${day}`;
   };
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-
     const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     const dayOfWeek = daysOfWeek[today.getDay()];
-
     return `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
   };
 
-  const getPlaylist = async () => {
+  const getPlaylist = async (date) => {
     try {
-      const memberId = Number(localStorage.getItem('memberId'));
-      const response = await axios.get(
-        `${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`
-      );
-      console.log(response.data);
+      const memberId = localStorage.getItem('memberId');
+      const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${date}`);
+      console.log('Playlist response:', response.data);
       return response.data;
     } catch (error) {
       alert('Error while Getting Playlist');
+      return null;
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (date) => {
     try {
-      const playlists = await getPlaylist();
+      const playlists = await getPlaylist(date);
       if (playlists && playlists.isSuccess) {
         const aipl = playlists.result.aiPlaylist;
         const empl = playlists.result.memberEmotionPlaylist;
         setAiPlaylist(aipl.slice(0, 3));
+        console.log(aiPlaylist);
         setEmotionPlaylist(empl.slice(0, 3));
       } else {
         console.log('Error while Getting Playlists.');
-        setDiaryWritten(false); 
-
+        setDiaryWritten(false);
       }
     } catch (error) {
       alert('Error Fetching PlayList');
-      setDiaryWritten(false); 
+      setDiaryWritten(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const date = getCurrentDateforAPI();
+    fetchData(date);
+    getColor(date).then((color) => setDivColor(color));
+  }, [location.search]);
 
-  const playlistDivStyle = (props) => css`
-    ${divStyle};
-    background-color: ${props.color};
-    max-height: 60vh;
-    overflow-y: auto;
+  const renderRecomandTextWithLineBreak = (nickname) => {
+    const text = `오늘 ${nickname}님을 위한 추천 노래들이예요!`;
+    const maxLength = 22;
+    if (text.length > maxLength) {
+      return (
+        <>
+          오늘 {nickname}님을 위한
+          <br />
+          추천 노래들이예요!
+        </>
+      );
+    }
+    return text;
+  };
+
+  const renderEmotionTextWithLineBreak = (nickname, emotion) => {
+    let text = '';
+    switch (emotion) {
+      case 'SAD':
+        text = `${nickname}님은 슬플 때 이런 노래들을 들었어요`;
+        break;
+      case 'ROMANCE':
+        text = `${nickname}님은 설렐 때 이런 노래들을 들었어요`;
+        break;
+      case 'HAPPY':
+        text = `${nickname}님은 기쁠 때 이런 노래들을 들었어요`;
+        break;
+      case 'ANGRY':
+        text = `${nickname}님은 화날 때 이런 노래들을 들었어요`;
+        break;
+      case 'ANXIOUS':
+        text = `${nickname}님은 불안할 때 이런 노래들을 들었어요`;
+        break;
+      default:
+        text = `${nickname}님은 이런 노래들을 들었어요`;
+        break;
+    }
+    const maxLength = 26;
+    if (text.length > maxLength) {
+      const firstPart = text.slice(0, -18);
+      const secondPart = text.slice(-18);
+      return (
+        <>
+          {firstPart}
+          <br />
+          {secondPart}
+        </>
+      );
+    }
+    return text;
+  };
+
+  const playlistDivStyle = (color) => css`
+    flex: 1;
+    width: 100%;
+    overflow: visible;
+    background-color: ${color};
+    padding: 25px 20px 11px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
   `;
 
-  const navigate = useNavigate();
-  const [aiPlaylist, setAiPlaylist] = useState([]);
-  const [emotionPlaylist, setEmotionPlaylist] = useState([]);
-  const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten); 
-  const nickname = localStorage.getItem('nickname');
-  const handleRoute = (type) => {
-    navigate(`/more?type=${type}`);
+  const handleRoute = () => {
+    navigate('/todayRecommend', {
+      state: {
+        selectedEmotion: emotion,
+      },
+    });
   };
+
+  const handleLibrary = () => {
+    navigate('/library', {
+      state: {
+        selectedEmotion: emotion,
+      },
+    });
+  };
+
   const handleDiaryRoute = () => {
     navigate('/write');
   };
-  const divColor = getColor();
+
   return (
-    <Container>
-      <Container css={containerStyle}>
-        <AppBarInMainScreen />
-        {diaryWritten ? (
-          <div css={containerStyle}>
-            <div
+    <Container css={containerStyle}>
+      <AppBarInMainScreen />
+      {diaryWritten ? (
+        <div css={subContainerStyle}>
+          <div css={playlistDivStyle(divColor)}>
+            <span
               css={css`
-                ${playlistDivStyle({ color: { divColor } })};
-                margin-top: 10px;
+                ${textStyle};
+                font-family: 'Pretendard-Medium';
+                font-size: 16px;
               `}
             >
-              <span
-                css={css`
-                  ${textStyle};
-                  margin-top: 10px;
-                  font-size: 13px;
-                `}
-              >
-                {getCurrentDate()}
-              </span>
-              <span
-                css={css`
-                  ${textStyle};
-                  font-size: 18px;
-                `}
-              >
-                오늘 {nickname}님을 위한 추천 노래들이예요!
-              </span>
-              {aiPlaylist.map((cell) => (
+              {getCurrentDate()}
+            </span>
+            <span
+              css={css`
+                ${textStyle};
+                font-family: 'Pretendard-Bold';
+                font-size: 20px;
+                margin-bottom: 23px;
+              `}
+            >
+              {renderRecomandTextWithLineBreak(nickname)}
+            </span>
+            {aiPlaylist.map((cell) => (
+              <PlayListCell
+                key={cell.id}
+                css={playListCellStyle}
+                image={cell.pictureKey}
+                title={cell.title}
+                artist={cell.artist}
+                description={cell.description}
+                onClick={() => null}
+              />
+            ))}
+            <span
+              onClick={() => handleRoute('ai')}
+              css={css`
+                ${textStyle};
+                text-align: right;
+                margin-top: 13px;
+                font-size: 10px;
+              `}
+            >
+              더보기&gt;
+            </span>
+          </div>
+          <div
+            css={css`
+              ${playlistDivStyle('white')};
+              padding-bottom: 38px;
+            `}
+          >
+            <span
+              css={css`
+                ${textStyle};
+                font-size: 15px;
+                font-family: 'Pretendard-SemiBold';
+              `}
+            >
+              {renderEmotionTextWithLineBreak(nickname, emotion)}
+            </span>
+            <span
+              onClick={() => handleLibrary()}
+              css={css`
+                ${textStyle};
+                text-align: right;
+                margin-top: -8px;
+                font-size: 10px;
+                margin-bottom: 15px;
+              `}
+            >
+              더보기&gt;
+            </span>
+            {emotionPlaylist.length > 0 ? (
+              emotionPlaylist.map((cell) => (
                 <PlayListCell
                   key={cell.id}
+                  css={playListCellStyle}
                   image={cell.pictureKey}
                   title={cell.title}
                   artist={cell.artist}
-                  css={playListCellStyle}
                   description={cell.description}
                   onClick={() => null}
                 />
-              ))}
-              <span
-                onClick={() => handleRoute('ai')}
-                css={css`
-                  ${textStyle};
-                  text-align: right;
-                  margin: 0 10px 5px 0;
-                  font-size: 12px;
-                `}
-              >
-                더보기&gt;
-              </span>
-            </div>
-            <div
-              css={css`
-                ${playlistDivStyle({ color: 'white' })};
-                padding-bottom: 10px;
-              `}
-            >
-              <span
-                css={css`
-                  ${textStyle};
-                  margin-top: 10px;
-                  font-size: 15px;
-                `}
-              >
-                {nickname}님은 설렐 때 이런 노래를 들었어요
-              </span>
-              <span
-                onClick={() => handleRoute('emotion')}
-                css={css`
-                  ${textStyle};
-                  text-align: right;
-                  margin: 0 10px 5px 0;
-                  font-size: 12px;
-                `}
-              >
-                더보기&gt;
-              </span>
-              {emotionPlaylist.map((cell) => (
-                <PlayListCell
-                  key={cell.id}
-                  image={cell.pictureKey}
-                  title={cell.title}
-                  artist={cell.artist}
-                  css={playListCellStyle}
-                  description={cell.description}
-                  onClick={() => null}
-                />
-              ))}
-            </div>
+              ))
+            ) : (
+              <span css={infoSpanStyle}>아직 데이터가 부족해요💧</span>
+            )}
           </div>
-        ) : (
-          <div css={contentStyle}>
-            <img src={Logo} css={musicIconStyle} alt="Music Note" />
-            <div css={buttonTextStyle}>노래 추천을 위해{'\n'}오늘의 일기를 작성해주세요.</div>
-            <Button onClick={handleDiaryRoute} text="일기 작성하러 가기" css={buttonStyle}></Button> 
-            {/* 왜 버튼 스타일 적용이 안될까요... */}
+        </div>
+      ) : (
+        <div css={contentStyle}>
+          <img src={Logo} css={musicIconStyle} alt="Music Note" />
+          <div css={buttonTextStyle}>노래 추천을 위해{'\n'}오늘의 일기를 작성해주세요.</div>
+          <div css={buttonStyle}>
+            <Button onClick={handleDiaryRoute} text="일기 작성하기"></Button>
           </div>
-        )}
-        <BottomNavigationBar current="/recommend"></BottomNavigationBar>
-      </Container>
+        </div>
+      )}
+      <BottomNavigationBar current="/recommend" />
     </Container>
   );
 };

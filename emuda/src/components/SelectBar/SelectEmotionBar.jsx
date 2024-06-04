@@ -16,47 +16,38 @@ const containerStyle = css`
 const barStyle = css`
   flex-direction: column;
   justify-content: space-around;
-  cursor: pointer;
+`;
+
+const selectedEmotionStyle = css`
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
 `;
 
 const SelectEmotionBar = ({ onEmotionSelect, selectedEmotion }) => {
   const emotions = [
     { name: 'SAD', displayName: '슬퍼요' },
     { name: 'HAPPY', displayName: '기뻐요' },
-    { name: 'SURPRISE', displayName: '놀랐어요' },
-    { name: 'ROMANCE', displayName: '설레요' },
     { name: 'ANGRY', displayName: '화나요' },
+    { name: 'ROMANCE', displayName: '설레요' },
+    { name: 'ANXIETY', displayName: '불안해요' },
   ];
 
   return (
     <div css={containerStyle}>
       {emotions.map((emotion) => (
-        <div
-          css={[
-            barStyle,
-            emotion.name === selectedEmotion &&
-              css`
-                opacity: 1;
-              `,
-          ]}
-          key={emotion.name}
-        >
+        <div css={[barStyle]} key={emotion.name}>
           <div
             css={css`
-              ${emotionStyles2[emotion.name]},
-              color:emotion.name===selectedEmotion ? #000000 : #666666
+              ${emotionStyles2[emotion.name]};
+              ${emotion.name === selectedEmotion ? selectedEmotionStyle : ''};
             `}
             onClick={() => onEmotionSelect(emotion.name)}
-            style={{
-              opacity: emotion.name === selectedEmotion ? 1 : 0.6,
-              color: emotion.name === selectedEmotion ? 'black' : 'grey',
-            }}
             aria-label={emotion.displayName}
           />
           <span
             css={css`
               font-size: 10px;
-              opacity: emotion.name === selectedEmotion ? 1 : 0.5;
+              font-family: 'Pretendard-Medium';
+              opacity: ${emotion.name === selectedEmotion ? 0.7 : 0.5};
             `}
           >
             {emotion.displayName}

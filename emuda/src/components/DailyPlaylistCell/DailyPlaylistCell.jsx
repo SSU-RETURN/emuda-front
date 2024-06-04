@@ -14,12 +14,12 @@ const listItemStyle = (color) => css`
 `;
 
 const squareStyle = (color) => css`
-  width: 60px;
-  height: 60px;
-  border-radius: 15px;
+  width: 61px;
+  height: 61px;
+  border-radius: 10px;
   background-color: ${color};
-  border: 1px solid ${color};
-  margin-right: 8px;
+  margin-left: -1px;
+  margin-right: 14px;
 `;
 
 const textStyle = css`
@@ -55,6 +55,7 @@ const DailyPlaylistCell = ({ date, text, emotion, onClick }) => {
       <div css={textStyle}>
         <span
           css={css`
+            color: #4e4d4d;
             font-size: 13px;
             padding-bottom: 3px;
           `}
@@ -63,8 +64,8 @@ const DailyPlaylistCell = ({ date, text, emotion, onClick }) => {
         </span>
         <span
           css={css`
+            font-family: 'Pretendard-SemiBold';
             font-size: 16px;
-            font-weight: 800;
           `}
         >
           {text}

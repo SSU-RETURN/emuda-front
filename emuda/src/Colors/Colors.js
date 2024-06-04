@@ -1,10 +1,10 @@
 // 색상 정의
 const colors = {
   lightPink: 'rgba(255, 220, 224, 1)',
-  lightBlue: 'rgba(213, 241, 247, 0.8)',
+  lightBlue: 'rgba(221, 244, 248, 1)',
   lightYellow: 'rgba(255, 244, 193, 1)',
-  lightRed: 'rgba(255, 103, 103, 0.8)',
-  lightPurple: 'rgba(158, 146, 210, 0.8)',
+  lightRed: 'rgba(255, 133, 133, 1)',
+  lightPurple: 'rgba(178, 167, 218, 1)',
   mainBlue: '#3D96FF',
   darkBlue: '#215088',
   black: '#000000',
@@ -12,7 +12,7 @@ const colors = {
   lightGray02: '#F6F6F6',
   lightGray03: '#6E6E6E',
   lightGray04: '#DEDEDE',
-  white:'#FFFFFF',
+  white: '#FFFFFF',
 };
 
 export default colors;
