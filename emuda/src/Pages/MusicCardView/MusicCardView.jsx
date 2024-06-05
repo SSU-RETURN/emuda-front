@@ -125,20 +125,12 @@ const fixButtonBoxStyle = css`
 `;
 
 const MusicCardView = () => {
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   const getPlaylist = async () => {
     try {
-      // const memberId = Number(localStorage.getItem('memberId'));
-      const response = await axios.get(`${apiUrl}/api/recommend/1/2024-05-23`);
-      // 실제 사용 시
-      // const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${getCurrentDate()}`);
+      const memberId = Number(localStorage.getItem('memberId'));
+      const response = await axios.get(
+        `${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`
+      );
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -161,32 +153,72 @@ const MusicCardView = () => {
       alert('Error Fetching PlayList');
     }
   };
-
+  const getCurrentDateforAPI = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const getTodayEmotion = async () => {
+    const memberId = localStorage.getItem('memberId');
+    const date = getCurrentDateforAPI();
+    try {
+      const response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+      const emotion = response.data.result.emotion;
+      switch (emotion) {
+        case 'SAD':
+          setEmotion('슬플');
+          break;
+        case 'HAPPY':
+          setEmotion('기쁠');
+          break;
+        case 'ANGRY':
+          setEmotion('화날');
+          break;
+        case 'ROMANCE':
+          setEmotion('설렐');
+          break;
+        case 'ANXIETY':
+          setEmotion('불안할');
+          break;
+        default:
+          return '';
+      }
+    } catch (error) {
+      alert('Error while Getting Date');
+      return colors.white;
+    }
+  };
   const navigate = useNavigate();
   const [AiPlaylist, setAiPlaylist] = useState([]);
   const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
+  const [emotion, setEmotion] = useState('');
   const location = useLocation();
 
   useEffect(() => {
     fetchData();
+    getTodayEmotion();
   }, []);
 
   const handleNext = () => {
     // navigate('/detail', { state: location.state.diaryID });
     navigate('/main', { state: location.state.diaryID });
-
+  };
+  const getNickname = () => {
+    return localStorage.getItem('nickname');
   };
 
   return (
     <Container>
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>일기 작성이 완료 되었어요.</span>
-        <span css={mainTitleStyle}>oo님을 위한 추천 노래를 확인하세요!</span>
+        <span css={mainTitleStyle}>{getNickname()}님을 위한 추천 노래를 확인하세요!</span>
         <div css={cardWrapperStyle}>
           <div css={cardStyle}>
             <div css={cardFrontStyle}></div>
             <div css={cardBackStyle}>
-              <div css={recommendLabelStyle}>설렌 오늘 이 노래는 어떤가요?</div>
+              <div css={recommendLabelStyle}>{emotion} 때 오늘 이 노래는 어떤가요?</div>
               <div css={activityListStyle}>
                 {AiPlaylist.map((item) => (
                   <PlayListCell
@@ -198,7 +230,9 @@ const MusicCardView = () => {
                   />
                 ))}
               </div>
-              <div css={recommendLabelStyle}>00님은 슬플 때 이런 노래를 들었어요.</div>
+              <div css={recommendLabelStyle}>
+                {getNickname()}님은 {emotion} 때 이런 노래를 들었어요.
+              </div>
               <div css={activityListStyle}>
                 {EmotionPlaylist.map((item) => (
                   <PlayListCell
