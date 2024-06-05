@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { React, useEffect } from 'react';
+import { React, useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import AppBarInEditMode from '../../components/AppBarInEditMode/AppBarInEditMode';
 import colors from '../../Colors/Colors';
@@ -133,12 +133,50 @@ const moodMessage = (mood) => {
   }
 };
 
+const spinnerStyle = css`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3d96ff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+const spinnerOverlayStyle = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  flex-direction: column;
+`;
+const spinnerTextStyle = css`
+  margin-top: 10px;
+  font-family: 'Pretendard-Medium';
+  font-size: 14px;
+  color: ${colors.mainBlue}; 
+  margin-top: 25px;
+`;
+
+
 const PreferFinView = () => {
   const location = useLocation();
   const { state } = location;
   const { selectedGenres, selectedMoods } = location.state;
   const progress = 100;
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (state && state.reSetting) {
@@ -192,6 +230,7 @@ const PreferFinView = () => {
       const result = await createPreference(requestBody);
       if (result.isSuccess) {
         console.log('취향 생성 성공');
+        await createPreferencePlaylist(requestBody.memberId);
         navigate('/main');
       } else {
         alert(`취향 생성 실패: ${result.message}`);
@@ -231,7 +270,28 @@ const PreferFinView = () => {
     }
   };
 
+  const createPreferencePlaylist = async (memberId) => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/playlist/preference/create?memberId=${memberId}`);
+      if (response.data.isSuccess) {
+        console.log('취향 플레이리스트 생성 성공:', response.data);
+      } else if (response.data.code === 'PLY_003') {
+        console.log('사용자의 취향플레이리스트가 존재합니다.');
+        navigate('/main'); 
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error('취향 플레이리스트 생성 실패:', error);
+      alert('취향 플레이리스트 생성 중 오류가 발생했습니다.');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleNextClick = async () => {
+    setLoading(true);
     const memberId = localStorage.getItem('memberId');
 
     const requestBody = {
@@ -280,6 +340,12 @@ const PreferFinView = () => {
       <div css={fixButtonBoxStyle}>
         <Button text="완료" onClick={handleNextClick} />
       </div>
+      {loading && (
+        <div css={spinnerOverlayStyle}>
+        <div css={spinnerStyle} />
+        <div css={spinnerTextStyle}>취향을 기반으로 플레이리스트를 생성 중입니다.</div>
+      </div>
+      )}
     </div>
   );
 };

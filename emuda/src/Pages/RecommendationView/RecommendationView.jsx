@@ -15,7 +15,7 @@ import { apiUrl } from '../../config/config';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   margin: 0;
   padding: 50px 0px;

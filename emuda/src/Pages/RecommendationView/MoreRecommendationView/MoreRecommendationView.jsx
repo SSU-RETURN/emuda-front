@@ -250,7 +250,6 @@ const MoreRecommendationView = () => {
     const fetchPlaylist = async () => {
       try {
         const memberId = Number(localStorage.getItem('memberId'));
-
         const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${day}`);
         if (response.data && response.data.isSuccess) {
           const playlists = response.data.result.aiPlaylist;
