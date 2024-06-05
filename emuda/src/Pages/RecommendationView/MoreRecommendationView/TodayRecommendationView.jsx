@@ -1,17 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react';
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AppBarInEditMode from '../../../components/AppBarInEditMode/AppBarInEditMode';
 import BottomNavigationBar from '../../../components/BottomNavigationBar/BottomNavigationBar';
 import PlayListCell from '../../../components/PlayListCell/PlayListCell';
 import { apiUrl } from '../../../config/config';
-import angry_back from '../../../assets/background/angry_back.png';
-import anxious_back from '../../../assets/background/anxious_back.png';
-import flutter_back from '../../../assets/background/flutter_back.png';
-import happy_back from '../../../assets/background/happy_back.png';
-import sad_back from '../../../assets/background/sad_back.png';
+import emuda_logo from '../../../assets/emuda_logo.svg';
+import mike from '../../../assets/mike.svg';
+import angry_back from '../../../assets/background/wideBackground/angry_wideBack.png';
+import anxious_back from '../../../assets/background/wideBackground/anxious_wideBack.png';
+import flutter_back from '../../../assets/background/wideBackground/flutter_wideBack.png';
+import happy_back from '../../../assets/background/wideBackground/happy_wideBack.png';
+import sad_back from '../../../assets/background/wideBackground/sad_wideBack.png';
 import DiaryIcon from '../../../assets/\bDiaryIcon';
 import colors from '../../../Colors/Colors';
 
@@ -48,7 +50,98 @@ const backgrounImgStyle = (backgroundImage) => css`
   aspect-ratio: 1/1;
   background-size: cover;
   background-position: center;
+  justify-content: center;
+  align-content: center;
   box-sizing: border-box;
+  border-radius: 13px;
+  position: relative;
+`;
+
+const logoTextStyle = css`
+  position: absolute;
+  top: 6px;
+  right: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  padding: 2px 4px;
+  margin-bottom: 5px;
+  img {
+    height: 15px;
+    width: 15px;
+    margin-right: 7px;
+  }
+  span {
+    transform: scaleX(1.2);
+    color: white;
+    font-family: 'Pretendard-Bold';
+    font-size: 10px;
+  }
+`;
+
+const fadeInOpacity = keyframes`
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const fadeOutUp = keyframes`
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  60% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const aniDivStyle = (isFadeOut) => css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  animation: ${isFadeOut ? fadeOutUp : fadeInOpacity} 2s forwards;
+
+  ${isFadeOut &&
+  css`
+    animation: ${isFadeOut ? fadeOutUp : fadeInOpacity} 2s forwards;
+  `}
+
+  img {
+    height: 30px;
+    width: 30px;
+    margin-left: 4px;
+    animation: ${fadeInOpacity} 3s forwards;
+    ${isFadeOut &&
+    css`
+      animation: ${isFadeOut ? fadeOutUp : fadeInOpacity} 2s forwards;
+    `}
+  }
+
+  span {
+    color: white;
+    font-family: 'Pretendard-ExtraBold';
+    font-size: 20px;
+    text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.7);
+    animation: ${fadeInOpacity} 2s forwards;
+
+    ${isFadeOut &&
+    css`
+      animation: ${fadeOutUp} 2s forwards;
+    `}
+  }
 `;
 
 const dateTextStyle = css`
@@ -93,7 +186,7 @@ const getBackgroundImage = (emotion) => {
   switch (emotion) {
     case 'ANGRY':
       return angry_back;
-    case 'ANXIOUS':
+    case 'ANXIETY':
       return anxious_back;
     case 'FLUTTER':
       return flutter_back;
@@ -110,9 +203,9 @@ const getTextColor = (emotion) => {
   switch (emotion) {
     case 'ANGRY':
       return '#FF3E3E';
-    case 'ANXIOUS':
+    case 'ANXIETY':
       return '#4D3EFF';
-    case 'FLUTTER':
+    case 'ROMANCE':
       return '#FF3E83';
     case 'HAPPY':
       return '#FFD53E';
@@ -145,9 +238,10 @@ const Container = ({ children }) => {
 const TodayRecommendationView = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedEmotion } = location.state || { selectedEmotion: 'FLUTTER' };
+  const { selectedEmotion } = location.state || { selectedEmotion: 'ROMANCE' };
   const queryParams = new URLSearchParams(location.search);
   const day = queryParams.get('day');
+  const [isFadeOut, setIsFadeOut] = useState(false);
 
   const [playlist, setPlaylist] = useState([]);
 
@@ -169,6 +263,14 @@ const TodayRecommendationView = () => {
     fetchPlaylist();
   }, [day]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFadeOut((prev) => !prev);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleSelect = (id) => {
     setPlaylist((prevPlaylist) =>
       prevPlaylist.map((cell) =>
@@ -184,7 +286,16 @@ const TodayRecommendationView = () => {
     <Container>
       <AppBarInEditMode text="더보기" />
       <div css={contentStyle}>
-        <div css={backgrounImgStyle(backgroundImage)}></div>
+        <div css={backgrounImgStyle(backgroundImage)}>
+          <div css={logoTextStyle}>
+            <img src={emuda_logo} />
+            <span>EMUDA</span>
+          </div>
+          <div css={aniDivStyle(isFadeOut)}>
+            <span>오늘의 노래 추천</span>
+            <img src={mike} />
+          </div>
+        </div>
         <div css={dateTextStyle}>{getDate()}</div>
         <div css={textStyle(textColor)}>더 빛나는 오늘을 위한 추천곡 모음.</div>
         <button

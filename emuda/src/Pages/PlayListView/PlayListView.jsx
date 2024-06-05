@@ -173,15 +173,28 @@ const PlayListView = () => {
       <SelectBar activeTab={activeTab} setActiveTab={setActiveTab} />
       {activeTab === 'day' ? (
         <div css={contentStyle}>
-          {dailyPlaylists.map((playlist) => (
-            <DailyPlaylistCell
-              key={playlist.playlistDate}
-              date={playlist.playlistDate}
-              text={returnText(playlist.memberEmotion)}
-              emotion={playlist.memberEmotion}
-              onClick={() => handleRoute('daily', playlist.playlistDate, playlist.memberEmotion)}
-            />
-          ))}
+          {dailyPlaylists.length > 0 ? (
+            dailyPlaylists.map((playlist) => (
+              <DailyPlaylistCell
+                key={playlist.playlistDate}
+                date={playlist.playlistDate}
+                text={returnText(playlist.memberEmotion)}
+                emotion={playlist.memberEmotion}
+                onClick={() => handleRoute('daily', playlist.playlistDate, playlist.memberEmotion)}
+              />
+            ))
+          ) : (
+            <div
+              css={css`
+                font-family: 'Pretendard-Light';
+                padding-top: 50%;
+                font-size: 14px;
+                color: #666;
+              `}
+            >
+              아직 생성된 플레이리스트 기록 없습니다 🫧
+            </div>
+          )}
         </div>
       ) : (
         <div css={contentStyle}>

@@ -23,7 +23,7 @@ function PlayListCell({
     width: 100%;
     aspect-ratio: 5 / 1;
     min-height: 50px;
-    margin: 5px 0 5px 0;
+    margin: 7px 0 7px 0;
     background-color: white;
     border-radius: 10px;
     display: flex;
@@ -117,14 +117,14 @@ function PlayListCell({
     }
     return title;
   };
-  const getArtistNameWithEllipsis = (title) => {
+  const getArtistNameWithEllipsis = (artist) => {
     const maxLength = 24;
     const ellipsis = '...';
 
-    if (title.length > maxLength) {
-      return `${title.slice(0, maxLength - ellipsis.length)}${ellipsis}`;
+    if (artist.length > maxLength) {
+      return `${artist.slice(0, maxLength - ellipsis.length)}${ellipsis}`;
     }
-    return title;
+    return artist;
   };
 
   const handleLikeClick = () => {

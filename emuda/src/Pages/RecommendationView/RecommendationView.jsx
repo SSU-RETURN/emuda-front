@@ -222,7 +222,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
       case 'ANGRY':
         text = `${nickname}님은 화날 때 이런 노래들을 들었어요`;
         break;
-      case 'ANXIOUS':
+      case 'ANXIETY':
         text = `${nickname}님은 불안할 때 이런 노래들을 들었어요`;
         break;
       default:

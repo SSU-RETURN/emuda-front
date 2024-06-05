@@ -451,9 +451,12 @@ const WriteDiaryView = () => {
 
         if (response.status === 201) {
           const diaryID = response.data.result.id;
+          const emtion = diaryData.memberEmotion;
           localStorage.removeItem('diary');
           localStorage.removeItem('diaryData');
-          navigate('/emotionGraph', { state: { diaryID } });
+          navigate('/emotionGraph', {
+            state: { diaryID: diaryID, emotion: emtion, date: selectedDate },
+          });
         } else {
           alert('일기 작성 중 오류가 발생했습니다.');
         }

@@ -12,36 +12,36 @@ const baseStyle = css`
 
 const emotionStyles = {
   HAPPY: css`
-  ${baseStyle};
-  background: ${colors.lightYellow}; // 기쁨
-`,
+    ${baseStyle};
+    background: ${colors.lightYellow}; // 기쁨
+  `,
   SAD: css`
-  ${baseStyle};
-  background: ${colors.lightBlue}; // 슬픔
-`,
+    ${baseStyle};
+    background: ${colors.lightBlue}; // 슬픔
+  `,
   ROMANCE: css`
-  ${baseStyle};
-  background: ${colors.lightPink}; // 설렘
-`,
+    ${baseStyle};
+    background: ${colors.lightPink}; // 설렘
+  `,
   ANXIETY: css`
-  ${baseStyle};
-  background: ${colors.lightPurple}; // 불안
-`,
+    ${baseStyle};
+    background: ${colors.lightPurple}; // 불안
+  `,
   ANGRY: css`
-  ${baseStyle};
-  background: ${colors.lightRed}; // 화
-`,
+    ${baseStyle};
+    background: ${colors.lightRed}; // 화
+  `,
   TODAY: css`
     ${baseStyle};
     background: white; // 오늘
     border: 2px solid ${colors.mainBlue};
     // background: ${colors.mainBlue}; // 오늘
-    `,
+  `,
 
   SELECT: css`
     ${baseStyle};
     background: ${colors.mainBlue}; // 클릭 날짜
-`
+  `,
 };
 
 export default emotionStyles;

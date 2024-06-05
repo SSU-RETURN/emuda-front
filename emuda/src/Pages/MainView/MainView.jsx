@@ -56,19 +56,20 @@ const dayOfWeekStyle = css`
 const suggestionTextStyle = css`
   font-size: 15px;
   color: #34495e;
-  margin: 0px 20px 10px 20px;
+  margin: 0px 20px 0px 20px;
   font-family: 'Pretendard-SemiBold';
   align-self: flex-start;
   box-sizing: border-box;
 `;
+
 const labelContainerStyle = css`
   width: 100%;
   height: 60px;
-  margin-bottom: 20px;
 `;
 
 const cellContainerStyle = css`
   width: 100%;
+  padding: 20px 0px 50px 0px;
 `;
 
 const sliderStyle = css`
@@ -125,7 +126,7 @@ const headerStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 50px 5px 0px 5px;
+  margin: 10px 5px 0px 5px;
   box-sizing: border-box;
 `;
 
@@ -140,11 +141,16 @@ const calendarStyle = css`
   .react-calendar__tile {
     width: 50px;
     height: 50px;
-    max-width: none;
     font-size: 15px;
   }
 
   // 요일 밑줄 제거
+  .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 15px;
+  }
+
   .react-calendar__month-view__weekdays abbr {
     text-decoration: none;
     font-weight: 800;
@@ -189,6 +195,7 @@ const calendarStyle = css`
 const todayButtonStyle = css`
   width: 43px;
   height: 28px;
+
   background-color: white;
   border: 1px solid ${colors.mainBlue};
   font-size: 15px;
@@ -202,21 +209,27 @@ const todayButtonStyle = css`
 
 const diaryStyle = css`
   .HAPPY {
+    border: 1.5px solid white;
     ${emotionStyles.HAPPY};
   }
   .SAD {
-    ${emotionStyles.SAD};
+    border: 1.5px solid white;
+    ${emotionStyles.SAD}
   }
   .ANGRY {
+    border: 1.5px solid white;
     ${emotionStyles.ANGRY};
   }
   .ANXIETY {
+    border: 1.5px solid white;
     ${emotionStyles.ANXIETY};
   }
   .ROMANCE {
+    border: 1.5px solid white;
     ${emotionStyles.ROMANCE};
   }
   .TODAY {
+    border: 1.5px solid white;
     ${emotionStyles.TODAY};
   }
 `;
@@ -250,7 +263,10 @@ function getCurrentDate() {
       month: '2-digit',
       day: '2-digit',
     })
-    .replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
+    .replace(/\./g, '-')
+    .replace(/ /g, '')
+    .replace(/-/g, '-')
+    .slice(0, 10);
 
   return formattedDate;
 }
@@ -266,17 +282,18 @@ const MainPage = () => {
   const [buttonText, setButtonText] = useState();
   const [showButton, setShowButton] = useState(false);
 
-
   useEffect(() => {
     const fetchDiaryEntries = async () => {
       try {
         const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth() + 1).padStart(2, '0')}-01`;
-        const response = await axios.get(`${apiUrl}/api/diary/monthly/${memberId}?YearMonth=${yearMonth}`);
+        const response = await axios.get(
+          `${apiUrl}/api/diary/monthly/${memberId}?YearMonth=${yearMonth}`
+        );
         if (response.data.isSuccess) {
-          const entries = response.data.result.map(entry => ({
+          const entries = response.data.result.map((entry) => ({
             date: new Date(entry.writtenDate),
             emotion: entry.memberEmotion,
-            id: entry.id 
+            id: entry.id,
           }));
           setDiaryEntries(entries);
         }
@@ -287,36 +304,35 @@ const MainPage = () => {
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
 
-    const updatePreferencePlaylist = async () => {
-      try {
-        console.log('취향플리 업데이트중');
-        const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
-          memberId: parseInt(memberId),
-          date: currentDate,
-        });
-        console.log('Update response:', response.data);
-        fetchPreferencePlaylist();
-      } catch (error) {
-        console.log('오류가 발생했습니다.', error);
-      }
-    };
-  
-    const fetchPreferencePlaylist = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
-        if (response.data.isSuccess) {
-          console.log('Fetch response:', response.data.result);
-          setPlaylist(response.data.result); 
-        }
-      } catch (error) {
-        console.error('Failed to fetch preference playlist', error);
-      }
-    };
-  
-    useEffect(() => {
-      updatePreferencePlaylist(); 
-    }, []);
+  const updatePreferencePlaylist = async () => {
+    try {
+      console.log('취향플리 업데이트중');
+      const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
+        memberId: parseInt(memberId),
+        date: currentDate,
+      });
+      console.log('Update response:', response.data);
+      fetchPreferencePlaylist();
+    } catch (error) {
+      console.log('오류가 발생했습니다.', error);
+    }
+  };
 
+  const fetchPreferencePlaylist = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
+      if (response.data.isSuccess) {
+        console.log('Fetch response:', response.data.result);
+        setPlaylist(response.data.result);
+      }
+    } catch (error) {
+      console.error('Failed to fetch preference playlist', error);
+    }
+  };
+
+  useEffect(() => {
+    updatePreferencePlaylist();
+  }, []);
 
   const settings = {
     dots: true,
@@ -328,12 +344,18 @@ const MainPage = () => {
   };
 
   const onChange = (newDate) => {
-    console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\. /g, '-').replace(/\.$/, ''));
-    setDate(newDate); 
+    console.log(
+      '선택된 날짜: ',
+      newDate
+        .toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replace(/\. /g, '-')
+        .replace(/\.$/, '')
+    );
+    setDate(newDate);
 
     const foundEntry = diaryEntries.find(
       (entry) =>
@@ -347,7 +369,7 @@ const MainPage = () => {
     } else {
       setButtonText('작성하기');
     }
-    setShowButton(true); 
+    setShowButton(true);
   };
 
   const goToToday = () => {
@@ -381,11 +403,14 @@ const MainPage = () => {
   };
 
   const handleWriteClick = () => {
-    const formattedDate = date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\. /g, '-').replace(/\.$/, '');
+    const formattedDate = date
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\. /g, '-')
+      .replace(/\.$/, '');
 
     const foundEntry = diaryEntries.find(
       (entry) =>
@@ -402,7 +427,7 @@ const MainPage = () => {
       navigate('/write', { state: { selectedDate: formattedDate } });
     }
 
-// 충돌 해결 부분
+    // 충돌 해결 부분
     localStorage.setItem('musics', JSON.stringify([]));
   };
 
@@ -416,18 +441,39 @@ const MainPage = () => {
         </div>
         <div css={suggestionTextStyle}>오늘 이 노래는 어떠세요?</div>
       </div>
-      <div css={cellContainerStyle}>
-        <Slider {...settings} css={sliderStyle}>
-          {playlist.map((item) => (
-            <PlayListCell
-              key={item.id}
-              image={item.pictureKey}
-              title={item.title}
-              artist={item.artist}
-            />
-          ))}
-        </Slider>
-      </div>
+      {playlist.length > 0 ? (
+        <div css={cellContainerStyle}>
+          <Slider {...settings} css={sliderStyle}>
+            {playlist.map((item) => (
+              <PlayListCell
+                key={item.id}
+                image={item.pictureKey}
+                title={item.title}
+                artist={item.artist}
+              />
+            ))}
+          </Slider>
+        </div>
+      ) : (
+        <div
+          css={css`
+            margin: 10px 0px;
+            height: 70px;
+            width: calc(100% - 30px);
+            background-color: ${colors.lightGray02};
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Pretendard-Light';
+            font-size: 14px;
+            color: #666;
+            box-sizing: border-box;
+          `}
+        >
+          아직 취향을 생성하지 않았어요 💦
+        </div>
+      )}
       <div css={headerStyle}>
         <div css={labelContainerStyle2}>
           <div css={questionTextStyle}>오늘 하루 생각나는 노래가 있었나요?</div>
@@ -449,9 +495,8 @@ const MainPage = () => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      {showButton && (
-        <Button text={buttonText} onClick={handleWriteClick} />
-      )}      <BottomNavigationBar />
+      {showButton && <Button text={buttonText} onClick={handleWriteClick} />}{' '}
+      <BottomNavigationBar />
     </div>
   );
 };

@@ -94,7 +94,12 @@ const LoginView = () => {
         localStorage.setItem('nickname', loginResult.result.nickname);
         localStorage.setItem('memberId', loginResult.result.memberId);
         localStorage.setItem('id', formData.userID);
-        navigate('/preferstart');
+        localStorage.setItem('isPreference', loginResult.result.isPreference);
+        if (loginResult.result.isPreference === 1) {
+          navigate('/main');
+        } else {
+          navigate('/preferstart');
+        }
       } else {
         alert(`로그인 실패: ${loginResult.message}`);
       }
