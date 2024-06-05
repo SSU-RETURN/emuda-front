@@ -130,7 +130,7 @@ const MusicCardView = () => {
   const location = useLocation();
   const [AiPlaylist, setAiPlaylist] = useState([]);
   const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
-  const nickname = Number(localStorage.getItem('nickname'));
+  const nickname = localStorage.getItem('nickname');
   const emotion = location.state.emotion;
   const date = location.state.date;
 
