@@ -395,6 +395,11 @@ const WriteDiaryView = () => {
   const updateButtonState = (emotion, content) => {
     setIsButtonEnabled(emotion !== '' && content !== '');
   };
+  
+    useEffect(() => {
+      updateButtonState(diaryData.memberEmotion, diaryData.content);
+    }, [diaryData]);
+  
 
   const handleNext = async () => {
     setLoading(true);
