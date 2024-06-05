@@ -176,7 +176,6 @@ const DetailDiaryView = () => {
     if (diaryId) {
       fetchDiaryDetails(diaryId);
       fetchEmotionGraph(diaryId); // 수정된 부분
-
     }
   }, [diaryId]);
 
@@ -196,11 +195,9 @@ const DetailDiaryView = () => {
           image: result.pictureKey,
           playlistData1: [],
           playlistData2: result.playlistData2 || [],
-
         });
-        fetchPlaylist(result.writtenDate); 
+        fetchPlaylist(result.writtenDate);
         fetchRecommendedPlaylist(memberId, result.writtenDate); // 추천 플레이리스트 가져오기
-
       } else {
         console.error('Failed to fetch diary details:', response.data.message);
       }
@@ -229,28 +226,31 @@ const DetailDiaryView = () => {
       console.error('Error fetching playlist:', error);
     }
   };
-    const fetchRecommendedPlaylist = async (memberId, writtenDate) => {
+  const fetchRecommendedPlaylist = async (memberId, writtenDate) => {
     try {
-      const formattedDate = new Date(writtenDate).toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
+      const formattedDate = new Date(writtenDate)
+        .toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replace(/\./g, '-')
+        .replace(/ /g, '')
+        .replace(/-/g, '-')
+        .slice(0, 10);
       const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${formattedDate}`);
       if (response.data.isSuccess) {
         setDiaryData((prevData) => ({
           ...prevData,
-          playlistData2: response.data.result.aiPlaylist || [],
+          playlistData2: response.data.result.aiPlaylist.slice(0, 5) || [],
         }));
-      } 
-      else {
+      } else {
         console.error('Failed to fetch recommended playlist:', response.data.message);
       }
     } catch (error) {
       console.error('Error fetching recommended playlist:', error);
     }
   };
-
 
   const renderImageContainer = () => {
     if (diaryData.image) {
@@ -276,7 +276,6 @@ const DetailDiaryView = () => {
       console.error('Error fetching emotion graph:', error);
     }
   };
-
 
   const selectedEmotion = emotions.find((e) => e.key === diaryData.emotion);
   const selectedEmotionColor = selectedEmotion ? selectedEmotion.color : 'red';
@@ -326,7 +325,7 @@ const DetailDiaryView = () => {
 
   return (
     <Container>
-      <AppBarInViewMode diaryId={diaryId} /> 
+      <AppBarInViewMode diaryId={diaryId} />
       <div css={subContainerStyle}>
         <div css={spanContainerStyle}>
           <span css={dateLabelStyle}>{diaryData?.date || ''}</span>
@@ -334,7 +333,15 @@ const DetailDiaryView = () => {
         </div>
         <div css={spanContainerStyle}>
           <span css={emotionLabelStyle}>{storedNickname}님은&nbsp;</span>
-          <span css={emotionLabelStyle} style={{ backgroundColor: selectedEmotionColor, color: 'black', padding: '0 0px', borderRadius: '3px' }}>
+          <span
+            css={emotionLabelStyle}
+            style={{
+              backgroundColor: selectedEmotionColor,
+              color: 'black',
+              padding: '0 0px',
+              borderRadius: '3px',
+            }}
+          >
             {selectedEmotion?.label} 하루
           </span>
           <span css={emotionLabelStyle}>를 보냈어요!</span>
