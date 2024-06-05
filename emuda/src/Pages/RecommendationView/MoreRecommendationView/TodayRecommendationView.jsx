@@ -237,13 +237,14 @@ const Container = ({ children }) => {
 
 const TodayRecommendationView = () => {
   const location = useLocation();
+  const { state } = location;
   const navigate = useNavigate();
   const { selectedEmotion } = location.state || { selectedEmotion: 'ROMANCE' };
   const queryParams = new URLSearchParams(location.search);
   const day = queryParams.get('day');
   const [isFadeOut, setIsFadeOut] = useState(false);
-
   const [playlist, setPlaylist] = useState([]);
+  const diaryId = state ? state.diaryId : '0';
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -301,9 +302,9 @@ const TodayRecommendationView = () => {
         <button
           css={buttonStyle(textColor)}
           onClick={() =>
-            navigate('/library', {
+            navigate('/detail', {
               state: {
-                selectedEmotion,
+                diaryId: diaryId,
               },
             })
           }

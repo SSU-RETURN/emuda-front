@@ -107,6 +107,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
   const [emotionPlaylist, setEmotionPlaylist] = useState([]);
   const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten);
   const [emotion, setEmotion] = useState(colors.white);
+  const [diaryId, setDiaryId] = useState(colors.white);
   const [divColor, setDivColor] = useState(colors.white);
   const nickname = localStorage.getItem('nickname');
 
@@ -173,8 +174,8 @@ const RecommendationView = ({ isDiaryWritten }) => {
       if (playlists && playlists.isSuccess) {
         const aipl = playlists.result.aiPlaylist;
         const empl = playlists.result.memberEmotionPlaylist;
+        setDiaryId(playlists.result.diaryId);
         setAiPlaylist(aipl.slice(0, 3));
-        console.log(aiPlaylist);
         setEmotionPlaylist(empl.slice(0, 3));
       } else {
         console.log('Error while Getting Playlists.');
@@ -260,6 +261,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
     navigate('/todayRecommend', {
       state: {
         selectedEmotion: emotion,
+        diaryId: diaryId,
       },
     });
   };
