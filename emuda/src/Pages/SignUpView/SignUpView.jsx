@@ -216,6 +216,7 @@ const SignUpView = () => {
 
   return (
     <div css={signupPageStyle}>
+      <AppBarInEditMode />
       <span css={guideLabelStyle}>회원가입</span>
       <span css={subGuideLabelStyle}>회원님의 정보를 등록해주세요!</span>
       <form css={formStyle} onSubmit={handleSubmit}>

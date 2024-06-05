@@ -20,6 +20,7 @@ import PreferFin from './Pages/PreferView/PreferFinView.jsx';
 import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGraphView.jsx';
 import SettingView from './Pages/SettingVIew/SettingView.jsx';
 import EditMemberInfoView from './Pages/EditMemberInfoView/EditMemberInfoView.jsx';
+import TodayRecommendationView from './Pages/RecommendationView/MoreRecommendationView/TodayRecommendationView.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
   },
   { path: '/library', element: <PlayListView /> },
   { path: '/more', element: <MoreRecommendationView /> },
+  { path: '/todayRecommend', element: <TodayRecommendationView /> },
 
   { path: '/login', element: <LoginView /> },
   { path: '/signup', element: <SignUpView /> },

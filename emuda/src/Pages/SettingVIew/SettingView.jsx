@@ -121,7 +121,13 @@ const SettingView = () => {
   };
 
   const handleRePreference = () => {
-    navigate('/preferfirst', { state: { reSetting: true } });
+    const isPreference = Number(localStorage.getItem('isPreference'));
+
+    if (isPreference === 1) {
+      navigate('/preferfirst', { state: { reSetting: true } });
+    } else {
+      navigate('/preferfirst');
+    }
   };
 
   return (

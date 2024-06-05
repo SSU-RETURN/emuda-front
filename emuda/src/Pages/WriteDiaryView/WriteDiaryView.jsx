@@ -18,8 +18,9 @@ const containerStyle = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px 0px;
+  padding: 50px 10px 70px 10px;
   margin: 0px;
+  box-sizing: border-box;
 `;
 
 const subContainerStyle = css`
@@ -145,11 +146,6 @@ const searchButtonStyle = css`
     width: auto;
     aspect-ratio: ${20.29 / 18.71};
   }
-`;
-
-const activityListStyle = css`
-  width: 100%;
-  margin-bottom: 80px;
 `;
 
 const fixButtonBoxStyle = css`
@@ -395,11 +391,6 @@ const WriteDiaryView = () => {
   const updateButtonState = (emotion, content) => {
     setIsButtonEnabled(emotion !== '' && content !== '');
   };
-  
-    useEffect(() => {
-      updateButtonState(diaryData.memberEmotion, diaryData.content);
-    }, [diaryData]);
-  
 
   const handleNext = async () => {
     setLoading(true);
@@ -460,9 +451,12 @@ const WriteDiaryView = () => {
 
         if (response.status === 201) {
           const diaryID = response.data.result.id;
+          const emtion = diaryData.memberEmotion;
           localStorage.removeItem('diary');
           localStorage.removeItem('diaryData');
-          navigate('/emotionGraph', { state: { diaryID } });
+          navigate('/emotionGraph', {
+            state: { diaryID: diaryID, emotion: emtion, date: selectedDate },
+          });
         } else {
           alert('일기 작성 중 오류가 발생했습니다.');
         }
@@ -544,18 +538,16 @@ const WriteDiaryView = () => {
               </div>
               원하는 노래를 검색해보세요.
             </button>
-            <div css={activityListStyle}>
-              {diaryData?.musicList?.map((item) => (
-                <PlayListCell
-                  key={item.id}
-                  image={item.pictureKey}
-                  title={item.title}
-                  artist={item.artist}
-                  type={'cancel'}
-                  onClickCancel={() => onClickCancel(item.id)}
-                />
-              ))}
-            </div>
+            {diaryData?.musicList?.map((item) => (
+              <PlayListCell
+                key={item.id}
+                image={item.pictureKey}
+                title={item.title}
+                artist={item.artist}
+                type={'cancel'}
+                onClickCancel={() => onClickCancel(item.id)}
+              />
+            ))}
           </>
         )}
       </div>

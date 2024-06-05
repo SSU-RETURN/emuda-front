@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AppBarInMainScreen from '../../components/AppBarInMainScreen/AppBarInMainScreen';
 import BottomNavigationBar from '../../components/BottomNavigationBar/BottomNavigationBar';
 import SelectBar from '../../components/SelectBar/SelectBar';
@@ -10,6 +10,7 @@ import PlayListCell from '../../components/PlayListCell/PlayListCell';
 import SelectEmotionBar from '../../components/SelectBar/SelectEmotionBar';
 import axios from 'axios';
 import { apiUrl } from '../../config/config';
+import Check from '../../assets/Check.svg';
 
 const containerStyle = css`
   display: flex;
@@ -17,7 +18,7 @@ const containerStyle = css`
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 70px 0;
+  padding: 50px 0;
   max-width: 800px;
   width: 100%;
   overflow: hidden;
@@ -47,20 +48,53 @@ const contentStyle = css`
   overflow-y: auto;
 `;
 
+const middleDivStyle = css`
+  margin-top: 28px;
+  margin-bottom: 18px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+`;
+
+const checkStyle = css`
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+`;
+
 const returnText = (emotion) => {
   switch (emotion) {
     case 'SAD':
-      return '슬픈 플레이리스트';
+      return '슬픈 날 플레이리스트';
     case 'ROMANCE':
-      return '설레는 플레이리스트';
+      return '설레는 날 플레이리스트';
     case 'HAPPY':
-      return '기쁜 플레이리스트';
+      return '기쁜 날 플레이리스트';
     case 'ANGRY':
-      return '화나는 플레이리스트';
-    case 'SURPRISE':
-      return '깜짝 놀란 플레이리스트';
+      return '화난 날 플레이리스트';
+    case 'ANXIETY':
+      return '불안한 날 플레이리스트';
     default:
       return '플레이리스트';
+  }
+};
+
+const emotionDescription = (emotion) => {
+  switch (emotion) {
+    case 'SAD':
+      return '슬플 때 이런 노래들을 들었어요.';
+    case 'ROMANCE':
+      return '설렐 때 이런 노래들을 들었어요.';
+    case 'HAPPY':
+      return '기쁠 때 이런 노래들을 들었어요.';
+    case 'ANGRY':
+      return '화날 때 이런 노래들을 들었어요.';
+    case 'ANXIETY':
+      return '불안할 때 이런 노래들을 들었어요.';
+    default:
+      return '감정에 따라 들은 노래를 확인해보세요!';
   }
 };
 
@@ -74,6 +108,14 @@ const PlayListView = () => {
   const [dailyPlaylists, setDailyPlaylists] = useState([]);
   const [emotionPlaylists, setEmotionPlaylists] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.selectedEmotion) {
+      setSelectedEmotion(location.state.selectedEmotion);
+      setActiveTab('emotion');
+    }
+  }, [location.state]);
 
   const fetchDailyPlaylists = async () => {
     try {
@@ -95,7 +137,6 @@ const PlayListView = () => {
       const response = await axios.get(
         `${apiUrl}/api/playlist/emotion/${emotion}?memberId=${memberId}&page=0`
       );
-      console.log(response.data.result);
       if (response.data.isSuccess) {
         setEmotionPlaylists(response.data.result);
       } else {
@@ -118,21 +159,42 @@ const PlayListView = () => {
     }
   }, [selectedEmotion]);
 
+  const handleRoute = (type, day, emotion) => {
+    navigate(`/more?type=${type}&day=${day}`, {
+      state: {
+        emotion,
+      },
+    });
+  };
+
   return (
     <Container>
       <AppBarInMainScreen />
       <SelectBar activeTab={activeTab} setActiveTab={setActiveTab} />
       {activeTab === 'day' ? (
         <div css={contentStyle}>
-          {dailyPlaylists.map((playlist) => (
-            <DailyPlaylistCell
-              key={playlist.playlistDate}
-              date={playlist.playlistDate}
-              text={returnText(playlist.memberEmotion)}
-              emotion={playlist.memberEmotion}
-              onClick={() => navigate(`/more?type=${'daily'}&day=${playlist.playlistDate}`)}
-            />
-          ))}
+          {dailyPlaylists.length > 0 ? (
+            dailyPlaylists.map((playlist) => (
+              <DailyPlaylistCell
+                key={playlist.playlistDate}
+                date={playlist.playlistDate}
+                text={returnText(playlist.memberEmotion)}
+                emotion={playlist.memberEmotion}
+                onClick={() => handleRoute('daily', playlist.playlistDate, playlist.memberEmotion)}
+              />
+            ))
+          ) : (
+            <div
+              css={css`
+                font-family: 'Pretendard-Light';
+                padding-top: 50%;
+                font-size: 14px;
+                color: #666;
+              `}
+            >
+              아직 생성된 플레이리스트 기록 없습니다 🫧
+            </div>
+          )}
         </div>
       ) : (
         <div css={contentStyle}>
@@ -140,16 +202,28 @@ const PlayListView = () => {
             selectedEmotion={selectedEmotion}
             onEmotionSelect={setSelectedEmotion}
           />
+          <div css={middleDivStyle}>
+            <img css={checkStyle} src={Check} />
+            <span
+              css={css`
+                font-family: 'Pretendard-Light';
+                font-size: 12px;
+              `}
+            >
+              {emotionDescription(selectedEmotion)}
+            </span>
+          </div>
           {selectedEmotion ? (
             emotionPlaylists.length == 0 ? (
               <div
                 css={css`
-                  padding-top: 60%;
-                  font-size: 18px;
+                  font-family: 'Pretendard-Light';
+                  padding-top: 50%;
+                  font-size: 14px;
                   color: #666;
                 `}
               >
-                선택된 음악이 없습니다
+                선택된 음악이 없습니다 🫧
               </div>
             ) : (
               emotionPlaylists.map((playlist) => (
@@ -159,7 +233,7 @@ const PlayListView = () => {
                   title={playlist.title}
                   artist={playlist.artist}
                   description={playlist.description}
-                  type="recommend"
+                  type="like"
                   emotion={selectedEmotion}
                 />
               ))
@@ -167,12 +241,13 @@ const PlayListView = () => {
           ) : (
             <div
               css={css`
-                padding-top: 60%;
-                font-size: 18px;
+                font-family: 'Pretendard-Light';
+                padding-top: 50%;
+                font-size: 14px;
                 color: #666;
               `}
             >
-              감정을 선택해주세요
+              감정을 선택해주세요 ✨
             </div>
           )}
         </div>

@@ -21,6 +21,7 @@ const containerStyle = css`
   flex-direction: column;
   align-items: center;
   padding: 0px;
+  padding-bottom: 30px;
   margin: 0px;
 `;
 
@@ -125,100 +126,104 @@ const fixButtonBoxStyle = css`
 `;
 
 const MusicCardView = () => {
-  const getPlaylist = async () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [AiPlaylist, setAiPlaylist] = useState([]);
+  const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
+  const nickname = Number(localStorage.getItem('nickname'));
+  const emotion = location.state.emotion;
+  const date = location.state.date;
+
+  const getPlaylist = async (date) => {
     try {
-      const memberId = Number(localStorage.getItem('memberId'));
-      const response = await axios.get(
-        `${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`
-      );
-      console.log(response.data);
+      const memberId = localStorage.getItem('memberId');
+      const response = await axios.get(`${apiUrl}/api/recommend/${memberId}/${date}`);
       return response.data;
     } catch (error) {
       alert('Error while Getting Playlist');
+      return null;
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const playlists = await getPlaylist();
-      if (playlists && playlists.isSuccess) {
+  useEffect(() => {
+    const fetchPlaylist = async (date) => {
+      try {
+        const playlists = await getPlaylist(date);
         const aipl = playlists.result.aiPlaylist;
         const empl = playlists.result.memberEmotionPlaylist;
         setAiPlaylist(aipl.slice(0, 3));
         setEmotionPlaylist(empl.slice(0, 3));
-      } else {
-        console.log('Error while Getting Playlists.');
+      } catch (error) {
+        alert('Error Fetching PlayList');
       }
-    } catch (error) {
-      alert('Error Fetching PlayList');
-    }
-  };
-  const getCurrentDateforAPI = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  const getTodayEmotion = async () => {
-    const memberId = localStorage.getItem('memberId');
-    const date = getCurrentDateforAPI();
-    try {
-      const response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
-      const emotion = response.data.result.emotion;
-      switch (emotion) {
-        case 'SAD':
-          setEmotion('슬플');
-          break;
-        case 'HAPPY':
-          setEmotion('기쁠');
-          break;
-        case 'ANGRY':
-          setEmotion('화날');
-          break;
-        case 'ROMANCE':
-          setEmotion('설렐');
-          break;
-        case 'ANXIETY':
-          setEmotion('불안할');
-          break;
-        default:
-          return '';
-      }
-    } catch (error) {
-      alert('Error while Getting Date');
-      return colors.white;
-    }
-  };
-  const navigate = useNavigate();
-  const [AiPlaylist, setAiPlaylist] = useState([]);
-  const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
-  const [emotion, setEmotion] = useState('');
-  const location = useLocation();
+    };
+    fetchPlaylist(date);
+  }, [date]);
 
-  useEffect(() => {
-    fetchData();
-    getTodayEmotion();
-  }, []);
+  const questionText = (emotion) => {
+    let text = '';
+    switch (emotion) {
+      case 'SAD':
+        text = '슬픈 오늘 이 노래는 어떤가요?';
+        break;
+      case 'ROMANCE':
+        text = '설렌 오늘 이 노래는 어떤가요?';
+        break;
+      case 'HAPPY':
+        text = '기쁜 오늘 이 노래는 어떤가요?';
+        break;
+      case 'ANGRY':
+        text = '화난 오늘 이 노래는 어떤가요?';
+        break;
+      case 'ANXIETY':
+        text = '불안한 오늘 이 노래는 어떤가요?';
+        break;
+      default:
+        text = '오늘 이 노래는 어떤가요?';
+        break;
+    }
+    return text;
+  };
+
+  const suggestionText = (nickname, emotion) => {
+    let text = '';
+    switch (emotion) {
+      case 'SAD':
+        text = `${nickname}님은 슬플 때 이런 노래들을 들었어요`;
+        break;
+      case 'ROMANCE':
+        text = `${nickname}님은 설렐 때 이런 노래들을 들었어요`;
+        break;
+      case 'HAPPY':
+        text = `${nickname}님은 기쁠 때 이런 노래들을 들었어요`;
+        break;
+      case 'ANGRY':
+        text = `${nickname}님은 화날 때 이런 노래들을 들었어요`;
+        break;
+      case 'ANXIETY':
+        text = `${nickname}님은 불안할 때 이런 노래들을 들었어요`;
+        break;
+      default:
+        text = `${nickname}님은 이런 노래들을 들었어요`;
+        break;
+    }
+    return text;
+  };
 
   const handleNext = () => {
-    // navigate('/detail', { state: location.state.diaryID });
-    navigate('/main', { state: location.state.diaryID });
-  };
-  const getNickname = () => {
-    return localStorage.getItem('nickname');
+    navigate('/detail', { state: { diaryId: location.state.diaryID } });
   };
 
   return (
     <Container>
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>일기 작성이 완료 되었어요.</span>
-        <span css={mainTitleStyle}>{getNickname()}님을 위한 추천 노래를 확인하세요!</span>
+        <span css={mainTitleStyle}>{nickname}님을 위한 추천 노래를 확인하세요!</span>
         <div css={cardWrapperStyle}>
           <div css={cardStyle}>
             <div css={cardFrontStyle}></div>
             <div css={cardBackStyle}>
-              <div css={recommendLabelStyle}>{emotion} 때 오늘 이 노래는 어떤가요?</div>
+              <div css={recommendLabelStyle}>{questionText(emotion)}</div>
               <div css={activityListStyle}>
                 {AiPlaylist.map((item) => (
                   <PlayListCell
@@ -230,9 +235,7 @@ const MusicCardView = () => {
                   />
                 ))}
               </div>
-              <div css={recommendLabelStyle}>
-                {getNickname()}님은 {emotion} 때 이런 노래를 들었어요.
-              </div>
+              <div css={recommendLabelStyle}>{suggestionText(nickname, emotion)}</div>
               <div css={activityListStyle}>
                 {EmotionPlaylist.map((item) => (
                   <PlayListCell

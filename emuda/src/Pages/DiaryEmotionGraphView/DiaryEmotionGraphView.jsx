@@ -83,7 +83,13 @@ const DiaryEmotionGraphView = () => {
   const [data, setData] = useState([0, 0, 0, 0]); //초기데이터입니다
 
   const handleNext = () => {
-    navigate('/card', { state: location.state.diaryID });
+    navigate('/card', {
+      state: {
+        diaryID: location.state.diaryID,
+        emotion: location.state.emotion,
+        date: location.state.date,
+      },
+    });
   };
 
   useEffect(() => {
