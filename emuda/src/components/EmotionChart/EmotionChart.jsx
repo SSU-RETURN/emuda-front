@@ -37,13 +37,7 @@ function EmotionChart({ data }) {
           show: false,
         },
       },
-      colors: [
-        colors.lightBlue,
-        colors.lightYellow,
-        colors.lightPurple,
-        colors.lightRed,
-        colors.lightPink,
-      ],
+      colors: [colors.lightBlue, colors.lightYellow, colors.lightPurple, colors.lightRed],
       plotOptions: {
         bar: {
           distributed: true,
@@ -65,7 +59,7 @@ function EmotionChart({ data }) {
         },
       },
       xaxis: {
-        categories: ['슬픔', '기쁨', '불안', '분노', '놀람'],
+        categories: ['슬픔', '기쁨', '불안', '분노'],
         position: 'bottom',
         axisBorder: {
           show: false,

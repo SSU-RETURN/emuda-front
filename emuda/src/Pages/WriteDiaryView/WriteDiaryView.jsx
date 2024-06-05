@@ -35,7 +35,7 @@ const subTitleStyle = css`
   font-family: 'Pretendard-SemiBold';
   font-size: 15px;
   text-align: left;
-  white-space: pre-line; 
+  white-space: pre-line;
   margin-left: 20px;
 `;
 
@@ -44,7 +44,7 @@ const subTitleStyle = css`
 //   font-family: 'Pretendard';
 //   font-size: 10px;
 //   text-align: left;
-//   white-space: pre-line; 
+//   white-space: pre-line;
 //   margin-left: 20px;
 // `;
 
@@ -190,14 +190,13 @@ const spinnerOverlayStyle = css`
   align-items: center;
   background-color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
-  flex-direction
-  : column;
+  flex-direction: column;
 `;
 const spinnerTextStyle = css`
   margin-top: 10px;
   font-family: 'Pretendard-Medium';
   font-size: 14px;
-  color: ${colors.mainBlue}; 
+  color: ${colors.mainBlue};
   margin-top: 25px;
 `;
 
@@ -211,11 +210,10 @@ const WriteDiaryView = () => {
   const textAreaRef = useRef(null);
   const textAreaHeightRef = useRef(null);
   const [imageFile, setImageFile] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false); 
-  const [diaryId, setDiaryId] = useState(null); 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [diaryId, setDiaryId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false); 
-
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const [diaryData, setDiaryData] = useState({
     memberId: memberId,
@@ -224,8 +222,8 @@ const WriteDiaryView = () => {
     musicList: [],
     image: '',
     writtenDate: initialWrittenDate,
-  });  
-  
+  });
+
   const emotions = [
     { key: 'SAD', label: '슬퍼요' },
     { key: 'HAPPY', label: '기뻐요' },
@@ -267,28 +265,27 @@ const WriteDiaryView = () => {
 
     if (location.state && location.state.diaryId) {
       setIsEditMode(true);
-      setDiaryId(location.state.diaryId); 
-      fetchDiaryDetails(location.state.diaryId); 
+      setDiaryId(location.state.diaryId);
+      fetchDiaryDetails(location.state.diaryId);
+    } else {
+      const savedDiaryData = localStorage.getItem('diaryData');
+      const savedDate = localStorage.getItem('writtenDate');
+      if (savedDiaryData) {
+        setDiaryData(JSON.parse(savedDiaryData));
+
+        console.log('Restored diaryData from localStorage:', savedDiaryData);
+      } else if (location.pathname === '/edit') {
+        setDiaryData(diaryData[0]);
+      } else if (location.pathname === '/write') {
+        setDiaryData((prevData) => ({
+          ...prevData,
+          memberId: memberId,
+          content: '',
+          memberEmotion: '',
+          writtenDate: savedDate || initialWrittenDate,
+        }));
+      }
     }
-    else{
-    const savedDiaryData = localStorage.getItem('diaryData');
-    const savedDate = localStorage.getItem('writtenDate'); 
-    if (savedDiaryData) {
-      setDiaryData(JSON.parse(savedDiaryData));
-      
-      console.log('Restored diaryData from localStorage:', savedDiaryData);
-    } else if (location.pathname === '/edit') {
-      setDiaryData(diaryData[0]);
-    } else if (location.pathname === '/write') {
-      setDiaryData((prevData) => ({
-        ...prevData,
-        memberId: memberId,
-        content: '',
-        memberEmotion: '',
-        writtenDate: savedDate || initialWrittenDate,
-      }));
-    }
-  }
     if (location.state && location.state.diaryData) {
       setDiaryData((prevData) => ({
         ...prevData,
@@ -324,7 +321,7 @@ const WriteDiaryView = () => {
           content: result.content,
           memberEmotion: result.memberEmotion,
           writtenDate: result.writtenDate,
-          musicList: result.musicList || [], 
+          musicList: result.musicList || [],
           image: result.pictureKey,
         });
         console.log('수정할 데이터 받아오기', setDiaryData);
@@ -363,9 +360,10 @@ const WriteDiaryView = () => {
       textAreaHeightRef.current = textArea.scrollHeight;
     }
 
-    if (!isEditMode) { 
+    if (!isEditMode) {
       updateButtonState(diaryData.memberEmotion, content);
-    }  };
+    }
+  };
 
   const handleSearchClick = () => {
     localStorage.setItem('diaryData', JSON.stringify(diaryData));
@@ -391,7 +389,7 @@ const WriteDiaryView = () => {
 
     if (!isEditMode) {
       updateButtonState(emotion, diaryData.content);
-    }  
+    }
   };
 
   const updateButtonState = (emotion, content) => {
@@ -402,20 +400,28 @@ const WriteDiaryView = () => {
       updateButtonState(diaryData.memberEmotion, diaryData.content);
     }, [diaryData]);
   
+
   const handleNext = async () => {
     setLoading(true);
     console.log('diaryData.writtenDate:', diaryData.writtenDate);
     console.log('location.state?.selectedDate:', location.state?.selectedDate);
-    const selectedDate = diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10);
+    const selectedDate =
+      diaryData.writtenDate ||
+      location.state?.selectedDate ||
+      new Date()
+        .toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
+        .replace(/\./g, '-')
+        .replace(/ /g, '')
+        .slice(0, 10);
     console.log('selectedDate:', selectedDate);
 
     const diaryDataToSend = {
-        memberId: parseInt(memberId), 
-        content: diaryData.content,
-        memberEmotion: diaryData.memberEmotion.toUpperCase(),
-        writtenDate: selectedDate, 
-        musicList: diaryData.musicList.map(music => music.id) || [],
-        pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
+      memberId: parseInt(memberId),
+      content: diaryData.content,
+      memberEmotion: diaryData.memberEmotion.toUpperCase(),
+      writtenDate: selectedDate,
+      musicList: diaryData.musicList.map((music) => music.id) || [],
+      pictureKey: diaryData.image, // 수정된 부분: 이미지 키 추가 이거 맞나? 삭제해야할수도
     };
     localStorage.removeItem('musics');
     localStorage.removeItem('writtenDate');
@@ -435,33 +441,31 @@ const WriteDiaryView = () => {
 
     try {
       if (isEditMode && diaryId) {
-        console.log('수정기능에 들어옴'); 
+        console.log('수정기능에 들어옴');
         const response = await axios.put(`${apiUrl}/api/diary/update`, {
           diaryId: diaryId,
           content: diaryData.content,
           pictureKey: imageFile ? URL.createObjectURL(imageFile) : diaryData.image,
         });
-        console.log('수정 데이터 전송', response); 
+        console.log('수정 데이터 전송', response);
         if (response.data.isSuccess) {
           navigate('/detail', { state: { diaryId } });
-          console.log('수정기능 완료'); 
+          console.log('수정기능 완료');
         } else {
           alert('일기 수정 중 오류가 발생했습니다.');
         }
-      }
-      else{
+      } else {
         const response = await axios.post(`${apiUrl}/api/diary/create`, formData);
-        console.log('POST successful, response:', response); 
+        console.log('POST successful, response:', response);
 
         if (response.status === 201) {
           const diaryID = response.data.result.id;
-            localStorage.removeItem('diary');
-            localStorage.removeItem('diaryData');
-            navigate('/emotionGraph', { state: { diaryID } }); 
-          } else {
-            alert('일기 작성 중 오류가 발생했습니다.');
+          localStorage.removeItem('diary');
+          localStorage.removeItem('diaryData');
+          navigate('/emotionGraph', { state: { diaryID } });
+        } else {
+          alert('일기 작성 중 오류가 발생했습니다.');
         }
-
       }
     } catch (error) {
       console.error('Error posting diary:', error);
@@ -469,9 +473,7 @@ const WriteDiaryView = () => {
     } finally {
       setLoading(false);
     }
-
   };
-
 
   return (
     <Container>
@@ -479,7 +481,18 @@ const WriteDiaryView = () => {
       <div css={subContainerStyle}>
         {/* <span css={dateTitleStyle}>{formatDateString(diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10))}</span>
         <span css={subTitleStyle}>오늘의 감정</span> */}
-        <span css={subTitleStyle}>{formatDateString(diaryData.writtenDate || location.state?.selectedDate || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\./g, '-').replace(/ /g, '').slice(0, 10))}{'\n'}오늘의 감정</span>
+        <span css={subTitleStyle}>
+          {formatDateString(
+            diaryData.writtenDate ||
+              location.state?.selectedDate ||
+              new Date()
+                .toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                .replace(/\./g, '-')
+                .replace(/ /g, '')
+                .slice(0, 10)
+          )}
+          {'\n'}오늘의 감정
+        </span>
         <div css={colorPickerStyle}>
           {emotions.map((memberEmotion) => (
             <div key={memberEmotion.key}>
@@ -491,12 +504,12 @@ const WriteDiaryView = () => {
                     selectedEmotionStyle,
                 ]}
                 onClick={() => {
-                  handleEmotionClick(memberEmotion.key)
-                  if (!isEditMode) { 
+                  handleEmotionClick(memberEmotion.key);
+                  if (!isEditMode) {
                     diaryData && setDiaryData({ ...diaryData, memberEmotion: memberEmotion.key });
                   }
                 }}
-                disabled={isEditMode} 
+                disabled={isEditMode}
               />
               <div css={emotionLabelStyle}>{memberEmotion.label}</div>
             </div>
@@ -522,34 +535,37 @@ const WriteDiaryView = () => {
           placeholder="오늘 하루 무슨 일이 있었나요?"
           ref={textAreaRef}
         />
-        {!isEditMode && ( 
-        <>
-        <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
-        <button css={searchButtonStyle} onClick={handleSearchClick}>
-          <div>
-            <Magnifyingglass fillColor="#3D96FF" strokeColor="#3D96FF" />
-          </div>
-          원하는 노래를 검색해보세요.
-        </button>
-        <div css={activityListStyle}>
-          {diaryData?.musicList?.map((item) => (
-            <PlayListCell
-              key={item.id}
-              image={item.pictureKey}
-              title={item.title}
-              artist={item.artist}
-              type={'cancel'}
-              onClickCancel={() => onClickCancel(item.id)}
-            />
-          ))}
-        </div>
-        </>
-      )}
+        {!isEditMode && (
+          <>
+            <span css={subTitleStyle}>오늘의 노래 플레이리스트</span>
+            <button css={searchButtonStyle} onClick={handleSearchClick}>
+              <div>
+                <Magnifyingglass fillColor="#3D96FF" strokeColor="#3D96FF" />
+              </div>
+              원하는 노래를 검색해보세요.
+            </button>
+            <div css={activityListStyle}>
+              {diaryData?.musicList?.map((item) => (
+                <PlayListCell
+                  key={item.id}
+                  image={item.pictureKey}
+                  title={item.title}
+                  artist={item.artist}
+                  type={'cancel'}
+                  onClickCancel={() => onClickCancel(item.id)}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <div css={fixButtonBoxStyle}>
-      <Button text={isEditMode ? '수정하기' : '작성하기'} onClick={handleNext} disabled={!isEditMode && !isButtonEnabled} /> 
-
+        <Button
+          text={isEditMode ? '수정하기' : '작성하기'}
+          onClick={handleNext}
+          disabled={!isEditMode && !isButtonEnabled}
+        />
       </div>
       {loading && (
         <div css={spinnerOverlayStyle}>

@@ -15,10 +15,10 @@ import { apiUrl } from '../../config/config';
 const containerStyle = css`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   margin: 0 auto;
-  padding: 70px 0;
+  padding: 20px 0;
   max-width: 800px;
   width: 100%;
   overflow: hidden;
@@ -55,7 +55,6 @@ const divStyle = (color) => css`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border: 1px solid black;
 `;
 
 const buttonTextStyle = css`
@@ -64,7 +63,7 @@ const buttonTextStyle = css`
   margin-top: 30px;
   margin-bottom: 30px;
   font-size: 16px;
-  white-space: pre-line; 
+  white-space: pre-line;
 `;
 
 const textStyle = css`
@@ -75,7 +74,6 @@ const musicIconStyle = css`
   height: 15vh;
   width: 15vh;
   margin-top: 80px;
-  // margin-bottom: 20px;
   @keyframes rotate {
     from {
       transform: rotate(0deg);
@@ -91,7 +89,7 @@ const playListCellStyle = css`
   margin-bottom: 50px;
 `;
 const buttonStyle = css`
-  width: 250px; 
+  width: 250px;
 `;
 
 const Container = ({ children }) => {
@@ -99,51 +97,56 @@ const Container = ({ children }) => {
 };
 
 const RecommendationView = ({ isDiaryWritten }) => {
+  const [divColor, setDivColor] = useState(colors.white);
+  const [emotionStr, setEmotionStr] = useState('');
+  const [aiPlaylist, setAiPlaylist] = useState([]);
+  const [emotionPlaylist, setEmotionPlaylist] = useState([]);
+  const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten);
+
+  const navigate = useNavigate();
+  const nickname = localStorage.getItem('nickname');
+
   const getColor = async () => {
     const memberId = localStorage.getItem('memberId');
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    var response;
-    const date = `${year}-${month}-${day}`;
+    const date = getCurrentDateforAPI();
     try {
-      response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+      const response = await axios.get(`${apiUrl}/api/diary/${memberId}/${date}`);
+      const emotion = response.data.result.emotion;
+      switch (emotion) {
+        case 'SAD':
+          return colors.darkBlue;
+        case 'HAPPY':
+          return colors.lightYellow;
+        case 'ANGRY':
+          return colors.lightRed;
+        case 'ROMANCE':
+          return colors.lightPink;
+        case 'ANXIETY':
+          return colors.lightPurple;
+        default:
+          return colors.white;
+      }
     } catch (error) {
       alert('Error while Getting Date');
-    }
-    switch (response) {
-      case 'SAD':
-        return colors.darkBlue;
-      case 'HAPPY':
-        return colors.lightYellow;
-      case 'ANGRY':
-        return colors.lightRed;
-      case 'ROMANCE':
-        return colors.lightPink;
-      case 'ANXIETY':
-        return colors.lightPurple;
-      default:
-        return colors.white;
+      return colors.white;
     }
   };
+
   const getCurrentDateforAPI = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-
     return `${year}-${month}-${day}`;
   };
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-
     const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     const dayOfWeek = daysOfWeek[today.getDay()];
-
     return `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
   };
 
@@ -153,10 +156,36 @@ const RecommendationView = ({ isDiaryWritten }) => {
       const response = await axios.get(
         `${apiUrl}/api/recommend/${memberId}/${getCurrentDateforAPI()}`
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       alert('Error while Getting Playlist');
+    }
+  };
+
+  const getTodayEmotion = async () => {
+    try {
+      const memberId = Number(localStorage.getItem('memberId'));
+      const response1 = await axios.get(
+        `${apiUrl}/api/diary/${memberId}/${getCurrentDateforAPI()}`
+      );
+      const emotion = response1.data.result.emotion;
+      switch (emotion) {
+        case 'SAD':
+          return '슬펐을';
+        case 'HAPPY':
+          return '기뻤을';
+        case 'ANGRY':
+          return '화났을';
+        case 'ROMANCE':
+          return '설렜을';
+        case 'ANXIETY':
+          return '불안할';
+        default:
+          return '';
+      }
+    } catch (error) {
+      console.log('Error while Getting Emotion');
+      return '';
     }
   };
 
@@ -166,42 +195,38 @@ const RecommendationView = ({ isDiaryWritten }) => {
       if (playlists && playlists.isSuccess) {
         const aipl = playlists.result.aiPlaylist;
         const empl = playlists.result.memberEmotionPlaylist;
-        setAiPlaylist(aipl.slice(0, 3));
-        setEmotionPlaylist(empl.slice(0, 3));
+        setAiPlaylist(aipl.slice(0, 4));
+        setEmotionPlaylist(empl.slice(0, 4));
       } else {
         console.log('Error while Getting Playlists.');
-        setDiaryWritten(false); 
-
+        setDiaryWritten(false);
       }
     } catch (error) {
       alert('Error Fetching PlayList');
-      setDiaryWritten(false); 
+      setDiaryWritten(false);
     }
   };
 
   useEffect(() => {
+    const fetchColorAndEmotion = async () => {
+      const color = await getColor();
+      setDivColor(color);
+      const emotion = await getTodayEmotion();
+      setEmotionStr(emotion);
+    };
+
+    fetchColorAndEmotion();
     fetchData();
   }, []);
 
-  const playlistDivStyle = (props) => css`
-    ${divStyle};
-    background-color: ${props.color};
-    max-height: 60vh;
-    overflow-y: auto;
-  `;
-
-  const navigate = useNavigate();
-  const [aiPlaylist, setAiPlaylist] = useState([]);
-  const [emotionPlaylist, setEmotionPlaylist] = useState([]);
-  const [diaryWritten, setDiaryWritten] = useState(isDiaryWritten); 
-  const nickname = localStorage.getItem('nickname');
   const handleRoute = (type) => {
     navigate(`/more?type=${type}`);
   };
+
   const handleDiaryRoute = () => {
     navigate('/write');
   };
-  const divColor = getColor();
+
   return (
     <Container>
       <Container css={containerStyle}>
@@ -210,7 +235,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
           <div css={containerStyle}>
             <div
               css={css`
-                ${playlistDivStyle({ color: { divColor } })};
+                ${divStyle(divColor)};
                 margin-top: 10px;
               `}
             >
@@ -256,7 +281,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
             </div>
             <div
               css={css`
-                ${playlistDivStyle({ color: 'white' })};
+                ${divStyle('white')};
                 padding-bottom: 10px;
               `}
             >
@@ -267,7 +292,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
                   font-size: 15px;
                 `}
               >
-                {nickname}님은 설렐 때 이런 노래를 들었어요
+                {nickname}님은 {emotionStr} 때 이런 노래를 들었어요
               </span>
               <span
                 onClick={() => handleRoute('emotion')}
@@ -297,8 +322,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
           <div css={contentStyle}>
             <img src={Logo} css={musicIconStyle} alt="Music Note" />
             <div css={buttonTextStyle}>노래 추천을 위해{'\n'}오늘의 일기를 작성해주세요.</div>
-            <Button onClick={handleDiaryRoute} text="일기 작성하러 가기" css={buttonStyle}></Button> 
-            {/* 왜 버튼 스타일 적용이 안될까요... */}
+            <Button onClick={handleDiaryRoute} text="일기 작성하러 가기" css={buttonStyle}></Button>
           </div>
         )}
         <BottomNavigationBar current="/recommend"></BottomNavigationBar>

@@ -78,7 +78,11 @@ const MoreRecommendationView = () => {
         const memberId = Number(localStorage.getItem('memberId'));
         if (type === 'daily') {
           try {
-            const response = await axios.get(`${apiUrl}/api/playlist/date/${day}`);
+            const memberId = localStorage.getItem('memberId');
+            //api/playlist/date/2024-06-03?memberId=10&page=0
+            const response = await axios.get(
+              `${apiUrl}/api/playlist/date/${day}?memberId=${memberId}&page=0`
+            );
             if (response.data && response.data.isSuccess) {
               setPlaylist(response.data.result);
             } else {

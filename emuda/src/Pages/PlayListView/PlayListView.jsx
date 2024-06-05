@@ -118,10 +118,6 @@ const PlayListView = () => {
     }
   }, [selectedEmotion]);
 
-  const handleRoute = (type, day) => {
-    navigate(`/more?type=${type}&day=${day}`);
-  };
-
   return (
     <Container>
       <AppBarInMainScreen />
@@ -134,7 +130,7 @@ const PlayListView = () => {
               date={playlist.playlistDate}
               text={returnText(playlist.memberEmotion)}
               emotion={playlist.memberEmotion}
-              onClick={() => handleRoute('daily', playlist.playlistDate)}
+              onClick={() => navigate(`/more?type=${'daily'}&day=${playlist.playlistDate}`)}
             />
           ))}
         </div>
