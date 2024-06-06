@@ -267,6 +267,7 @@ const MainPage = () => {
   const [diaryEntries, setDiaryEntries] = useState([]);
   const [buttonText, setButtonText] = useState();
   const [showButton, setShowButton] = useState(false);
+  const storedNickname = localStorage.getItem('nickname');
 
 
   useEffect(() => {
@@ -416,7 +417,9 @@ const MainPage = () => {
           <span css={dateLabelStyle}>{formattedDate}</span>
           <span css={dayOfWeekStyle}>{dayOfWeek}</span>
         </div>
-        <div css={suggestionTextStyle}>오늘 이 노래는 어떠세요?</div>
+        <div css={suggestionTextStyle}>{storedNickname}님 오늘 이 노래는 어떠세요?</div>
+        {/* <div css={suggestionTextStyle}>오늘 이 노래는 어떠세요?</div> */}
+
       </div>
       <div css={cellContainerStyle}>
         <Slider {...settings} css={sliderStyle}>
