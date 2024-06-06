@@ -137,6 +137,7 @@ const PlayListView = () => {
       const response = await axios.get(
         `${apiUrl}/api/playlist/emotion/${emotion}?memberId=${memberId}&page=0`
       );
+      
       if (response.data.isSuccess) {
         setEmotionPlaylists(response.data.result);
       } else {
