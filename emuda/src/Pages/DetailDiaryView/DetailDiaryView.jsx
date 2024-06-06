@@ -145,6 +145,44 @@ const graphContainerStyle = css`
   margin-bottom: 80px;
 `;
 
+const spinnerStyle = css`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3d96ff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const spinnerOverlayStyle = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  flex-direction: column;
+`;
+
+const spinnerTextStyle = css`
+  margin-top: 10px;
+  font-family: 'Pretendard-Medium';
+  font-size: 14px;
+  color: ${colors.mainBlue};
+  margin-top: 25px;
+`;
+
+
 const DetailDiaryView = () => {
   const location = useLocation();
   const diaryId = location.state?.diaryId;
@@ -152,6 +190,7 @@ const DetailDiaryView = () => {
   const [activeTab, setActiveTab] = useState('today');
   const storedNickname = localStorage.getItem('nickname');
   const [emotionGraphData, setEmotionGraphData] = useState([]); // 수정된 부분
+  const [loading, setLoading] = useState(true); // 수정된 부분
 
   const [diaryData, setDiaryData] = useState({
     id: null,
@@ -203,6 +242,8 @@ const DetailDiaryView = () => {
       }
     } catch (error) {
       console.error('Error fetching diary details:', error);
+    } finally {
+      setLoading(false); // 수정된 부분
     }
   };
 
@@ -325,6 +366,15 @@ const DetailDiaryView = () => {
 
   return (
     <Container>
+      {loading && ( // 수정된 부분: 로딩 중일 때 스피너 표시
+        <div css={spinnerOverlayStyle}>
+          <div css={spinnerStyle} />
+          <div css={spinnerTextStyle}>일기 데이터를 불러오는 중입니다.</div>
+        </div>
+      )}
+      {!loading && (
+        <>
+
       <AppBarInViewMode diaryId={diaryId} />
       <div css={subContainerStyle}>
         <div css={spanContainerStyle}>
@@ -372,6 +422,8 @@ const DetailDiaryView = () => {
           <EmotionChart data={emotionGraphData} height="100%" /> {/* 수정된 부분 */}
         </div>
       </div>
+      </>
+      )}
     </Container>
   );
 };

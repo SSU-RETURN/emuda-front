@@ -130,7 +130,9 @@ const MusicCardView = () => {
   const location = useLocation();
   const [AiPlaylist, setAiPlaylist] = useState([]);
   const [EmotionPlaylist, setEmotionPlaylist] = useState([]);
-  const nickname = localStorage.getItem('nickname');
+  // const nickname = Number(localStorage.getItem('nickname'));
+  const storedNickname = localStorage.getItem('nickname');
+  
   const emotion = location.state.emotion;
   const date = location.state.date;
 
@@ -185,26 +187,26 @@ const MusicCardView = () => {
     return text;
   };
 
-  const suggestionText = (nickname, emotion) => {
+  const suggestionText = (storedNickname, emotion) => {
     let text = '';
     switch (emotion) {
       case 'SAD':
-        text = `${nickname}님은 슬플 때 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 슬플 때 이런 노래들을 들었어요`;
         break;
       case 'ROMANCE':
-        text = `${nickname}님은 설렐 때 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 설렐 때 이런 노래들을 들었어요`;
         break;
       case 'HAPPY':
-        text = `${nickname}님은 기쁠 때 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 기쁠 때 이런 노래들을 들었어요`;
         break;
       case 'ANGRY':
-        text = `${nickname}님은 화날 때 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 화날 때 이런 노래들을 들었어요`;
         break;
       case 'ANXIETY':
-        text = `${nickname}님은 불안할 때 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 불안할 때 이런 노래들을 들었어요`;
         break;
       default:
-        text = `${nickname}님은 이런 노래들을 들었어요`;
+        text = `${storedNickname}님은 이런 노래들을 들었어요`;
         break;
     }
     return text;
@@ -218,7 +220,7 @@ const MusicCardView = () => {
     <Container>
       <div css={subContainerStyle}>
         <span css={subTitleStyle}>일기 작성이 완료 되었어요.</span>
-        <span css={mainTitleStyle}>{nickname}님을 위한 추천 노래를 확인하세요!</span>
+        <span css={mainTitleStyle}>{storedNickname}님을 위한 추천 노래를 확인하세요!</span>
         <div css={cardWrapperStyle}>
           <div css={cardStyle}>
             <div css={cardFrontStyle}></div>
@@ -235,7 +237,7 @@ const MusicCardView = () => {
                   />
                 ))}
               </div>
-              <div css={recommendLabelStyle}>{suggestionText(nickname, emotion)}</div>
+              <div css={recommendLabelStyle}>{suggestionText(storedNickname, emotion)}</div>
               <div css={activityListStyle}>
                 {EmotionPlaylist.map((item) => (
                   <PlayListCell

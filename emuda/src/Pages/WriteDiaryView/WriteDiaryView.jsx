@@ -184,6 +184,7 @@ const spinnerOverlayStyle = css`
   display: flex;
   justify-content: center;
   align-items: center;
+  // background-color: white; 
   background-color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
   flex-direction: column;
@@ -194,12 +195,15 @@ const spinnerTextStyle = css`
   font-size: 14px;
   color: ${colors.mainBlue};
   margin-top: 25px;
+  white-space: pre-line;
+  text-align: center;
 `;
 
 const WriteDiaryView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const memberId = localStorage.getItem('memberId');
+  const storedNickname = localStorage.getItem('nickname');
   const initialWrittenDate = location.state?.selectedDate || '';
 
   const fileInputRef = useRef(null);
@@ -268,7 +272,10 @@ const WriteDiaryView = () => {
       const savedDate = localStorage.getItem('writtenDate');
       if (savedDiaryData) {
         setDiaryData(JSON.parse(savedDiaryData));
-
+        updateButtonState(
+          JSON.parse(savedDiaryData).memberEmotion,
+          JSON.parse(savedDiaryData).content
+        );
         console.log('Restored diaryData from localStorage:', savedDiaryData);
       } else if (location.pathname === '/edit') {
         setDiaryData(diaryData[0]);
@@ -287,6 +294,11 @@ const WriteDiaryView = () => {
         ...prevData,
         ...location.state.diaryData,
       }));
+
+      updateButtonState(
+        location.state.diaryData.memberEmotion,
+        location.state.diaryData.content
+      );
     }
 
     if (location.state && Array.isArray(location.state.selectedMusic)) {
@@ -391,6 +403,10 @@ const WriteDiaryView = () => {
   const updateButtonState = (emotion, content) => {
     setIsButtonEnabled(emotion !== '' && content !== '');
   };
+
+  useEffect(() => {
+    updateButtonState(diaryData.memberEmotion, diaryData.content);
+  }, [diaryData]); 
 
   const handleNext = async () => {
     setLoading(true);
@@ -562,7 +578,7 @@ const WriteDiaryView = () => {
       {loading && (
         <div css={spinnerOverlayStyle}>
           <div css={spinnerStyle} />
-          <div css={spinnerTextStyle}>일기를 생성 중 입니다.</div>
+          <div css={spinnerTextStyle}>일기를 생성 중 입니다.{'\n'}{storedNickname}님 오늘도 수고 많으셨어요😊</div>
         </div>
       )}
     </Container>
