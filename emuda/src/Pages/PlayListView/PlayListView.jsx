@@ -122,7 +122,13 @@ const PlayListView = () => {
       const memberId = localStorage.getItem('memberId');
       const response = await axios.get(`${apiUrl}/api/playlist/info/${memberId}`);
       if (response.data.isSuccess) {
-        setDailyPlaylists(response.data.result);
+        let playlist = response.data.result;
+        playlist = playlist.sort((a, b) => {
+          if (a.playlistDate === null) return 1;
+          if (b.playlistDate === null) return -1;
+          return new Date(a.playlistDate) - new Date(b.playlistDate);
+        });
+        setDailyPlaylists(playlist);
       } else {
         console.error('Error fetching daily playlists');
       }
