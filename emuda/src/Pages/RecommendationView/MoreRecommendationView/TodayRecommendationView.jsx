@@ -238,6 +238,7 @@ const Container = ({ children }) => {
 const TodayRecommendationView = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const diaryId = location.state?.diaryId;
   const { selectedEmotion } = location.state || { selectedEmotion: 'ROMANCE' };
   const queryParams = new URLSearchParams(location.search);
   const day = queryParams.get('day');
@@ -301,9 +302,9 @@ const TodayRecommendationView = () => {
         <button
           css={buttonStyle(textColor)}
           onClick={() =>
-            navigate('/library', {
+            navigate('/detail', {
               state: {
-                selectedEmotion,
+                diaryId: diaryId,
               },
             })
           }
