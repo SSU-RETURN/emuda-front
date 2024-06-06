@@ -17,7 +17,7 @@ const containerStyle = css`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  margin: 0;
+  margin: 0 auto;
   padding: 50px 0px;
   max-width: 800px;
   width: 100%;
@@ -132,7 +132,7 @@ const RecommendationView = ({ isDiaryWritten }) => {
           return colors.white;
       }
     } catch (error) {
-      alert('Error while Getting Date');
+      // alert('Error while Getting Date');
       return colors.white;
     }
   };

@@ -268,7 +268,10 @@ const WriteDiaryView = () => {
       const savedDate = localStorage.getItem('writtenDate');
       if (savedDiaryData) {
         setDiaryData(JSON.parse(savedDiaryData));
-
+        updateButtonState(
+          JSON.parse(savedDiaryData).memberEmotion,
+          JSON.parse(savedDiaryData).content
+        );
         console.log('Restored diaryData from localStorage:', savedDiaryData);
       } else if (location.pathname === '/edit') {
         setDiaryData(diaryData[0]);
@@ -287,6 +290,11 @@ const WriteDiaryView = () => {
         ...prevData,
         ...location.state.diaryData,
       }));
+
+      updateButtonState(
+        location.state.diaryData.memberEmotion,
+        location.state.diaryData.content
+      );
     }
 
     if (location.state && Array.isArray(location.state.selectedMusic)) {
@@ -391,6 +399,10 @@ const WriteDiaryView = () => {
   const updateButtonState = (emotion, content) => {
     setIsButtonEnabled(emotion !== '' && content !== '');
   };
+
+  useEffect(() => {
+    updateButtonState(diaryData.memberEmotion, diaryData.content);
+  }, [diaryData]); 
 
   const handleNext = async () => {
     setLoading(true);
