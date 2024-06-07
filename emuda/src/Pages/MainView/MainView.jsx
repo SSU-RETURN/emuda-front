@@ -19,15 +19,14 @@ import { apiUrl } from '../../config/config';
 const pageStyle = css`
   display: flex;
   flex-direction: column;
-  // justify-content: flex-start;
-  justify-content: center; /* 중앙 정렬 추가 */
-
+  justify-content: flex-start;
   align-items: center;
   margin: 0 auto;
   padding: 70px 0px;
-  max-width: 800px;
   width: 100%;
+  min-height: 100vh;
   font-family: 'Pretendard-Medium';
+  box-sizing: content-box;
 `;
 
 // 날짜 표시 스타일
@@ -252,7 +251,10 @@ function getCurrentDate() {
       month: '2-digit',
       day: '2-digit',
     })
-    .replace(/\./g, '-').replace(/ /g, '').replace(/-/g, '-').slice(0, 10);
+    .replace(/\./g, '-')
+    .replace(/ /g, '')
+    .replace(/-/g, '-')
+    .slice(0, 10);
 
   return formattedDate;
 }
@@ -269,17 +271,18 @@ const MainPage = () => {
   const [showButton, setShowButton] = useState(false);
   const storedNickname = localStorage.getItem('nickname');
 
-
   useEffect(() => {
     const fetchDiaryEntries = async () => {
       try {
         const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth() + 1).padStart(2, '0')}-01`;
-        const response = await axios.get(`${apiUrl}/api/diary/monthly/${memberId}?YearMonth=${yearMonth}`);
+        const response = await axios.get(
+          `${apiUrl}/api/diary/monthly/${memberId}?YearMonth=${yearMonth}`
+        );
         if (response.data.isSuccess) {
-          const entries = response.data.result.map(entry => ({
+          const entries = response.data.result.map((entry) => ({
             date: new Date(entry.writtenDate),
             emotion: entry.memberEmotion,
-            id: entry.id 
+            id: entry.id,
           }));
           setDiaryEntries(entries);
         }
@@ -290,36 +293,35 @@ const MainPage = () => {
     fetchDiaryEntries();
   }, [activeStartDate, memberId]);
 
-    const updatePreferencePlaylist = async () => {
-      try {
-        console.log('취향플리 업데이트중');
-        const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
-          memberId: parseInt(memberId),
-          date: currentDate,
-        });
-        console.log('Update response:', response.data);
-        fetchPreferencePlaylist();
-      } catch (error) {
-        console.log('오류가 발생했습니다.', error);
-      }
-    };
-  
-    const fetchPreferencePlaylist = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
-        if (response.data.isSuccess) {
-          console.log('Fetch response:', response.data.result);
-          setPlaylist(response.data.result); 
-        }
-      } catch (error) {
-        console.error('Failed to fetch preference playlist', error);
-      }
-    };
-  
-    useEffect(() => {
-      updatePreferencePlaylist(); 
-    }, []);
+  const updatePreferencePlaylist = async () => {
+    try {
+      console.log('취향플리 업데이트중');
+      const response = await axios.put(`${apiUrl}/api/playlist/preference/update`, {
+        memberId: parseInt(memberId),
+        date: currentDate,
+      });
+      console.log('Update response:', response.data);
+      fetchPreferencePlaylist();
+    } catch (error) {
+      console.log('오류가 발생했습니다.', error);
+    }
+  };
 
+  const fetchPreferencePlaylist = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/playlist/preference/musics/${memberId}`);
+      if (response.data.isSuccess) {
+        console.log('Fetch response:', response.data.result);
+        setPlaylist(response.data.result.slice(0, 3));
+      }
+    } catch (error) {
+      console.error('Failed to fetch preference playlist', error);
+    }
+  };
+
+  useEffect(() => {
+    updatePreferencePlaylist();
+  }, []);
 
   const settings = {
     dots: true,
@@ -331,12 +333,18 @@ const MainPage = () => {
   };
 
   const onChange = (newDate) => {
-    console.log('선택된 날짜: ', newDate.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\. /g, '-').replace(/\.$/, ''));
-    setDate(newDate); 
+    console.log(
+      '선택된 날짜: ',
+      newDate
+        .toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replace(/\. /g, '-')
+        .replace(/\.$/, '')
+    );
+    setDate(newDate);
 
     const foundEntry = diaryEntries.find(
       (entry) =>
@@ -350,7 +358,7 @@ const MainPage = () => {
     } else {
       setButtonText('작성하기');
     }
-    setShowButton(true); 
+    setShowButton(true);
   };
 
   const goToToday = () => {
@@ -384,11 +392,14 @@ const MainPage = () => {
   };
 
   const handleWriteClick = () => {
-    const formattedDate = date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\. /g, '-').replace(/\.$/, '');
+    const formattedDate = date
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\. /g, '-')
+      .replace(/\.$/, '');
 
     const foundEntry = diaryEntries.find(
       (entry) =>
@@ -405,7 +416,7 @@ const MainPage = () => {
       navigate('/write', { state: { selectedDate: formattedDate } });
     }
 
-// 충돌 해결 부분
+    // 충돌 해결 부분
     localStorage.setItem('musics', JSON.stringify([]));
   };
 
@@ -419,7 +430,6 @@ const MainPage = () => {
         </div>
         <div css={suggestionTextStyle}>{storedNickname}님 오늘 이 노래는 어떠세요?</div>
         {/* <div css={suggestionTextStyle}>오늘 이 노래는 어떠세요?</div> */}
-
       </div>
       <div css={cellContainerStyle}>
         <Slider {...settings} css={sliderStyle}>
@@ -454,9 +464,8 @@ const MainPage = () => {
         onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
         formatMonthYear={formatMonthYear}
       />
-      {showButton && (
-        <Button text={buttonText} onClick={handleWriteClick} />
-      )}      <BottomNavigationBar />
+      {showButton && <Button text={buttonText} onClick={handleWriteClick} />}{' '}
+      <BottomNavigationBar />
     </div>
   );
 };

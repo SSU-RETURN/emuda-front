@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Global, css } from '@emotion/react';
 import App from './App.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import RecommendationView from './Pages/RecommendationView/RecommendationView.jsx';
@@ -21,31 +22,119 @@ import DiaryEmotionGraphView from './Pages/DiaryEmotionGraphView/DiaryEmotionGra
 import SettingView from './Pages/SettingVIew/SettingView.jsx';
 import EditMemberInfoView from './Pages/EditMemberInfoView/EditMemberInfoView.jsx';
 import TodayRecommendationView from './Pages/RecommendationView/MoreRecommendationView/TodayRecommendationView.jsx';
+import ProtectedRoute from './core/ProtectedRoute';
+import { AuthProvider } from './core/AuthContext';
+
+const globalStyles = css`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard-Medium', sans-serif;
+    min-height: 100vh;
+  }
+`;
+
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
   },
-  { path: '/detail', element: <DetailDiaryView /> },
-  { path: '/write', element: <WriteDiaryView /> },
-  { path: '/edit', element: <WriteDiaryView /> },
-  { path: '/emotionGraph', element: <DiaryEmotionGraphView /> },
-  { path: '/card', element: <MusicCardView /> },
-  { path: '/search', element: <SearchMusicView /> },
+  {
+    path: '/main',
+    element: (
+      <ProtectedRoute>
+        <MainPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/detail',
+    element: (
+      <ProtectedRoute>
+        <DetailDiaryView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/write',
+    element: (
+      <ProtectedRoute>
+        <WriteDiaryView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/edit',
+    element: (
+      <ProtectedRoute>
+        <WriteDiaryView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/emotionGraph',
+    element: (
+      <ProtectedRoute>
+        <DiaryEmotionGraphView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/card',
+    element: (
+      <ProtectedRoute>
+        <MusicCardView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/search',
+    element: (
+      <ProtectedRoute>
+        <SearchMusicView />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: '/recommend',
-    //추후에 server과의 연결할 때 여기에도 함수 추가해야 합니다
-    element: <RecommendationView isDiaryWritten={true} />,
+    element: (
+      <ProtectedRoute>
+        <RecommendationView isDiaryWritten={true} />
+      </ProtectedRoute>
+    ),
   },
-  { path: '/library', element: <PlayListView /> },
-  { path: '/more', element: <MoreRecommendationView /> },
-  { path: '/todayRecommend', element: <TodayRecommendationView /> },
-
+  {
+    path: '/library',
+    element: (
+      <ProtectedRoute>
+        <PlayListView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/more',
+    element: (
+      <ProtectedRoute>
+        <MoreRecommendationView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/todayRecommend',
+    element: (
+      <ProtectedRoute>
+        <TodayRecommendationView />
+      </ProtectedRoute>
+    ),
+  },
   { path: '/login', element: <LoginView /> },
   { path: '/signup', element: <SignUpView /> },
   { path: '/signupcom', element: <SignUpComView /> },
-
-  { path: '/main', element: <MainPage /> },
   { path: '/setting', element: <SettingView /> },
   { path: '/editMemberInfo', element: <EditMemberInfoView /> },
   { path: '/preferstart', element: <PreferStart /> },
@@ -56,6 +145,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <Global styles={globalStyles} />
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );

@@ -21,7 +21,7 @@ const containerStyle = css`
   align-items: center;
   margin: 0;
   padding: 50px 0px;
-  max-width: 800px;
+  min-height: 100vh;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;

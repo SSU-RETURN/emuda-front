@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
-import './Fonts/Font.css';
 import LoginView from './Pages/LoginView/LoginView';
+import ResizeWarning from './Pages/ErrorView/ResizeWarningView/ResizeWarningView';
 
 const containerStyle = css`
   display: flex;
@@ -12,17 +12,13 @@ const containerStyle = css`
   margin: 0;
   padding: 0;
   width: 100%;
+  min-height: 100vh;
   box-sizing: border-box;
   .btn:active,
   .btn:focus {
     outline: none !important;
     box-shadow: none !important;
   }
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  font-family: 'Pretendard-Medium';
 `;
 
 const Container = ({ children }) => {
@@ -30,10 +26,27 @@ const Container = ({ children }) => {
 };
 
 function App() {
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isLarge = window.innerWidth > 600;
+      setIsLargeScreen(isLarge);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <Container>
-      <LoginView></LoginView>
-    </Container>
+    <>
+      <Container>{isLargeScreen ? <ResizeWarning /> : <LoginView />}</Container>
+    </>
   );
 }
 

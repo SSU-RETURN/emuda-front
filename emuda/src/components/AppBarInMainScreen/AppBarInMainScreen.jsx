@@ -29,8 +29,9 @@ const BarStyle = css`
   background-color: white;
   height: 60px;
   padding: 13px 22px;
-  box-sizing: border-box;
   width: 100%;
+  box-sizing: border-box;
+  aspect-ratio: 6 / 1;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */
   display: flex;
   justify-content: center;
@@ -54,9 +55,6 @@ const MainStyle = css`
     font-family: 'Pretendard-Semibold';
     font-size: 16px;
     transform: scaleX(1.2);
-  }
-  @media (min-width: 800px) {
-    font-size: 30px;
   }
 `;
 const personImageStyle = css`

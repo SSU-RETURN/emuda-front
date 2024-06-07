@@ -2,8 +2,9 @@ import { css } from '@emotion/react';
 import colors from '../../Colors/Colors';
 
 const baseStyle = css`
-  width: 45px;
-  height: 45px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 10px 20px 15px 30px;
   flex: none;
   order: 0;

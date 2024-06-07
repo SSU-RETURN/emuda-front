@@ -29,7 +29,7 @@ const subContainerStyle = css`
   flex-direction: column;
   align-items: center;
   padding: 0px;
-  margin: 10px 22px;
+  margin: 10vh 22vh;
 `;
 const subTitleStyle = css`
   width: 100%;
@@ -184,7 +184,7 @@ const spinnerOverlayStyle = css`
   display: flex;
   justify-content: center;
   align-items: center;
-  // background-color: white; 
+  // background-color: white;
   background-color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
   flex-direction: column;
@@ -295,10 +295,7 @@ const WriteDiaryView = () => {
         ...location.state.diaryData,
       }));
 
-      updateButtonState(
-        location.state.diaryData.memberEmotion,
-        location.state.diaryData.content
-      );
+      updateButtonState(location.state.diaryData.memberEmotion, location.state.diaryData.content);
     }
 
     if (location.state && Array.isArray(location.state.selectedMusic)) {
@@ -406,7 +403,7 @@ const WriteDiaryView = () => {
 
   useEffect(() => {
     updateButtonState(diaryData.memberEmotion, diaryData.content);
-  }, [diaryData]); 
+  }, [diaryData]);
 
   const handleNext = async () => {
     setLoading(true);
@@ -578,7 +575,10 @@ const WriteDiaryView = () => {
       {loading && (
         <div css={spinnerOverlayStyle}>
           <div css={spinnerStyle} />
-          <div css={spinnerTextStyle}>일기를 생성 중 입니다.{'\n'}{storedNickname}님 오늘도 수고 많으셨어요😊</div>
+          <div css={spinnerTextStyle}>
+            일기를 생성 중 입니다.{'\n'}
+            {storedNickname}님 오늘도 수고 많으셨어요😊
+          </div>
         </div>
       )}
     </Container>

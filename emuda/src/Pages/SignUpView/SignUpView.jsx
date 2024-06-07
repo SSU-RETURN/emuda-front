@@ -13,6 +13,7 @@ import EyeOffIcon from '../../assets/EyeOffIcon';
 const signupPageStyle = css`
   display: flex;
   width: 100%;
+  margin: 0;
   padding: 50px 20px;
   flex-direction: column;
   align-items: center;

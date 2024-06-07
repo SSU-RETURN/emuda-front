@@ -19,9 +19,9 @@ const containerStyle = css`
   align-items: center;
   margin: 0 auto;
   padding: 50px 0px;
-  max-width: 800px;
   width: 100%;
   overflow: hidden;
+  min-height: 100vh;
   box-sizing: border-box;
 `;
 
@@ -74,7 +74,6 @@ const infoSpanStyle = css`
 
 const musicIconStyle = css`
   width: 15vh;
-  margin-top: 140px;
   @keyframes rotate {
     from {
       transform: rotate(0deg);

@@ -19,6 +19,7 @@ const containerStyle = css`
   flex-direction: column;
   align-items: center;
   padding: 0px;
+  padding-bottom: 50px;
   margin: 0px;
 `;
 const subContainerStyle = css`

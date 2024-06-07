@@ -19,12 +19,8 @@ const navBarStyle = css`
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   z-index: 100;
   color: rgb(55, 104, 251);
-  max-width: 800px;
   width: 100%;
-  height: 50px;
-  @media (max-width: 800px) {
-    height: 30px;
-  }
+  height: 70px;
 `;
 
 const buttonStyle = (isSelected) => css`

@@ -29,9 +29,9 @@ const BarStyle = css`
   right: 0;
   z-index: 1000;
   background-color: white;
-  height: 50px;
   padding-top: 0.5vh;
   width: 100%;
+  height: 50px;
   /* viewport height 대신 다른 단위를 사용할 수 있습니다. */
   display: flex;
   justify-content: space-between;
@@ -49,12 +49,8 @@ const ButtonStyle = css`
   border: none;
   padding: 0;
   flex: 1;
-  @media (min-width: 600px) {
-    font-size: 30px;
-    width: 10%;
-    max-width: 60px;
-  }
 `;
+
 const MainStyle = css`
   background-color: white;
   color: ${colors.darkBlue};

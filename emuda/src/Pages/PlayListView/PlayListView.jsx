@@ -19,8 +19,8 @@ const containerStyle = css`
   align-items: center;
   margin: 0 auto;
   padding: 50px 0;
-  max-width: 800px;
   width: 100%;
+  min-height: 100vh;
   overflow: hidden;
   box-sizing: border-box;
   .btn:active,
@@ -143,7 +143,7 @@ const PlayListView = () => {
       const response = await axios.get(
         `${apiUrl}/api/playlist/emotion/${emotion}?memberId=${memberId}&page=0`
       );
-      
+
       if (response.data.isSuccess) {
         setEmotionPlaylists(response.data.result);
       } else {
@@ -194,7 +194,7 @@ const PlayListView = () => {
             <div
               css={css`
                 font-family: 'Pretendard-Light';
-                padding-top: 50%;
+                padding-top: 25vh;
                 font-size: 14px;
                 color: #666;
               `}
@@ -225,7 +225,7 @@ const PlayListView = () => {
               <div
                 css={css`
                   font-family: 'Pretendard-Light';
-                  padding-top: 50%;
+                  padding-top: 25vh;
                   font-size: 14px;
                   color: #666;
                 `}
@@ -249,7 +249,7 @@ const PlayListView = () => {
             <div
               css={css`
                 font-family: 'Pretendard-Light';
-                padding-top: 50%;
+                padding-top: 25vh;
                 font-size: 14px;
                 color: #666;
               `}

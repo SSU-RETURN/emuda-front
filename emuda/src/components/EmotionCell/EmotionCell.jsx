@@ -2,7 +2,7 @@ import emotionStyles from '/Users/yunha/Desktop/코딩/Algorithms/emuda-front/em
 import { css } from '@emotion/react';
 const containerStyle = css`
   display: flex;
-  height: 60px;
+  height: 60vh;
   flex-direction: column;
   justify-content: space-between;
 `;
