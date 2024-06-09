@@ -59,6 +59,8 @@ const colorPickerStyle = css`
   button {
     border: none;
     outline: none;
+    width: 45px;
+    height: 45px;
     &:active,
     &:focus {
       border: none;
@@ -185,7 +187,7 @@ const spinnerOverlayStyle = css`
   justify-content: center;
   align-items: center;
   // background-color: white;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.85); // 변경
   z-index: 9999;
   flex-direction: column;
 `;
