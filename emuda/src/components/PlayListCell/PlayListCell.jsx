@@ -14,7 +14,7 @@ function PlayListCell({
   type,
   isChecked,
   onCheckChange,
-  onClickCancle = undefined,
+  onClickCancel = undefined,
 }) {
   const [imgSrc, setImgSrc] = useState(image);
   const [isLiked, setIsLiked] = useState(false);
@@ -153,7 +153,7 @@ function PlayListCell({
           <div css={[checkboxStyle, isChecked && checkedStyle]} onClick={onCheckChange} />
         )}
         {type === 'cancel' && (
-          <button css={btnStyle} onClick={onClickCancle}>
+          <button css={btnStyle} onClick={onClickCancel}>
             <i className="fa-solid fa-x" style={{ color: '#6e6e6e' }}></i>
           </button>
         )}
